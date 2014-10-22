@@ -6,7 +6,7 @@
 
 #include "util.h"
 #include "timer0.h"
-#include "crc16.h"
+//#include "crc16.h"
 
 #include "modbus.h"
 

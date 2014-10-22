@@ -8,6 +8,7 @@
 #include "temperature.h"
 #include "eeprom.h"
 #include "uart.h"
+#include "defs.h"
 
 
 // ---------------------------------------------------------------
@@ -136,13 +137,14 @@ void menu_monitor_main( void )
     static uint8_t cnt_main_monitor;
 
     lcd_gotoxy( 0, 1 );
-    lcd_puts("EE: ");
+    lcd_puts("EE:");
     lcd_putc( ui_marker_unsaved ? '*' : '.' );
-    lcd_puts(" IO: ");
+    lcd_puts(" IO:");
     lcd_puti( modbus_event_cnt % 100 ); // Take 2 digits
-//    lcd_putc( ' ' );
     lcd_putc( (cnt_main_monitor++ & 1) ? ':' : '.' );
     lcd_puti( (modbus_crc_cnt+modbus_exceptions_cnt) % 100 ); // Take 2 digits
+    lcd_putc( ' ' );
+    lcd_puti( ow_error_cnt % 100 ); // Take 2 digits
     lcd_puts("               ");
 }
 
@@ -406,31 +408,69 @@ static void *shift_buf( void *bp, uint8_t blen )
 #endif
 }
 
-void menu_display_bus_i(void)
+void menu_display_485_i(void)
 {
     lcd_gotoxy( 0, 0 );
     lcd_puts("< RS485 RX data:" );
 }
 
-void menu_monitor_bus_i(void)
+void menu_monitor_485_i(void)
 {
     lcd_gotoxy( 0, 1 );
     //lcd_puthex((char *)modbus_rx_buf,MODBUS_MAX_RX_PKT);
     lcd_puthex((char *) shift_buf( modbus_rx_buf, MODBUS_MAX_RX_PKT),8);
 }
 
-void menu_display_bus_o(void)
+void menu_display_485_o(void)
 {
     lcd_gotoxy( 0, 0 );
     lcd_puts("< RS485 TX data:" );
 }
 
-void menu_monitor_bus_o(void)
+void menu_monitor_485_o(void)
 {
     lcd_gotoxy( 0, 1 );
     //lcd_puthex((char *)modbus_rx_buf,MODBUS_MAX_RX_PKT);
     lcd_puthex((char *) shift_buf( modbus_tx_buf, MODBUS_MAX_TX_PKT),8);
 }
+
+// ---------------------------------------------------------------
+
+
+
+void menu_display_bus(void)
+{
+    uint8_t bus = vr2/4;
+    if(bus >= N_1W_BUS) bus = N_1W_BUS-1;
+
+    uint8_t i, c = 0;
+    for( i = 0; i < N_TEMPERATURE_IN; i++ )
+        if( gTempSensorBus[i] == bus )
+            c++;
+
+    lcd_gotoxy( 0, 0 );
+
+    lcd_puts("<1w Bus ");
+    lcd_puti(bus);
+
+    lcd_gotoxy( 0, 1 );
+    lcd_puts("Sens:");
+    lcd_puti(c);
+    lcd_puts(" ");
+}
+
+void menu_monitor_bus(void)
+{
+    uint8_t bus = vr2/4;
+    if(bus >= N_1W_BUS) bus = N_1W_BUS-1;
+
+    lcd_gotoxy( 9, 1 );
+
+    lcd_puts("Err:");
+    lcd_puti(ow_bus_error_cnt[bus]);
+    lcd_puts("  ");
+}
+
 
 // ---------------------------------------------------------------
 //
@@ -451,8 +491,9 @@ struct menu_t menu[] = {
 #if SERVANT_NCNT || SERVANT_NDI
     { "DIn", 	menu_display_di, 		0, 0 },
 #endif
-    { "BusI", 	menu_display_bus_i, 		0, menu_monitor_bus_i },
-    { "BusO", 	menu_display_bus_o, 		0, menu_monitor_bus_o },
+    { "485I", 	menu_display_485_i, 		0, menu_monitor_485_i },
+    { "485O", 	menu_display_485_o, 		0, menu_monitor_485_o },
+    { "1wBus",  menu_display_bus,               0, menu_monitor_bus },
 };
 
 #define _MENU_SIZE ( (sizeof(menu)) / (sizeof(struct menu_t))  )
@@ -543,8 +584,8 @@ static void menu_read_input(void)
 
     // ADC is 10 bit, we need 32 steps (5 bit)
 
-    vr1 = adc_value[6] >> 5;
-    vr2 = adc_value[7] >> 5;
+    vr1 = (adc_value[6] + 15) >> 5;
+    vr2 = (adc_value[7] + 15) >> 5;
 
     if( vr1_prev != vr1 ) { vr1_prev = vr1; 	changed |= KEY_VR1; }
     if( vr2_prev != vr2 ) { vr2_prev = vr2; 	changed |= KEY_VR2; }

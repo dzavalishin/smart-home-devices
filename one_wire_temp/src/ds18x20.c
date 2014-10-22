@@ -384,9 +384,11 @@ uint8_t DS18X20_start_meas( uint8_t with_power_extern, uint8_t id[])
         ow_command( DS18X20_CONVERT_T, id );
         if (with_power_extern != DS18X20_POWER_EXTERN)
             ow_parasite_enable();
+        //led1_timed( 155 );
         return DS18X20_OK;
     }
     else {
+        //led2_timed( 55 );
 #ifdef DS18X20_VERBOSE
         uart_puts_P( "DS18X20_start_meas: Short Circuit !\r" );
 #endif

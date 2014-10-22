@@ -12,11 +12,6 @@
 
 #define DS_DEBUG 1
 
-#ifdef OW_ONE_BUS
-#	define N_1W_BUS 1
-#else
-#	define N_1W_BUS 8
-#endif
 
 
 #if DS_DEBUG
@@ -47,6 +42,11 @@ uint8_t gTempSensorLogicalNumber[N_TEMPERATURE_IN]; // Report sensor with this l
 uint16_t currTemperature[N_TEMPERATURE_IN];
 
 uint16_t ow_error_cnt; // 1wire error counter
+
+#ifndef OW_ONE_BUS
+uint8_t ow_bus_error_cnt[N_1W_BUS]; // 1wire error counter per bus
+#endif
+
 #endif
 
 
@@ -97,7 +97,9 @@ uint8_t search_sensors(uint8_t currBus)
             REPORT_ERROR(ERR_FLAG_1WIRE_SCAN_FAULT);
             //			debug_puts( "Bus Error\n" );
             debug_puts( "B" );
-            ow_error_cnt++;
+            //ow_error_cnt++;
+            //ow_bus_error_cnt[currBus];
+            count_1w_bus_error( currBus );
             break;
         }
 
@@ -143,7 +145,7 @@ uint8_t search_sensors(uint8_t currBus)
 
 #if N_TEMPERATURE_IN > 0
 
-#define TEMP_FAST_RESTART 1
+#define TEMP_FAST_RESTART 0
 
 
 static void read_temperature_data(void);
@@ -173,13 +175,14 @@ void temp_meter_05sec_timer(void)
 
     case 2:        	// 1 sec passed, read measurements.
 
-        timerCallNumber = 0;
         read_temperature_data();
 #if TEMP_FAST_RESTART
         timerCallNumber = 1;
         goto req;
-#endif
+#else
+        timerCallNumber = 0;
         break;
+#endif
     }
 }
 
@@ -199,12 +202,15 @@ static void request_temperature_measurement(void)
 #ifndef OW_ONE_BUS
         ow_set_bus(&PINB,&PORTB,&DDRB,PB0+bus);
 #endif
-        if ( DS18X20_start_meas( DS18X20_POWER_EXTERN, NULL ) != DS18X20_OK)
-            //	        if ( DS18X20_start_meas( DS18X20_POWER_PARASITE, NULL ) != DS18X20_OK)
+        // if( DS18X20_start_meas( DS18X20_POWER_PARASITE, NULL ) != DS18X20_OK)
+        if( DS18X20_start_meas( DS18X20_POWER_EXTERN, NULL ) != DS18X20_OK)
         {
             // Error starting temp mesaure.
-            REPORT_ERROR(ERR_FLAG_1WIRE_READ_FAULT);
-            ow_error_cnt++;
+            REPORT_ERROR(ERR_FLAG_1WIRE_START_FAULT);
+            //ow_error_cnt++;
+            //ow_bus_error_cnt[bus];
+            count_1w_bus_error( bus );
+            //led1_timed( 200 );
         }
     }
 }
@@ -230,15 +236,26 @@ void read_temperature_data(void)
         if ( DS18X20_read_meas_word(&gTempSensorIDs[i][0], &out) != DS18X20_OK )
         {
             REPORT_ERROR(ERR_FLAG_1WIRE_READ_FAULT);
-            ow_error_cnt++;
+            //ow_error_cnt++;
+            //ow_bus_error_cnt[i]++;
+            count_1w_bus_error( i );
+            //led1_timed( 50 );
             continue;
         }
+        //led2_timed( 15 );
         currTemperature[i] = out;
     }
 }
 
 
-
+void count_1w_bus_error( uint8_t bus )
+{
+    ow_error_cnt++;
+#ifndef OW_ONE_BUS
+    if( bus < N_1W_BUS )
+        ow_bus_error_cnt[bus]++;
+#endif
+}
 
 
 #endif // N_TEMPERATURE_IN > 0

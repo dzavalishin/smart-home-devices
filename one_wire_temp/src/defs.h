@@ -86,6 +86,11 @@
 //#define OW_CONF_DELAYOFFSET 2
 //#define OW_CONF_DELAYOFFSET 4
 
+#ifdef OW_ONE_BUS
+#	define N_1W_BUS 1
+#else
+#	define N_1W_BUS 8
+#endif
 
 
 // ------------------------------------------------------------------------

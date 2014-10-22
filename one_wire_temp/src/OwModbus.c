@@ -44,7 +44,7 @@ int main()
     lcd_gotoxy( 0, 1 );
 
     load_eeprom_settings();
-//    flash_led2_once();
+    flash_led1_once();
 
 #if USE_WDOG
     wdt_enable(WDTO_2S);

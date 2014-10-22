@@ -13,7 +13,8 @@ LDSECTION  = --section-start=.text=0x00000
 
 OBJ        = $(PROGRAM).o adc.o uart.o util.o pwm.o timer0.o delay.o temp_sens_eeprom.o uart_debug.o  ui_menu.o ui_lcd.o
 OBJ       += crc8.o onewire.o ds18x20.o temperature.o 
-OBJ       += modbus_ascii.o modbus_crc.o modbus_pkt.o modbus_reg.o crc16.o dcon.o
+OBJ       += modbus_ascii.o modbus_crc.o modbus_pkt.o modbus_reg.o dcon.o
+# crc16.o
 
 OPTIMIZE   = -O2
 
