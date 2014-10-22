@@ -91,8 +91,6 @@ ISR(TIMER0_OVF_vect)
         temp_meter_05sec_timer();
 #endif
         menu_timer_05sec();
-//modbus_timer_callout_5msec();
-        //turn_led_off();
     }
 
     // TODO too long with interrupts off
@@ -129,6 +127,7 @@ void wait_for_halfduplex_timeout()
 #endif
 
 
+static uint16_t led1_time, led2_time;
 
 // each 50 msec
 void timer0_50ms()
@@ -139,6 +138,32 @@ void timer0_50ms()
         halfduplex_pause_count--;
 #endif
 
+    if( led1_time > 0 )
+    {
+        led1_time -= 50;
+        turn_led1_off();
+    }
+
+    if( led2_time > 0 )
+    {
+        led2_time -= 50;
+        turn_led2_off();
+    }
+
+}
+
+void led1_timed( uint16_t msec )
+{
+    led1_time += msec;
+    led1_time %= 500;
+    turn_led1_on();
+}
+
+void led2_timed( uint16_t msec )
+{
+    led2_time += msec;
+    led2_time %= 500;
+    turn_led2_on();
 }
 
 

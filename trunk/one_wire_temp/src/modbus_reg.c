@@ -126,10 +126,20 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
 #if OW_SERIAL_ID
     if( INRANGE( nReg, MB_REG_ROMID, MB_COUNT_ROMID ) )
     {
-        *val = *((uint16_t*)serialNumber+nReg-MB_REG_ROM);
+        *val = *((uint16_t*)serialNumber+nReg-MB_REG_ROMID);
         return 1;
     }
 #endif
+
+#ifndef OW_ONE_BUS
+    if( INRANGE( nReg, MB_REG_COUNTERS_1WBUS, MB_COUNT_COUNTERS_1WBUS ) )
+    {
+        uint8_t id = nReg-MB_REG_COUNTERS_1WBUS;
+        *val = ow_bus_error_cnt[id];
+        return 1;
+    }
+#endif
+
 
     switch(nReg)
     {

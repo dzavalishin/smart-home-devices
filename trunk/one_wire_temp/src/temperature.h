@@ -7,6 +7,8 @@ void init_temperature(void);
 void request_temp_data_send(unsigned char channel);
 void temp_meter_05sec_timer(void);
 
+void count_1w_bus_error( uint8_t bus );
+
 
 #if N_TEMPERATURE_IN > 0
 extern uint8_t gTempSensorIDs[N_TEMPERATURE_IN][OW_ROMCODE_SIZE];
@@ -23,6 +25,11 @@ extern uint8_t nTempSensors;
 
 
 extern uint16_t ow_error_cnt; // 1wire error counter
+
+#ifndef OW_ONE_BUS
+extern uint8_t ow_bus_error_cnt[]; // 1wire error counter per bus
+//extern uint8_t ow_bus_sensor_cnt[]; // 1wire error counter per bus
+#endif
 
 #endif
 

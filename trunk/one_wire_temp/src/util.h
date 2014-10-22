@@ -36,6 +36,14 @@ void turn_led2_off(void);
 #define turn_led1_off turn_led_off
 
 
+// returns immediately, timer turns off
+void led1_timed( uint16_t msec );
+void led2_timed( uint16_t msec );
+
+
+
+
+
 #define debug_puts lcd_puts
 #define debug_putc lcd_putc
 

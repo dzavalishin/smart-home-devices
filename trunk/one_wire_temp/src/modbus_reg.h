@@ -39,11 +39,13 @@
 #define MB_REG_COUNTERS	32
 #define MB_COUNT_COUNTERS	32
 
-#define MB_REG_COUNTER_IO       (MB_REG_COUNTERS+0) // -
-#define MB_REG_COUNTER_CRC      (MB_REG_COUNTERS+1) // -
-#define MB_REG_COUNTER_EXC      (MB_REG_COUNTERS+2) // - modbus exceptions, dcon error replies
-#define MB_REG_COUNTER_1WE      (MB_REG_COUNTERS+3) // - 1wire bus io errors
+#define MB_REG_COUNTER_IO       (MB_REG_COUNTERS+0) // + 485 io operations (repiles)
+#define MB_REG_COUNTER_CRC      (MB_REG_COUNTERS+1) // + 485 CRC errors
+#define MB_REG_COUNTER_EXC      (MB_REG_COUNTERS+2) // + modbus exceptions, dcon error replies
+#define MB_REG_COUNTER_1WE      (MB_REG_COUNTERS+3) // + 1wire bus io errors
 
+#define MB_REG_COUNTERS_1WBUS   (MB_REG_COUNTERS+16) // + 1wire bus io errors per bus
+#define MB_COUNT_COUNTERS_1WBUS 8
 
 // + 64-79 - 16 x AI (8 provided: 4 real AI, 2 internal, but visible, 2 variable resistors)
 #define MB_REG_AI	64
@@ -115,8 +117,9 @@
 
 #define REPORT_ERROR(_flag) (error_flags |= (_flag))
 
-#define ERR_FLAG_1WIRE_SCAN_FAULT (1 << 0)
-#define ERR_FLAG_1WIRE_READ_FAULT (1 << 1)
+#define ERR_FLAG_1WIRE_SCAN_FAULT  (1 << 0)
+#define ERR_FLAG_1WIRE_START_FAULT (1 << 1)
+#define ERR_FLAG_1WIRE_READ_FAULT  (1 << 2)
 
 uint8_t         error_flags; // bit per error type
 
