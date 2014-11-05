@@ -23,6 +23,11 @@
 #include "temperature.h"
 
 
+static char *device_id0 = DEVICE_ID0;
+static char *device_id1 = DEVICE_ID1;
+static char *device_id2 = DEVICE_ID2;
+
+
 //static uint8_t modbus_read_register( uint16_t nReg, uint16_t *val );
 
 // return nReplyBytes
@@ -152,10 +157,15 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
     case MB_REG_FLAGS_ERROR: *val = error_flags; break;
 
 
+//    case MB_REG_ID+0:
+//    case MB_REG_ID+1: *val = 'DZ'; break;
+//    case MB_REG_ID+2: *val = '1W'; break;
+//    case MB_REG_ID+3: *val = 'T8'; break;
+
     case MB_REG_ID+0:
-    case MB_REG_ID+1: *val = 'DZ'; break;
-    case MB_REG_ID+2: *val = '1W'; break;
-    case MB_REG_ID+3: *val = 'T8'; break;
+    case MB_REG_ID+1: *val = *((uint16_t *)device_id0) /* 'DZ' */; break;
+    case MB_REG_ID+2: *val = *((uint16_t *)device_id1); break;
+    case MB_REG_ID+3: *val = *((uint16_t *)device_id2); break;
 
 
 
