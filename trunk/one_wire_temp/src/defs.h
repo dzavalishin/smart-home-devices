@@ -14,6 +14,12 @@
 #define DEVICE_NAME "DZ1W-485"
 #define FW_VER_STRING "0.10"
 
+#define DEVICE_ID0 "DZ"
+#define DEVICE_ID1 "1W"
+#define DEVICE_ID2 "T8"
+
+
+
 #define USE_WDOG 0
 
 
