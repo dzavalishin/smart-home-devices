@@ -1,13 +1,17 @@
+#include <inttypes.h>
+
+
 void load_eeprom_settings();
 
 
-#define EEPROM_TIMEOUT_SEC      60
+#define EEPROM_TIMEOUT_SEC      120
 
 #define EEPROM_WR_MAP 0x01              // request to write temperature sensor mappings
 #define EEPROM_WR_485 0x02              // request to write communication parameters and address
 
 void eeprom_request_write( uint8_t what );
 void eeprom_timer_5sec(void);
+
 
 
 #define save_eeprom_settings() 			eeprom_request_write( EEPROM_WR_485 );
@@ -59,4 +63,8 @@ void eeprom_timer_5sec(void);
 
 
 #define SENS_ID_BYTE 6
+
+
+void temp_sens_read_record( int nRec, uint8_t record[EEPROM_MAP_REC_SZ] );
+
 

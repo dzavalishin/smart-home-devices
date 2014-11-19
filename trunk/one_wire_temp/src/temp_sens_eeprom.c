@@ -20,7 +20,7 @@
 #endif
 
 
-static void temp_sens_read_record( int nRec, uint8_t record[EEPROM_MAP_REC_SZ] );
+0void temp_sens_read_record( int nRec, uint8_t record[EEPROM_MAP_REC_SZ] );
 static void temp_sens_write_record( int nRec, uint8_t record[EEPROM_MAP_REC_SZ] );
 
 static uint8_t same_serial( uint8_t record[], uint8_t gTempSensorID[] );
@@ -187,6 +187,12 @@ void EEPROM_write(unsigned int uiAddress, unsigned char ucData)
     EECR |= (1<<EEMWE);
     /* Start eeprom write by setting EEWE */
     EECR |= (1<<EEWE);
+
+    /* Wait for completion of this write */
+    while(EECR & (1<<EEWE))
+        ;
+
+    EEAR = EEPROM_CONF_VALID; // leave non-critical slot address in EEAR for any case
 }
 
 
@@ -204,12 +210,16 @@ unsigned char EEPROM_read(unsigned int uiAddress)
     EECR |= (1<<EERE);
 
     /* Return data from data register */
-    return EEDR;
+    uint8_t ret =  EEDR;
+
+    EEAR = EEPROM_CONF_VALID; // leave non-critical slot address in EEAR for any case
+
+    return ret;
 }
 
-
-
-static void temp_sens_read_record( int nRec, uint8_t record[EEPROM_MAP_REC_SZ] )
+// TODO read cache for modbus access
+// TODO return err/success
+void temp_sens_read_record( int nRec, uint8_t record[EEPROM_MAP_REC_SZ] )
 {
     uint8_t i;
     for( i = 0; i < EEPROM_MAP_REC_SZ; i++ )
@@ -218,6 +228,7 @@ static void temp_sens_read_record( int nRec, uint8_t record[EEPROM_MAP_REC_SZ] )
     }
 
 }
+
 
 static void temp_sens_write_record( int nRec, uint8_t record[EEPROM_MAP_REC_SZ] )
 {

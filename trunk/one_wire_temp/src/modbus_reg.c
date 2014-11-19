@@ -23,9 +23,15 @@
 #include "temperature.h"
 
 
+
+static void send_descriptor( uint16_t *val, uint8_t displ, uint8_t pos, uint8_t persId, void *romBase );
+
+
+
 static char *device_id0 = DEVICE_ID0;
 static char *device_id1 = DEVICE_ID1;
 static char *device_id2 = DEVICE_ID2;
+
 
 
 //static uint8_t modbus_read_register( uint16_t nReg, uint16_t *val );
@@ -94,6 +100,12 @@ int modbus_write_register( uint16_t nReg, uint16_t value )
 
 #define INRANGE( _n, _start, _cnt ) ( ((_n) >= (_start)) && ( (_n) < ((_start)+(_cnt)) ) )
 
+#define BEGIN_RANGE( _id, _n, _start, _cnt ) \
+    if( INRANGE( _n, _start, _cnt ) ) \
+    { uint16_t _id = (_n) - (_start);
+#define END_RANGE() return 1; }
+
+
 uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
 {
     if( INRANGE( nReg, MB_REG_TEMP, MB_COUNT_TEMP ) )
@@ -146,6 +158,44 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
 #endif
 
 
+    // EEPROM/persistent id order
+    BEGIN_RANGE( id, nReg, MB_REG_ROM, MB_COUNT_ROM )
+
+        uint16_t nRec = id / (MB_REG_ROM_RECSIZE/2);
+        uint8_t displ = id % (MB_REG_ROM_RECSIZE/2);
+
+
+        uint8_t record[EEPROM_MAP_REC_SZ];
+        temp_sens_read_record( nRec, record );
+
+        uint8_t persId = record[SENS_ID_BYTE];
+        int8_t pos = find_pos_by_persistent_id( persId );
+
+        send_descriptor( val, displ, pos, persId, record );
+
+    END_RANGE()
+
+
+
+    // ram/sequential id order
+    BEGIN_RANGE( id, nReg, MB_REG_MAP, MB_COUNT_MAP )
+
+        uint16_t nRec = id / (MB_REG_ROM_RECSIZE/2);
+        uint8_t displ = id % (MB_REG_ROM_RECSIZE/2);
+
+        int8_t pos = nRec;
+
+        if( pos >= N_TEMPERATURE_IN )
+            return 0;
+
+        uint8_t persId = gTempSensorLogicalNumber[pos];
+
+        send_descriptor( val, displ, pos, persId, (gTempSensorIDs[pos]) + 1 );
+
+    END_RANGE()
+
+
+
     switch(nReg)
     {
     case MB_REG_SETUP_BUS_ADDR: *val = modbus_our_address; break;
@@ -192,4 +242,60 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
 
     return 1;
 }
+
+
+
+
+
+
+/** -
+ *
+ *  64 x record:
+ *   6 bytes 1wire ROM id
+ *   2 bytes persistent id
+ *   2 bytes current internal id (search order) or -1 if non-active, NO WR
+ *   2 bytes bus number or -1, NO WR
+ *   4 bytes pad
+ *
+**/
+
+static void send_descriptor( uint16_t *val, uint8_t displ, uint8_t pos, uint8_t persId, void *romBase )
+{
+    switch( displ )
+    {
+    case 3: *val = persId; break;
+    case 4: *val = pos; break;
+    case 5:
+        {
+            if( pos < N_TEMPERATURE_IN )
+                *val = gTempSensorBus[pos];
+            else
+                *val = -1;
+        }
+        break;
+
+    case 6: *val = currTemperature[pos]; break;
+
+    default:
+        if( (displ < 3) && (pos < N_TEMPERATURE_IN) )
+            *val = *((uint16_t *)(romBase+displ*2));
+        else
+            *val = 0;
+        break;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

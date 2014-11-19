@@ -13,7 +13,7 @@
 // 
 // ------------------------------------------------------------------
 
-
+// TODO turn cursor off
 // TODO read LCD ready bit, speedup io
 
 #define RS_ENABLE 	sbi(PORTD,6)

@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "eeprom.h"
 
 
 /**
@@ -97,18 +98,25 @@
 
 /** -
  *
- * 1024… 32 x record:
+ *  32 x record:
  *   6 bytes 1wire ROM id
  *   2 bytes persistent id
  *   2 bytes current internal id (search order) or -1 if non-active, NO WR
  *   2 bytes bus number or -1, NO WR
- *   4 bytes pad
+ *   2 bytes curr temperature, NO WR
+ *   2 bytes pad
  *
 **/
-#define MB_REG_ROM              4096
-#define MB_COUNT_ROM            (1024*32)
 #define MB_REG_ROM_RECSIZE      16
+#define MB_REG_ROM_NREC         N_TEMP_SENS_EEPROM_RECORDS
 
+// + mapped (by id) records
+#define MB_REG_ROM              4096
+#define MB_COUNT_ROM            (MB_REG_ROM_RECSIZE * (N_TEMP_SENS_EEPROM_RECORDS) / 2)
+
+// + direct, unmapped (by sequential sensor number) records
+#define MB_REG_MAP              5120
+#define MB_COUNT_MAP            (MB_REG_ROM_RECSIZE * N_TEMPERATURE_IN / 2)
 
 
 // ------------------------------------------------------------------

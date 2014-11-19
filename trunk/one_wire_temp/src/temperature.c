@@ -145,7 +145,7 @@ uint8_t search_sensors(uint8_t currBus)
 
 #if N_TEMPERATURE_IN > 0
 
-#define TEMP_FAST_RESTART 0
+#define TEMP_FAST_RESTART 1
 
 
 static void read_temperature_data(void);
@@ -239,7 +239,6 @@ void read_temperature_data(void)
             //ow_error_cnt++;
             //ow_bus_error_cnt[i]++;
             count_1w_bus_error( i );
-            //led1_timed( 50 );
             continue;
         }
         //led2_timed( 15 );
@@ -255,6 +254,8 @@ void count_1w_bus_error( uint8_t bus )
     if( bus < N_1W_BUS )
         ow_bus_error_cnt[bus]++;
 #endif
+    led1_timed( 110 );
+    led2_timed( 110 );
 }
 
 
