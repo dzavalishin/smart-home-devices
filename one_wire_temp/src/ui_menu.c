@@ -67,9 +67,9 @@ void ui_report_unsaved( uint8_t yes )
 void menu_display_help(void)
 {
     lcd_gotoxy( 0, 0 );
-    lcd_puts("Select VR Change");
+    lcd_puts("Change VR Select");
     lcd_gotoxy( 0, 1 );
-    lcd_puts("Exit  Button  Ok");
+    lcd_puts("Exit Button   Ok");
 }
 
 void menu_event_saved(void)
@@ -292,8 +292,9 @@ void menu_display_map(void)
     uint16_t temp = currTemperature[index];
 
     lcd_gotoxy( 0, 0 );
-    lcd_puts("> ROM:  ");
+    lcd_puts("> ROM:");
     lcd_puthex((char *)sensor_rom_code,OW_ROMCODE_SIZE);
+    lcd_puts(" ");
 
     lcd_gotoxy( 0, 1 );
     lcd_puts("< ID: ");

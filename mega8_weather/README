@@ -1,0 +1,8 @@
+Atmega8 at 16Mhz
+
+- DHT-11 
+- Rain sensor
+- CO2 sensor
+- CO sensor
+- natural gas sensor
+- pressure sensor (I2C - BMP180)
