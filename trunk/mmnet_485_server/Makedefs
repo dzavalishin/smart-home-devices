@@ -1,0 +1,11 @@
+# Do not edit! Automatically generated on Sat Jun 21 17:27:42 2008
+
+top_srcdir = G:/Projects/avr/trunk/nut
+top_appdir = G:/Projects/avr/trunk/nutapps
+LIBDIR = G:/Projects/avr/trunk/nut-21/lib
+
+INCFIRST = $(INCPRE)G:/Projects/avr/trunk/nut-21/include
+include $(top_appdir)/NutConf.mk
+include $(top_srcdir)/app/Makedefs.avr-gcc
+include $(top_srcdir)/app/Makeburn.avr-uisp-stk500
+

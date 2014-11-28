@@ -1,0 +1,933 @@
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 1
+
+
+   1               		.file	"servant.c"
+   2               		.arch atmega128
+   3               	__SREG__ = 0x3f
+   4               	__SP_H__ = 0x3e
+   5               	__SP_L__ = 0x3d
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.global __do_copy_data
+   9               		.global __do_clear_bss
+  10               	.global	mac
+  11               		.data
+  12               		.type	mac, @object
+  13               		.size	mac, 6
+  14               	mac:
+  15 0000 02        		.byte	2
+  16 0001 06        		.byte	6
+  17 0002 98        		.byte	-104
+  18 0003 00        		.byte	0
+  19 0004 00        		.byte	0
+  20 0005 00        		.byte	0
+  21               		.text
+  22               		.type	pong_sender, @function
+  23               	pong_sender:
+  24               	/* prologue: frame size=0 */
+  25               	/* prologue end (size=0) */
+  26 0000 0E94 0000 		call net_request_pong
+  27               	/* epilogue: frame size=0 */
+  28 0004 0895      		ret
+  29               	/* epilogue end (size=1) */
+  30               	/* function pong_sender size 3 (2) */
+  31               		.size	pong_sender, .-pong_sender
+  32               		.type	each_second, @function
+  33               	each_second:
+  34               	/* prologue: frame size=0 */
+  35               	/* prologue end (size=0) */
+  36 0006 8091 0000 		lds r24,temperatureMeterCnt
+  37 000a 8F5F      		subi r24,lo8(-(1))
+  38 000c 8093 0000 		sts temperatureMeterCnt,r24
+  39               	/* epilogue: frame size=0 */
+  40 0010 0895      		ret
+  41               	/* epilogue end (size=1) */
+  42               	/* function each_second size 6 (5) */
+  43               		.size	each_second, .-each_second
+  44               	.global	triggerSendOut
+  45               		.type	triggerSendOut, @function
+  46               	triggerSendOut:
+  47               	/* prologue: frame size=0 */
+  48               	/* prologue end (size=0) */
+  49 0012 80E0      		ldi r24,lo8(sendOutEvent)
+  50 0014 90E0      		ldi r25,hi8(sendOutEvent)
+  51 0016 0E94 0000 		call NutEventPostAsync
+  52               	/* epilogue: frame size=0 */
+  53 001a 0895      		ret
+  54               	/* epilogue end (size=1) */
+  55               	/* function triggerSendOut size 5 (4) */
+  56               		.size	triggerSendOut, .-triggerSendOut
+  57               		.data
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 2
+
+
+  58               	.LC0:
+  59 0006 4D61 6465 		.string	"Made MAC from 1wire id: "
+  59      204D 4143 
+  59      2066 726F 
+  59      6D20 3177 
+  59      6972 6520 
+  60               	.LC1:
+  61 001f 2530 3258 		.string	"%02X"
+  61      00
+  62               		.text
+  63               		.type	tryToFillMac, @function
+  64               	tryToFillMac:
+  65               	/* prologue: frame size=0 */
+  66 001c EF92      		push r14
+  67 001e FF92      		push r15
+  68 0020 0F93      		push r16
+  69 0022 1F93      		push r17
+  70 0024 CF93      		push r28
+  71 0026 DF93      		push r29
+  72               	/* prologue end (size=6) */
+  73 0028 8C01      		movw r16,r24
+  74 002a 20E0      		ldi r18,lo8(0)
+  75 002c 30E0      		ldi r19,hi8(0)
+  76 002e FB01      		movw r30,r22
+  77               	.L9:
+  78 0030 8191      		ld r24,Z+
+  79 0032 8823      		tst r24
+  80 0034 41F4      		brne .L25
+  81 0036 2F5F      		subi r18,lo8(-(1))
+  82 0038 3F4F      		sbci r19,hi8(-(1))
+  83 003a 2830      		cpi r18,8
+  84 003c 3105      		cpc r19,__zero_reg__
+  85 003e C4F3      		brlt .L9
+  86 0040 80E0      		ldi r24,lo8(0)
+  87 0042 90E0      		ldi r25,hi8(0)
+  88 0044 3BC0      		rjmp .L4
+  89               	.L25:
+  90 0046 D801      		movw r26,r16
+  91 0048 1196      		adiw r26,1
+  92 004a FB01      		movw r30,r22
+  93 004c 3196      		adiw r30,1
+  94 004e 24E0      		ldi r18,lo8(4)
+  95 0050 30E0      		ldi r19,hi8(4)
+  96               	.L14:
+  97 0052 8191      		ld r24,Z+
+  98 0054 8D93      		st X+,r24
+  99 0056 2150      		subi r18,lo8(-(-1))
+ 100 0058 3040      		sbci r19,hi8(-(-1))
+ 101 005a 37FF      		sbrs r19,7
+ 102 005c FACF      		rjmp .L14
+ 103 005e 82E0      		ldi r24,lo8(2)
+ 104 0060 F801      		movw r30,r16
+ 105 0062 8083      		st Z,r24
+ 106 0064 80E0      		ldi r24,lo8(.LC0)
+ 107 0066 90E0      		ldi r25,hi8(.LC0)
+ 108 0068 9F93      		push r25
+ 109 006a 8F93      		push r24
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 3
+
+
+ 110 006c 0E94 0000 		call printf
+ 111 0070 0F90      		pop __tmp_reg__
+ 112 0072 0F90      		pop __tmp_reg__
+ 113 0074 E801      		movw r28,r16
+ 114 0076 85E0      		ldi r24,lo8(5)
+ 115 0078 E82E      		mov r14,r24
+ 116 007a F12C      		mov r15,__zero_reg__
+ 117 007c E00E      		add r14,r16
+ 118 007e F11E      		adc r15,r17
+ 119               	.L19:
+ 120 0080 C017      		cp r28,r16
+ 121 0082 D107      		cpc r29,r17
+ 122 0084 21F0      		breq .L18
+ 123 0086 8DE2      		ldi r24,lo8(45)
+ 124 0088 90E0      		ldi r25,hi8(45)
+ 125 008a 0E94 0000 		call putchar
+ 126               	.L18:
+ 127 008e 8991      		ld r24,Y+
+ 128 0090 9927      		clr r25
+ 129 0092 9F93      		push r25
+ 130 0094 8F93      		push r24
+ 131 0096 80E0      		ldi r24,lo8(.LC1)
+ 132 0098 90E0      		ldi r25,hi8(.LC1)
+ 133 009a 9F93      		push r25
+ 134 009c 8F93      		push r24
+ 135 009e 0E94 0000 		call printf
+ 136 00a2 0F90      		pop __tmp_reg__
+ 137 00a4 0F90      		pop __tmp_reg__
+ 138 00a6 0F90      		pop __tmp_reg__
+ 139 00a8 0F90      		pop __tmp_reg__
+ 140 00aa EC16      		cp r14,r28
+ 141 00ac FD06      		cpc r15,r29
+ 142 00ae 44F7      		brge .L19
+ 143 00b0 8AE0      		ldi r24,lo8(10)
+ 144 00b2 90E0      		ldi r25,hi8(10)
+ 145 00b4 0E94 0000 		call putchar
+ 146 00b8 81E0      		ldi r24,lo8(1)
+ 147 00ba 90E0      		ldi r25,hi8(1)
+ 148               	.L4:
+ 149               	/* epilogue: frame size=0 */
+ 150 00bc DF91      		pop r29
+ 151 00be CF91      		pop r28
+ 152 00c0 1F91      		pop r17
+ 153 00c2 0F91      		pop r16
+ 154 00c4 FF90      		pop r15
+ 155 00c6 EF90      		pop r14
+ 156 00c8 0895      		ret
+ 157               	/* epilogue end (size=7) */
+ 158               	/* function tryToFillMac size 87 (74) */
+ 159               		.size	tryToFillMac, .-tryToFillMac
+ 160               	.global	main_loop
+ 161               		.type	main_loop, @function
+ 162               	main_loop:
+ 163               	/* prologue: frame size=0 */
+ 164               	/* prologue end (size=0) */
+ 165               	.L28:
+ 166 00ca 8091 6500 		lds r24,101
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 4
+
+
+ 167 00ce 877F      		andi r24,lo8(-9)
+ 168 00d0 8093 6500 		sts 101,r24
+ 169 00d4 6AE0      		ldi r22,lo8(10)
+ 170 00d6 70E0      		ldi r23,hi8(10)
+ 171 00d8 80E0      		ldi r24,hlo8(10)
+ 172 00da 90E0      		ldi r25,hhi8(10)
+ 173 00dc 0E94 0000 		call NutSleep
+ 174 00e0 44E6      		ldi r20,lo8(100)
+ 175 00e2 50E0      		ldi r21,hi8(100)
+ 176 00e4 60E0      		ldi r22,hlo8(100)
+ 177 00e6 70E0      		ldi r23,hhi8(100)
+ 178 00e8 80E0      		ldi r24,lo8(sendOutEvent)
+ 179 00ea 90E0      		ldi r25,hi8(sendOutEvent)
+ 180 00ec 0E94 0000 		call NutEventWait
+ 181 00f0 8091 6500 		lds r24,101
+ 182 00f4 8860      		ori r24,lo8(8)
+ 183 00f6 8093 6500 		sts 101,r24
+ 184 00fa 0E94 0000 		call send_changed_adc_data
+ 185 00fe 0E94 0000 		call send_changed_dig_data
+ 186 0102 0E94 0000 		call send_changed_freq_data
+ 187 0106 8091 0000 		lds r24,temperatureMeterCnt
+ 188 010a 8823      		tst r24
+ 189 010c 51F0      		breq .L30
+ 190 010e 8091 0000 		lds r24,temperatureMeterCnt
+ 191 0112 8150      		subi r24,lo8(-(-1))
+ 192 0114 8093 0000 		sts temperatureMeterCnt,r24
+ 193 0118 0E94 0000 		call temp_meter_sec_timer
+ 194 011c 80E0      		ldi r24,lo8(0)
+ 195 011e 0E94 0000 		call ch1w_read_temperature
+ 196               	.L30:
+ 197 0122 0E94 0000 		call send_changed_temperature_data
+ 198 0126 0E94 0000 		call send_protocol_replies
+ 199 012a CFCF      		rjmp .L28
+ 200               	/* epilogue: frame size=0 */
+ 201               	/* epilogue: noreturn */
+ 202               	/* epilogue end (size=0) */
+ 203               	/* function main_loop size 49 (49) */
+ 204               		.size	main_loop, .-main_loop
+ 205               		.data
+ 206               	.LC2:
+ 207 0024 4932 4320 		.string	"I2C init..."
+ 207      696E 6974 
+ 207      2E2E 2E00 
+ 208               	.LC3:
+ 209 0030 2064 6F6E 		.string	" done, speed is %ld\n"
+ 209      652C 2073 
+ 209      7065 6564 
+ 209      2069 7320 
+ 209      256C 640A 
+ 210               	.LC4:
+ 211 0045 4453 3234 		.string	"DS2482 i2c/1wire bridge init..."
+ 211      3832 2069 
+ 211      3263 2F31 
+ 211      7769 7265 
+ 211      2062 7269 
+ 212               	.LC5:
+ 213 0065 6572 7200 		.string	"err"
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 5
+
+
+ 214               	.LC6:
+ 215 0069 6F6B 00   		.string	"ok"
+ 216               	.LC7:
+ 217 006c 2025 730A 		.string	" %s\n"
+ 217      00
+ 218               	.LC8:
+ 219 0071 4453 3234 		.string	"DS2482 cfg: 0x%02X\n"
+ 219      3832 2063 
+ 219      6667 3A20 
+ 219      3078 2530 
+ 219      3258 0A00 
+ 220               	.LC9:
+ 221 0085 4453 3234 		.string	"DS2482 status: 0x%02X\n"
+ 221      3832 2073 
+ 221      7461 7475 
+ 221      733A 2030 
+ 221      7825 3032 
+ 222               	.LC10:
+ 223 009c 6861 7665 		.string	"have"
+ 223      00
+ 224               	.LC11:
+ 225 00a1 6E6F 00   		.string	"no"
+ 226               	.LC12:
+ 227 00a4 3177 6972 		.string	"1wire: %s devices\n"
+ 227      653A 2025 
+ 227      7320 6465 
+ 227      7669 6365 
+ 227      730A 00
+ 228               		.text
+ 229               	.global	init_devices
+ 230               		.type	init_devices, @function
+ 231               	init_devices:
+ 232               	/* prologue: frame size=5 */
+ 233 012c 1F93      		push r17
+ 234 012e CF93      		push r28
+ 235 0130 DF93      		push r29
+ 236 0132 CDB7      		in r28,__SP_L__
+ 237 0134 DEB7      		in r29,__SP_H__
+ 238 0136 2597      		sbiw r28,5
+ 239 0138 0FB6      		in __tmp_reg__,__SREG__
+ 240 013a F894      		cli
+ 241 013c DEBF      		out __SP_H__,r29
+ 242 013e 0FBE      		out __SREG__,__tmp_reg__
+ 243 0140 CDBF      		out __SP_L__,r28
+ 244               	/* prologue end (size=11) */
+ 245 0142 80E1      		ldi r24,lo8(10000)
+ 246 0144 97E2      		ldi r25,hi8(10000)
+ 247 0146 A0E0      		ldi r26,hlo8(10000)
+ 248 0148 B0E0      		ldi r27,hhi8(10000)
+ 249 014a 8983      		std Y+1,r24
+ 250 014c 9A83      		std Y+2,r25
+ 251 014e AB83      		std Y+3,r26
+ 252 0150 BC83      		std Y+4,r27
+ 253 0152 80E0      		ldi r24,lo8(.LC2)
+ 254 0154 90E0      		ldi r25,hi8(.LC2)
+ 255 0156 9F93      		push r25
+ 256 0158 8F93      		push r24
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 6
+
+
+ 257 015a 0E94 0000 		call printf
+ 258 015e 80E0      		ldi r24,lo8(0)
+ 259 0160 0E94 0000 		call TwInit
+ 260 0164 BE01      		movw r22,r28
+ 261 0166 6F5F      		subi r22,lo8(-(1))
+ 262 0168 7F4F      		sbci r23,hi8(-(1))
+ 263 016a 81E0      		ldi r24,lo8(1025)
+ 264 016c 94E0      		ldi r25,hi8(1025)
+ 265 016e 0E94 0000 		call TwIOCtl
+ 266 0172 BE01      		movw r22,r28
+ 267 0174 6F5F      		subi r22,lo8(-(1))
+ 268 0176 7F4F      		sbci r23,hi8(-(1))
+ 269 0178 82E0      		ldi r24,lo8(1026)
+ 270 017a 94E0      		ldi r25,hi8(1026)
+ 271 017c 0E94 0000 		call TwIOCtl
+ 272 0180 8981      		ldd r24,Y+1
+ 273 0182 9A81      		ldd r25,Y+2
+ 274 0184 AB81      		ldd r26,Y+3
+ 275 0186 BC81      		ldd r27,Y+4
+ 276 0188 BF93      		push r27
+ 277 018a AF93      		push r26
+ 278 018c 9F93      		push r25
+ 279 018e 8F93      		push r24
+ 280 0190 80E0      		ldi r24,lo8(.LC3)
+ 281 0192 90E0      		ldi r25,hi8(.LC3)
+ 282 0194 9F93      		push r25
+ 283 0196 8F93      		push r24
+ 284 0198 0E94 0000 		call printf
+ 285 019c 0E94 0000 		call child_1wire_init
+ 286 01a0 80E0      		ldi r24,lo8(.LC4)
+ 287 01a2 90E0      		ldi r25,hi8(.LC4)
+ 288 01a4 9F93      		push r25
+ 289 01a6 8F93      		push r24
+ 290 01a8 0E94 0000 		call printf
+ 291 01ac 10E0      		ldi r17,lo8(0)
+ 292 01ae 8BE1      		ldi r24,lo8(27)
+ 293 01b0 0E94 0000 		call ds2482Init
+ 294 01b4 2DB7      		in r18,__SP_L__
+ 295 01b6 3EB7      		in r19,__SP_H__
+ 296 01b8 265F      		subi r18,lo8(-(10))
+ 297 01ba 3F4F      		sbci r19,hi8(-(10))
+ 298 01bc 0FB6      		in __tmp_reg__,__SREG__
+ 299 01be F894      		cli
+ 300 01c0 3EBF      		out __SP_H__,r19
+ 301 01c2 0FBE      		out __SREG__,__tmp_reg__
+ 302 01c4 2DBF      		out __SP_L__,r18
+ 303 01c6 8823      		tst r24
+ 304 01c8 09F4      		brne .L32
+ 305 01ca 11E0      		ldi r17,lo8(1)
+ 306               	.L32:
+ 307 01cc 1093 0000 		sts onewire_2482_available,r17
+ 308 01d0 1123      		tst r17
+ 309 01d2 19F4      		brne .L33
+ 310 01d4 80E0      		ldi r24,lo8(.LC5)
+ 311 01d6 90E0      		ldi r25,hi8(.LC5)
+ 312 01d8 02C0      		rjmp .L34
+ 313               	.L33:
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 7
+
+
+ 314 01da 80E0      		ldi r24,lo8(.LC6)
+ 315 01dc 90E0      		ldi r25,hi8(.LC6)
+ 316               	.L34:
+ 317 01de 9F93      		push r25
+ 318 01e0 8F93      		push r24
+ 319 01e2 80E0      		ldi r24,lo8(.LC7)
+ 320 01e4 90E0      		ldi r25,hi8(.LC7)
+ 321 01e6 9F93      		push r25
+ 322 01e8 8F93      		push r24
+ 323 01ea 0E94 0000 		call printf
+ 324 01ee 61EE      		ldi r22,lo8(-31)
+ 325 01f0 82ED      		ldi r24,lo8(-46)
+ 326 01f2 0E94 0000 		call ds2482SendCmdArg
+ 327 01f6 0E94 0000 		call ds2482ReadConfig
+ 328 01fa 9927      		clr r25
+ 329 01fc 9F93      		push r25
+ 330 01fe 8F93      		push r24
+ 331 0200 80E0      		ldi r24,lo8(.LC8)
+ 332 0202 90E0      		ldi r25,hi8(.LC8)
+ 333 0204 9F93      		push r25
+ 334 0206 8F93      		push r24
+ 335 0208 0E94 0000 		call printf
+ 336 020c CE01      		movw r24,r28
+ 337 020e 0596      		adiw r24,5
+ 338 0210 0E94 0000 		call ds2482BusyWait
+ 339 0214 8D81      		ldd r24,Y+5
+ 340 0216 9927      		clr r25
+ 341 0218 9F93      		push r25
+ 342 021a 8F93      		push r24
+ 343 021c 80E0      		ldi r24,lo8(.LC9)
+ 344 021e 90E0      		ldi r25,hi8(.LC9)
+ 345 0220 9F93      		push r25
+ 346 0222 8F93      		push r24
+ 347 0224 0E94 0000 		call printf
+ 348 0228 0E94 0000 		call dallasReset
+ 349 022c 8836      		cpi r24,lo8(104)
+ 350 022e 19F4      		brne .L35
+ 351 0230 80E0      		ldi r24,lo8(.LC10)
+ 352 0232 90E0      		ldi r25,hi8(.LC10)
+ 353 0234 02C0      		rjmp .L36
+ 354               	.L35:
+ 355 0236 80E0      		ldi r24,lo8(.LC11)
+ 356 0238 90E0      		ldi r25,hi8(.LC11)
+ 357               	.L36:
+ 358 023a 9F93      		push r25
+ 359 023c 8F93      		push r24
+ 360 023e 80E0      		ldi r24,lo8(.LC12)
+ 361 0240 90E0      		ldi r25,hi8(.LC12)
+ 362 0242 9F93      		push r25
+ 363 0244 8F93      		push r24
+ 364 0246 0E94 0000 		call printf
+ 365 024a 0E94 0000 		call init_udp_net_io
+ 366               	/* #APP */
+ 367 024e F894      		cli
+ 368               	/* #NOAPP */
+ 369 0250 0E94 0000 		call port_init
+ 370 0254 0E94 0000 		call adc_init
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 8
+
+
+ 371 0258 0E94 0000 		call icp_init
+ 372 025c 0E94 0000 		call init_temperature
+ 373               	/* #APP */
+ 374 0260 7894      		sei
+ 375               	/* #NOAPP */
+ 376 0262 0E94 0000 		call adc_start
+ 377 0266 8DB7      		in r24,__SP_L__
+ 378 0268 9EB7      		in r25,__SP_H__
+ 379 026a 4096      		adiw r24,16
+ 380 026c 0FB6      		in __tmp_reg__,__SREG__
+ 381 026e F894      		cli
+ 382 0270 9EBF      		out __SP_H__,r25
+ 383 0272 0FBE      		out __SREG__,__tmp_reg__
+ 384 0274 8DBF      		out __SP_L__,r24
+ 385               	/* epilogue: frame size=5 */
+ 386 0276 2596      		adiw r28,5
+ 387 0278 0FB6      		in __tmp_reg__,__SREG__
+ 388 027a F894      		cli
+ 389 027c DEBF      		out __SP_H__,r29
+ 390 027e 0FBE      		out __SREG__,__tmp_reg__
+ 391 0280 CDBF      		out __SP_L__,r28
+ 392 0282 DF91      		pop r29
+ 393 0284 CF91      		pop r28
+ 394 0286 1F91      		pop r17
+ 395 0288 0895      		ret
+ 396               	/* epilogue end (size=10) */
+ 397               	/* function init_devices size 177 (156) */
+ 398               		.size	init_devices, .-init_devices
+ 399               		.data
+ 400               	.LC13:
+ 401 00b7 7700      		.string	"w"
+ 402               	.LC14:
+ 403 00b9 7561 7274 		.string	"uart1"
+ 403      3100 
+ 404               	.LC15:
+ 405 00bf 0A0A 4761 		.string	"\n\nGardemarine MMNet101 controller, Nut/OS %s\n"
+ 405      7264 656D 
+ 405      6172 696E 
+ 405      6520 4D4D 
+ 405      4E65 7431 
+ 406               	.LC16:
+ 407 00ed 5265 6769 		.string	"Registering device failed"
+ 407      7374 6572 
+ 407      696E 6720 
+ 407      6465 7669 
+ 407      6365 2066 
+ 408               	.LC17:
+ 409 0107 3139 322E 		.string	"192.168.1.200"
+ 409      3136 382E 
+ 409      312E 3230 
+ 409      3000 
+ 410               	.LC18:
+ 411 0115 3235 352E 		.string	"255.255.255.0"
+ 411      3235 352E 
+ 411      3235 352E 
+ 411      3000 
+ 412               	.LC20:
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 9
+
+
+ 413 0123 4545 5052 		.string	"EEPROM/DHCP/ARP config failed"
+ 413      4F4D 2F44 
+ 413      4843 502F 
+ 413      4152 5020 
+ 413      636F 6E66 
+ 414               	.LC19:
+ 415 0141 6574 6830 		.string	"eth0"
+ 415      00
+ 416               	.LC21:
+ 417 0146 2573 2072 		.string	"%s ready\n"
+ 417      6561 6479 
+ 417      0A00 
+ 418               	.LC22:
+ 419 0150 7465 7374 		.string	"test.cgi"
+ 419      2E63 6769 
+ 419      00
+ 420               	.LC23:
+ 421 0159 7468 7265 		.string	"threads.cgi"
+ 421      6164 732E 
+ 421      6367 6900 
+ 422               	.LC24:
+ 423 0165 7469 6D65 		.string	"timers.cgi"
+ 423      7273 2E63 
+ 423      6769 00
+ 424               	.LC25:
+ 425 0170 736F 636B 		.string	"sockets.cgi"
+ 425      6574 732E 
+ 425      6367 6900 
+ 426               	.LC26:
+ 427 017c 696E 7075 		.string	"inputs.cgi"
+ 427      7473 2E63 
+ 427      6769 00
+ 428               	.LC27:
+ 429 0187 6F75 7470 		.string	"outputs.cgi"
+ 429      7574 732E 
+ 429      6367 6900 
+ 430               	.LC28:
+ 431 0193 6E65 7477 		.string	"network.cgi"
+ 431      6F72 6B2E 
+ 431      6367 6900 
+ 432               	.LC29:
+ 433 019f 666F 726D 		.string	"form.cgi"
+ 433      2E63 6769 
+ 433      00
+ 434               	.LC30:
+ 435 01a8 726F 6F74 		.string	"root:root"
+ 435      3A72 6F6F 
+ 435      7400 
+ 436               	.LC31:
+ 437 01b2 6367 692D 		.string	"cgi-bin"
+ 437      6269 6E00 
+ 438               	.LC32:
+ 439 01ba 6874 7470 		.string	"httpd0"
+ 439      6430 00
+ 440               	.LC33:
+ 441 01c1 4D61 696E 		.string	"MainLoop"
+ 441      4C6F 6F70 
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 10
+
+
+ 441      00
+ 442               		.text
+ 443               	.global	NutAppMain
+ 444               		.type	NutAppMain, @function
+ 445               	NutAppMain:
+ 446               	/* prologue: frame size=4 */
+ 447 028a FF92      		push r15
+ 448 028c 0F93      		push r16
+ 449 028e 1F93      		push r17
+ 450 0290 CF93      		push r28
+ 451 0292 DF93      		push r29
+ 452 0294 CDB7      		in r28,__SP_L__
+ 453 0296 DEB7      		in r29,__SP_H__
+ 454 0298 2497      		sbiw r28,4
+ 455 029a 0FB6      		in __tmp_reg__,__SREG__
+ 456 029c F894      		cli
+ 457 029e DEBF      		out __SP_H__,r29
+ 458 02a0 0FBE      		out __SREG__,__tmp_reg__
+ 459 02a2 CDBF      		out __SP_L__,r28
+ 460               	/* prologue end (size=13) */
+ 461 02a4 80E0      		ldi r24,lo8(38400)
+ 462 02a6 96E9      		ldi r25,hi8(38400)
+ 463 02a8 A0E0      		ldi r26,hlo8(38400)
+ 464 02aa B0E0      		ldi r27,hhi8(38400)
+ 465 02ac 8983      		std Y+1,r24
+ 466 02ae 9A83      		std Y+2,r25
+ 467 02b0 AB83      		std Y+3,r26
+ 468 02b2 BC83      		std Y+4,r27
+ 469 02b4 80E0      		ldi r24,lo8(0)
+ 470 02b6 0E94 0000 		call NutThreadSetSleepMode
+ 471 02ba 0E94 0000 		call led_ddr_init
+ 472 02be 8091 6500 		lds r24,101
+ 473 02c2 877F      		andi r24,lo8(-9)
+ 474 02c4 8093 6500 		sts 101,r24
+ 475 02c8 40E0      		ldi r20,lo8(0)
+ 476 02ca 60E0      		ldi r22,lo8(0)
+ 477 02cc 70E0      		ldi r23,hi8(0)
+ 478 02ce 80E0      		ldi r24,lo8(devDebug1)
+ 479 02d0 90E0      		ldi r25,hi8(devDebug1)
+ 480 02d2 0E94 0000 		call NutRegisterDevice
+ 481 02d6 4091 0000 		lds r20,__iob+2
+ 482 02da 5091 0000 		lds r21,(__iob+2)+1
+ 483 02de 60E0      		ldi r22,lo8(.LC13)
+ 484 02e0 70E0      		ldi r23,hi8(.LC13)
+ 485 02e2 80E0      		ldi r24,lo8(.LC14)
+ 486 02e4 90E0      		ldi r25,hi8(.LC14)
+ 487 02e6 0E94 0000 		call freopen
+ 488 02ea 8091 0000 		lds r24,__iob+2
+ 489 02ee 9091 0000 		lds r25,(__iob+2)+1
+ 490 02f2 0E94 0000 		call _fileno
+ 491 02f6 AE01      		movw r20,r28
+ 492 02f8 4F5F      		subi r20,lo8(-(1))
+ 493 02fa 5F4F      		sbci r21,hi8(-(1))
+ 494 02fc 61E0      		ldi r22,lo8(257)
+ 495 02fe 71E0      		ldi r23,hi8(257)
+ 496 0300 0E94 0000 		call _ioctl
+ 497 0304 68EC      		ldi r22,lo8(200)
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 11
+
+
+ 498 0306 70E0      		ldi r23,hi8(200)
+ 499 0308 80E0      		ldi r24,hlo8(200)
+ 500 030a 90E0      		ldi r25,hhi8(200)
+ 501 030c 0E94 0000 		call NutSleep
+ 502 0310 0E94 0000 		call NutVersionString
+ 503 0314 9F93      		push r25
+ 504 0316 8F93      		push r24
+ 505 0318 80E0      		ldi r24,lo8(.LC15)
+ 506 031a 90E0      		ldi r25,hi8(.LC15)
+ 507 031c 9F93      		push r25
+ 508 031e 8F93      		push r24
+ 509 0320 0E94 0000 		call printf
+ 510 0324 0E94 0000 		call init_devices
+ 511 0328 45E0      		ldi r20,lo8(5)
+ 512 032a 60E0      		ldi r22,lo8(-256)
+ 513 032c 7FEF      		ldi r23,hi8(-256)
+ 514 032e 80E0      		ldi r24,lo8(devSmsc111)
+ 515 0330 90E0      		ldi r25,hi8(devSmsc111)
+ 516 0332 0E94 0000 		call NutRegisterDevice
+ 517 0336 0F90      		pop __tmp_reg__
+ 518 0338 0F90      		pop __tmp_reg__
+ 519 033a 0F90      		pop __tmp_reg__
+ 520 033c 0F90      		pop __tmp_reg__
+ 521 033e 892B      		or r24,r25
+ 522 0340 31F0      		breq .L38
+ 523 0342 80E0      		ldi r24,lo8(.LC16)
+ 524 0344 90E0      		ldi r25,hi8(.LC16)
+ 525 0346 0E94 0000 		call puts
+ 526 034a 0E94 0000 		call fail_led
+ 527               	.L38:
+ 528 034e 80E0      		ldi r24,lo8(.LC17)
+ 529 0350 90E0      		ldi r25,hi8(.LC17)
+ 530 0352 0E94 0000 		call inet_addr
+ 531 0356 80E0      		ldi r24,lo8(.LC18)
+ 532 0358 90E0      		ldi r25,hi8(.LC18)
+ 533 035a 0E94 0000 		call inet_addr
+ 534 035e 60E0      		ldi r22,lo8(serialNumber)
+ 535 0360 70E0      		ldi r23,hi8(serialNumber)
+ 536 0362 80E0      		ldi r24,lo8(mac)
+ 537 0364 90E0      		ldi r25,hi8(mac)
+ 538 0366 0E94 0000 		call tryToFillMac
+ 539 036a 892B      		or r24,r25
+ 540 036c 29F5      		brne .L45
+ 541 036e 00E0      		ldi r16,lo8(gTempSensorIDs)
+ 542 0370 10E0      		ldi r17,hi8(gTempSensorIDs)
+ 543               	.L44:
+ 544 0372 B801      		movw r22,r16
+ 545 0374 80E0      		ldi r24,lo8(mac)
+ 546 0376 90E0      		ldi r25,hi8(mac)
+ 547 0378 0E94 0000 		call tryToFillMac
+ 548 037c 892B      		or r24,r25
+ 549 037e E1F4      		brne .L45
+ 550 0380 085F      		subi r16,lo8(-(8))
+ 551 0382 1F4F      		sbci r17,hi8(-(8))
+ 552 0384 80E0      		ldi r24,hi8(gTempSensorIDs+56)
+ 553 0386 0030      		cpi r16,lo8(gTempSensorIDs+56)
+ 554 0388 1807      		cpc r17,r24
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 12
+
+
+ 555 038a 99F3      		breq .L44
+ 556 038c 94F3      		brlt .L44
+ 557 038e 14C0      		rjmp .L45
+ 558               	.L47:
+ 559 0390 80E0      		ldi r24,lo8(.LC20)
+ 560 0392 90E0      		ldi r25,hi8(.LC20)
+ 561 0394 0E94 0000 		call puts
+ 562 0398 8091 6500 		lds r24,101
+ 563 039c 8860      		ori r24,lo8(8)
+ 564 039e 8093 6500 		sts 101,r24
+ 565 03a2 60E4      		ldi r22,lo8(320)
+ 566 03a4 71E0      		ldi r23,hi8(320)
+ 567 03a6 80E0      		ldi r24,hlo8(320)
+ 568 03a8 90E0      		ldi r25,hhi8(320)
+ 569 03aa 0E94 0000 		call NutSleep
+ 570 03ae 0E94 0000 		call flash_led_once
+ 571               	/* #APP */
+ 572 03b2 F894      		cli
+ 573 03b4 0C94 0000 		jmp 0
+ 574               	/* #NOAPP */
+ 575               	.L45:
+ 576 03b8 20E6      		ldi r18,lo8(60000)
+ 577 03ba 3AEE      		ldi r19,hi8(60000)
+ 578 03bc 40E0      		ldi r20,hlo8(60000)
+ 579 03be 50E0      		ldi r21,hhi8(60000)
+ 580 03c0 60E0      		ldi r22,lo8(mac)
+ 581 03c2 70E0      		ldi r23,hi8(mac)
+ 582 03c4 80E0      		ldi r24,lo8(.LC19)
+ 583 03c6 90E0      		ldi r25,hi8(.LC19)
+ 584 03c8 0E94 0000 		call NutDhcpIfConfig
+ 585 03cc 8C01      		movw r16,r24
+ 586 03ce 892B      		or r24,r25
+ 587 03d0 F9F6      		brne .L47
+ 588 03d2 6091 0000 		lds r22,confnet+16
+ 589 03d6 7091 0000 		lds r23,(confnet+16)+1
+ 590 03da 8091 0000 		lds r24,(confnet+16)+2
+ 591 03de 9091 0000 		lds r25,(confnet+16)+3
+ 592 03e2 0E94 0000 		call inet_ntoa
+ 593 03e6 9F93      		push r25
+ 594 03e8 8F93      		push r24
+ 595 03ea 80E0      		ldi r24,lo8(.LC21)
+ 596 03ec 90E0      		ldi r25,hi8(.LC21)
+ 597 03ee 9F93      		push r25
+ 598 03f0 8F93      		push r24
+ 599 03f2 0E94 0000 		call printf
+ 600 03f6 40E0      		ldi r20,lo8(0)
+ 601 03f8 B801      		movw r22,r16
+ 602 03fa 80E0      		ldi r24,lo8(devUrom)
+ 603 03fc 90E0      		ldi r25,hi8(devUrom)
+ 604 03fe 0E94 0000 		call NutRegisterDevice
+ 605 0402 60E0      		ldi r22,lo8(pm(ShowQuery))
+ 606 0404 70E0      		ldi r23,hi8(pm(ShowQuery))
+ 607 0406 80E0      		ldi r24,lo8(.LC22)
+ 608 0408 90E0      		ldi r25,hi8(.LC22)
+ 609 040a 0E94 0000 		call NutRegisterCgi
+ 610 040e 60E0      		ldi r22,lo8(pm(ShowThreads))
+ 611 0410 70E0      		ldi r23,hi8(pm(ShowThreads))
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 13
+
+
+ 612 0412 80E0      		ldi r24,lo8(.LC23)
+ 613 0414 90E0      		ldi r25,hi8(.LC23)
+ 614 0416 0E94 0000 		call NutRegisterCgi
+ 615 041a 60E0      		ldi r22,lo8(pm(ShowTimers))
+ 616 041c 70E0      		ldi r23,hi8(pm(ShowTimers))
+ 617 041e 80E0      		ldi r24,lo8(.LC24)
+ 618 0420 90E0      		ldi r25,hi8(.LC24)
+ 619 0422 0E94 0000 		call NutRegisterCgi
+ 620 0426 60E0      		ldi r22,lo8(pm(ShowSockets))
+ 621 0428 70E0      		ldi r23,hi8(pm(ShowSockets))
+ 622 042a 80E0      		ldi r24,lo8(.LC25)
+ 623 042c 90E0      		ldi r25,hi8(.LC25)
+ 624 042e 0E94 0000 		call NutRegisterCgi
+ 625 0432 60E0      		ldi r22,lo8(pm(CgiInputs))
+ 626 0434 70E0      		ldi r23,hi8(pm(CgiInputs))
+ 627 0436 80E0      		ldi r24,lo8(.LC26)
+ 628 0438 90E0      		ldi r25,hi8(.LC26)
+ 629 043a 0E94 0000 		call NutRegisterCgi
+ 630 043e 60E0      		ldi r22,lo8(pm(CgiOutputs))
+ 631 0440 70E0      		ldi r23,hi8(pm(CgiOutputs))
+ 632 0442 80E0      		ldi r24,lo8(.LC27)
+ 633 0444 90E0      		ldi r25,hi8(.LC27)
+ 634 0446 0E94 0000 		call NutRegisterCgi
+ 635 044a 60E0      		ldi r22,lo8(pm(CgiNetwork))
+ 636 044c 70E0      		ldi r23,hi8(pm(CgiNetwork))
+ 637 044e 80E0      		ldi r24,lo8(.LC28)
+ 638 0450 90E0      		ldi r25,hi8(.LC28)
+ 639 0452 0E94 0000 		call NutRegisterCgi
+ 640 0456 60E0      		ldi r22,lo8(pm(ShowForm))
+ 641 0458 70E0      		ldi r23,hi8(pm(ShowForm))
+ 642 045a 80E0      		ldi r24,lo8(.LC29)
+ 643 045c 90E0      		ldi r25,hi8(.LC29)
+ 644 045e 0E94 0000 		call NutRegisterCgi
+ 645 0462 60E0      		ldi r22,lo8(.LC30)
+ 646 0464 70E0      		ldi r23,hi8(.LC30)
+ 647 0466 80E0      		ldi r24,lo8(.LC31)
+ 648 0468 90E0      		ldi r25,hi8(.LC31)
+ 649 046a 0E94 0000 		call NutRegisterAuth
+ 650 046e 91E0      		ldi r25,lo8(1)
+ 651 0470 F92E      		mov r15,r25
+ 652 0472 0F90      		pop __tmp_reg__
+ 653 0474 0F90      		pop __tmp_reg__
+ 654 0476 0F90      		pop __tmp_reg__
+ 655 0478 0F90      		pop __tmp_reg__
+ 656 047a 01E0      		ldi r16,lo8(1)
+ 657 047c 10E0      		ldi r17,hi8(1)
+ 658               	.L51:
+ 659 047e 80E3      		ldi r24,lo8(48)
+ 660 0480 F80E      		add r15,r24
+ 661 0482 F092 0000 		sts .LC32+5,r15
+ 662 0486 20E8      		ldi r18,lo8(640)
+ 663 0488 32E0      		ldi r19,hi8(640)
+ 664 048a A801      		movw r20,r16
+ 665 048c 60E0      		ldi r22,lo8(pm(Service))
+ 666 048e 70E0      		ldi r23,hi8(pm(Service))
+ 667 0490 80E0      		ldi r24,lo8(.LC32)
+ 668 0492 90E0      		ldi r25,hi8(.LC32)
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 14
+
+
+ 669 0494 0E94 0000 		call NutThreadCreate
+ 670 0498 81ED      		ldi r24,lo8(-47)
+ 671 049a F80E      		add r15,r24
+ 672 049c 0F5F      		subi r16,lo8(-(1))
+ 673 049e 1F4F      		sbci r17,hi8(-(1))
+ 674 04a0 86E0      		ldi r24,lo8(6)
+ 675 04a2 8F15      		cp r24,r15
+ 676 04a4 60F7      		brsh .L51
+ 677 04a6 8EEF      		ldi r24,lo8(-2)
+ 678 04a8 0E94 0000 		call NutThreadSetPriority
+ 679 04ac 00E0      		ldi r16,lo8(0)
+ 680 04ae 20E0      		ldi r18,lo8(0)
+ 681 04b0 30E0      		ldi r19,hi8(0)
+ 682 04b2 40E0      		ldi r20,lo8(pm(pong_sender))
+ 683 04b4 50E0      		ldi r21,hi8(pm(pong_sender))
+ 684 04b6 68E8      		ldi r22,lo8(5000)
+ 685 04b8 73E1      		ldi r23,hi8(5000)
+ 686 04ba 80E0      		ldi r24,hlo8(5000)
+ 687 04bc 90E0      		ldi r25,hhi8(5000)
+ 688 04be 0E94 0000 		call NutTimerStart
+ 689 04c2 20E0      		ldi r18,lo8(0)
+ 690 04c4 30E0      		ldi r19,hi8(0)
+ 691 04c6 40E0      		ldi r20,lo8(pm(each_second))
+ 692 04c8 50E0      		ldi r21,hi8(pm(each_second))
+ 693 04ca 68EE      		ldi r22,lo8(1000)
+ 694 04cc 73E0      		ldi r23,hi8(1000)
+ 695 04ce 80E0      		ldi r24,hlo8(1000)
+ 696 04d0 90E0      		ldi r25,hhi8(1000)
+ 697 04d2 0E94 0000 		call NutTimerStart
+ 698 04d6 8091 6500 		lds r24,101
+ 699 04da 8860      		ori r24,lo8(8)
+ 700 04dc 8093 6500 		sts 101,r24
+ 701 04e0 20E8      		ldi r18,lo8(640)
+ 702 04e2 32E0      		ldi r19,hi8(640)
+ 703 04e4 40E0      		ldi r20,lo8(0)
+ 704 04e6 50E0      		ldi r21,hi8(0)
+ 705 04e8 60E0      		ldi r22,lo8(pm(main_loop))
+ 706 04ea 70E0      		ldi r23,hi8(pm(main_loop))
+ 707 04ec 80E0      		ldi r24,lo8(.LC33)
+ 708 04ee 90E0      		ldi r25,hi8(.LC33)
+ 709 04f0 0E94 0000 		call NutThreadCreate
+ 710               	.L52:
+ 711 04f4 68EE      		ldi r22,lo8(1000)
+ 712 04f6 73E0      		ldi r23,hi8(1000)
+ 713 04f8 80E0      		ldi r24,hlo8(1000)
+ 714 04fa 90E0      		ldi r25,hhi8(1000)
+ 715 04fc 0E94 0000 		call NutSleep
+ 716 0500 F9CF      		rjmp .L52
+ 717               	/* epilogue: frame size=4 */
+ 718               	/* epilogue: noreturn */
+ 719               	/* epilogue end (size=0) */
+ 720               	/* function NutAppMain size 317 (304) */
+ 721               		.size	NutAppMain, .-NutAppMain
+ 722               		.comm temperatureMeterCnt,1,1
+ 723               		.comm sendOutEvent,2,1
+ 724               		.comm dallas_roms,160,1
+ 725               	/* File "servant.c": code  644 = 0x0284 ( 594), prologues  30, epilogues  20 */
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 15
+
+
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 16
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 servant.c
+C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s:14     .data:00000000 mac
+C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s:23     .text:00000000 pong_sender
+C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s:33     .text:00000006 each_second
+                            *COM*:00000001 temperatureMeterCnt
+C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s:46     .text:00000012 triggerSendOut
+                            *COM*:00000002 sendOutEvent
+C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s:64     .text:0000001c tryToFillMac
+C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s:162    .text:000000ca main_loop
+C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s:231    .text:0000012c init_devices
+C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s:445    .text:0000028a NutAppMain
+                            *COM*:000000a0 dallas_roms
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+net_request_pong
+NutEventPostAsync
+printf
+putchar
+NutSleep
+NutEventWait
+send_changed_adc_data
+send_changed_dig_data
+send_changed_freq_data
+temp_meter_sec_timer
+ch1w_read_temperature
+send_changed_temperature_data
+send_protocol_replies
+TwInit
+TwIOCtl
+child_1wire_init
+ds2482Init
+onewire_2482_available
+ds2482SendCmdArg
+ds2482ReadConfig
+ds2482BusyWait
+dallasReset
+init_udp_net_io
+port_init
+adc_init
+icp_init
+init_temperature
+adc_start
+NutThreadSetSleepMode
+led_ddr_init
+devDebug1
+NutRegisterDevice
+__iob
+freopen
+_fileno
+GAS LISTING C:\DOCUME~1\dz\LOCALS~1\Temp/ccEdaaaa.s 			page 17
+
+
+_ioctl
+NutVersionString
+devSmsc111
+puts
+fail_led
+inet_addr
+serialNumber
+gTempSensorIDs
+flash_led_once
+NutDhcpIfConfig
+confnet
+inet_ntoa
+devUrom
+ShowQuery
+NutRegisterCgi
+ShowThreads
+ShowTimers
+ShowSockets
+CgiInputs
+CgiOutputs
+CgiNetwork
+ShowForm
+NutRegisterAuth
+Service
+NutThreadCreate
+NutThreadSetPriority
+NutTimerStart

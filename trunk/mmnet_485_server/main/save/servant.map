@@ -1,0 +1,2301 @@
+Archive member included because of file (symbol)
+
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+                              oscgi.o (tcpSocketList)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                              net_io.o (NutUdpCreateSocket)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(route.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o) (NutIpRouteQuery)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(inet.o)
+                              servant.o (inet_addr)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o)
+                              servant.o (confnet)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o) (NutTcpOutput)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o) (NutTcpStatePassiveOpenEvent)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcputil.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o) (IsInLimits)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpout.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o) (NutUdpOutput)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipcsum.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o) (NutIpChkSumPartial)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipout.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o) (NutIpOutput)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipout.o) (NutArpCacheQuery)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpout.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o) (NutArpAllocNetBuf)
+G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                              servant.o (NutDhcpIfConfig)
+G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o) (NutDnsConfig2)
+G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o)
+                              servant.o (NutRegisterAuth)
+G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(cgi.o)
+                              servant.o (NutRegisterCgi)
+G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dencode.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o) (NutDecodeBase64)
+G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                              cgi.o (NutHttpSendHeaderTop)
+G:/Projects/avr/trunk/nut-21/lib\libnutfs.a(uromfs.o)
+                              servant.o (devUrom)
+G:/Projects/avr/trunk/nut-21/lib\libnutos.a(heap.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o) (NutHeapAlloc)
+G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                              servant.o (NutThreadCreate)
+G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                              oscgi.o (nutTimerList)
+G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+                              servant.o (NutEventWait)
+G:/Projects/avr/trunk/nut-21/lib\libnutos.a(devreg.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipout.o) (nutDeviceList)
+G:/Projects/avr/trunk/nut-21/lib\libnutos.a(confos.o)
+                              G:/Projects/avr/trunk/nut-21/lib/nutinit.o (NutLoadConfig)
+G:/Projects/avr/trunk/nut-21/lib\libnutos.a(version.o)
+                              servant.o (NutVersionString)
+G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ihndlr.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o) (NutRegisterIrqHandler)
+G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect15.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o) (sig_OUTPUT_COMPARE0)
+G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(debug1.o)
+                              servant.o (devDebug1)
+G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+                              servant.o (devSmsc111)
+G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+                              child-1wire.o (TwMasterTransact)
+G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(netbuf.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o) (NutNetBufAlloc)
+G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect06.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o) (sig_INTERRUPT5)
+G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect33.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o) (sig_2WIRE_SERIAL)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethin.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o) (NutEtherInput)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethout.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o) (NutEtherOutput)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ifconfig.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o) (NutNetIfSetup)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipin.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethin.o) (NutIpInput)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpin.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipin.o) (NutIcmpInput)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpout.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpin.o) (NutIcmpOutput)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpin.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethin.o) (NutArpInput)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpin.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipin.o) (NutTcpInput)
+G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpin.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipin.o) (NutUdpInput)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(close.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o) (_close)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(ioctl.o)
+                              servant.o (_ioctl)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(open.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o) (_open)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(read.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o) (_read)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fclose.o)
+                              httpd.o (fclose)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fdopen.o)
+                              httpd.o (_fdopen)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fflush.o)
+                              cgi.o (fflush)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(filelength.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o) (_filelength)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fileno.o)
+                              servant.o (_fileno)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fmode.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fdopen.o) (_fmode)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fopen.o)
+                              servant.o (__iob)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(freopen.o)
+                              servant.o (freopen)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fgets.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o) (fgets)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputc.o)
+                              cgi.o (fputc)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputs.o)
+                              cgi.o (fputs)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fwrite.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o) (fwrite)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(printf.o)
+                              servant.o (printf)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putchar.o)
+                              servant.o (putchar)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(puts.o)
+                              servant.o (puts)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(printf.o) (vfprintf)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fprintf_p.o)
+                              cgi.o (fprintf_P)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputs_p.o)
+                              cgi.o (fputs_P)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(puts_p.o)
+                              temperature.o (puts_P)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf_p.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fprintf_p.o) (vfprintf_P)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(errno.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutfs.a(uromfs.o) (errno)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(malloc.o)
+                              net_io.o (malloc)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putf.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf.o) (_putf)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(write.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fflush.o) (_write)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(write_p.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputs_p.o) (_write_P)
+G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fgetc.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fgets.o) (fgetc)
+g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_mulsi3.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o) (__mulsi3)
+g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_udivmodqi4.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(inet.o) (__udivmodqi4)
+g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_udivmodhi4.o)
+                              icp.o (__udivmodhi4)
+g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_divmodhi4.o)
+                              oscgi.o (__divmodhi4)
+g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_udivmodsi4.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(debug1.o) (__udivmodsi4)
+g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_clear_bss.o)
+                              servant.o (__do_clear_bss)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(memcpy_P.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o) (memcpy_P)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcmp_P.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutfs.a(uromfs.o) (strcmp_P)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcpy_P.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putf.o) (strcpy_P)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strlen_P.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputs_p.o) (strlen_P)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(memchr.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putf.o) (memchr)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(memcpy.o)
+                              net_io.o (memcpy)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(memset.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o) (memset)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcasecmp.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(cgi.o) (strcasecmp)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcat.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o) (strcat)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strchr.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o) (strchr)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcmp.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o) (strcmp)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcpy.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o) (strcpy)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strncasecmp.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o) (strncasecmp)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strncmp.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o) (strncmp)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strrchr.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o) (strrchr)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strtok_r.o)
+                              websetup.o (strtok_r)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(ee_rb.1C1D1E.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o) (__eeprom_read_byte_1C1D1E)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(ee_rblk.1C1D1E.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o) (__eeprom_read_block_1C1D1E)
+g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(ee_wb.1C1D1E.o)
+                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o) (__eeprom_write_byte_1C1D1E)
+
+Allocating common symbols
+Common symbol       size              file
+
+adc_prev            0x10              adc.o
+dallas_roms         0xa0              servant.o
+sig_OUTPUT_COMPARE0
+                    0x8               G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect15.o)
+dig_prev            0x7               dports.o
+al_mask             0x7               alarm.o
+errno               0x2               G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(errno.o)
+al_byte             0x7               alarm.o
+icp_start_time      0x2               icp.o
+icp_stop_time       0x2               icp.o
+icp_rx_q            0x2               icp.o
+udpSocketList       0x2               G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+gTempSensorIDs      0x40              temperature.o
+freq_outs           0x8               freq_send.o
+dallas_crc          0x1               dallas_ds2482.o
+oldTemperature      0x10              temperature.o
+icp_total           0x4               icp.o
+temperatureMeterCnt
+                    0x1               servant.o
+confos              0x13              G:/Projects/avr/trunk/nut-21/lib\libnutos.a(confos.o)
+adc_value           0x10              adc.o
+freq_prev           0x8               freq_send.o
+nutThreadList       0x2               G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+DS2482I2cAddr       0x1               ds2482.o
+multicast_addr      0x4               net_io.o
+runQueue            0x2               G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+tcp_in_nbq          0x2               G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+nutmem_onchip       0x40              G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+tcp_in_rdy          0x2               G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+warn_max            0x8               alarm.o
+warn_min            0x8               alarm.o
+sig_INTERRUPT5      0x8               G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect06.o)
+sendOutEvent        0x2               servant.o
+runningThread       0x2               G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+icp_rx_tail         0x1               icp.o
+serialNumber        0x8               temperature.o
+al_max              0x8               alarm.o
+warn_byte           0x7               alarm.o
+LastDiscrepancy     0x1               dallas_ds2482.o
+killedThread        0x2               G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+icp_period          0x2               icp.o
+confnet             0x20              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o)
+warn_mask           0x7               alarm.o
+al_min              0x8               alarm.o
+SearchSerialNum     0x8               dallas_ds2482.o
+dig_value           0x7               dports.o
+sig_2WIRE_SERIAL    0x8               G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect33.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+text             0x00000000         0x00020000         xr
+data             0x00800060         0x0000ffa0         rw !x
+eeprom           0x00810000         0x00010000         rw !x
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+Address of section .data set to 0x800100
+LOAD g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+LOAD servant.o
+LOAD urom.o
+LOAD crc8.o
+LOAD crc16.o
+LOAD net_io.o
+LOAD adc.o
+LOAD alarm.o
+LOAD dports.o
+LOAD cgi.o
+LOAD icp.o
+LOAD freq_send.o
+LOAD oscgi.o
+LOAD ds18x20.o
+LOAD temperature.o
+LOAD onewire.o
+LOAD delay.o
+LOAD spi.o
+LOAD child-1wire.o
+LOAD ds2482.o
+LOAD dallas_ds2482.o
+LOAD runtime_cfg.o
+LOAD util.o
+LOAD httpd.o
+LOAD websetup.o
+                0x00000000                main = 0x0
+LOAD G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+LOAD G:/Projects/avr/trunk/nut-21/lib\libnutnet.a
+LOAD G:/Projects/avr/trunk/nut-21/lib\libnutpro.a
+LOAD G:/Projects/avr/trunk/nut-21/lib\libnutfs.a
+LOAD G:/Projects/avr/trunk/nut-21/lib\libnutos.a
+LOAD G:/Projects/avr/trunk/nut-21/lib\libnutdev.a
+LOAD G:/Projects/avr/trunk/nut-21/lib\libnutnet.a
+LOAD G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a
+LOAD g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a
+LOAD g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a
+LOAD g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a
+
+.hash
+ *(.hash)
+
+.dynsym
+ *(.dynsym)
+
+.dynstr
+ *(.dynstr)
+
+.gnu.version
+ *(.gnu.version)
+
+.gnu.version_d
+ *(.gnu.version_d)
+
+.gnu.version_r
+ *(.gnu.version_r)
+
+.rel.init
+ *(.rel.init)
+
+.rela.init
+ *(.rela.init)
+
+.rel.text
+ *(.rel.text)
+ *(.rel.text.*)
+ *(.rel.gnu.linkonce.t*)
+
+.rela.text
+ *(.rela.text)
+ *(.rela.text.*)
+ *(.rela.gnu.linkonce.t*)
+
+.rel.fini
+ *(.rel.fini)
+
+.rela.fini
+ *(.rela.fini)
+
+.rel.rodata
+ *(.rel.rodata)
+ *(.rel.rodata.*)
+ *(.rel.gnu.linkonce.r*)
+
+.rela.rodata
+ *(.rela.rodata)
+ *(.rela.rodata.*)
+ *(.rela.gnu.linkonce.r*)
+
+.rel.data
+ *(.rel.data)
+ *(.rel.data.*)
+ *(.rel.gnu.linkonce.d*)
+
+.rela.data
+ *(.rela.data)
+ *(.rela.data.*)
+ *(.rela.gnu.linkonce.d*)
+
+.rel.ctors
+ *(.rel.ctors)
+
+.rela.ctors
+ *(.rela.ctors)
+
+.rel.dtors
+ *(.rel.dtors)
+
+.rela.dtors
+ *(.rela.dtors)
+
+.rel.got
+ *(.rel.got)
+
+.rela.got
+ *(.rela.got)
+
+.rel.bss
+ *(.rel.bss)
+
+.rela.bss
+ *(.rela.bss)
+
+.rel.plt
+ *(.rel.plt)
+
+.rela.plt
+ *(.rela.plt)
+
+.text           0x00000000     0xeb9a
+ *(.vectors)
+ .vectors       0x00000000       0x8c g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+                0x00000000                __vectors
+                0x00000000                __vector_default
+                0x0000008c                __ctors_start = .
+ *(.ctors)
+                0x0000008c                __ctors_end = .
+                0x0000008c                __dtors_start = .
+ *(.dtors)
+                0x0000008c                __dtors_end = .
+ *(.progmem.gcc*)
+ *(.progmem*)
+ .progmem.data  0x0000008c      0xf3f urom.o
+                0x00000c50                file2data
+                0x00000c5a                file1data
+                0x0000008c                file3name
+                0x00000097                file3data
+                0x00000c50                file1name
+                0x00000c3b                file2name
+ .progmem.data  0x00000fcb      0x37f cgi.o
+ .progmem.data  0x0000134a      0x54f oscgi.o
+ .progmem.data  0x00001899       0x3a temperature.o
+ .progmem.data  0x000018d3       0xb0 dallas_ds2482.o
+ .progmem.data  0x00001983       0x82 websetup.o
+ .progmem.data  0x00001a05       0x60 G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dencode.o)
+ .progmem.data  0x00001a65       0xcd G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                0x00001b32                . = ALIGN (0x2)
+ *(.init0)
+ *(.init1)
+ .init1         0x00001b32        0x4 G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+ *(.init2)
+ .init2         0x00001b36        0xc g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+ *(.init3)
+ *(.init4)
+ .init4         0x00001b42       0x1a g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+                0x00001b42                __do_copy_data
+ .init4         0x00001b5c       0x10 g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_clear_bss.o)
+                0x00001b5c                __do_clear_bss
+ *(.init5)
+ *(.init6)
+ *(.init7)
+ *(.init8)
+ .init8         0x00001b6c       0x56 G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+                0x00001b6c                NutInit
+ *(.init9)
+ .init9         0x00001bc2        0x4 g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+ *(.text)
+ .text          0x00001bc6        0x4 g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+                0x00001bc6                __vector_22
+                0x00001bc6                __vector_28
+                0x00001bc6                __vector_1
+                0x00001bc6                __vector_32
+                0x00001bc6                __vector_34
+                0x00001bc6                __vector_24
+                0x00001bc6                __bad_interrupt
+                0x00001bc6                __vector_31
+                0x00001bc6                __vector_3
+                0x00001bc6                __vector_23
+                0x00001bc6                __vector_30
+                0x00001bc6                __vector_25
+                0x00001bc6                __vector_13
+                0x00001bc6                __vector_17
+                0x00001bc6                __vector_19
+                0x00001bc6                __vector_7
+                0x00001bc6                __vector_27
+                0x00001bc6                __vector_5
+                0x00001bc6                __vector_4
+                0x00001bc6                __vector_9
+                0x00001bc6                __vector_2
+                0x00001bc6                __vector_29
+                0x00001bc6                __vector_8
+                0x00001bc6                __vector_26
+                0x00001bc6                __vector_14
+                0x00001bc6                __vector_10
+                0x00001bc6                __vector_16
+                0x00001bc6                __vector_18
+                0x00001bc6                __vector_20
+ .text          0x00001bca      0x502 servant.o
+                0x00001c94                main_loop
+                0x00001e54                NutAppMain
+                0x00001bdc                triggerSendOut
+                0x00001cf6                init_devices
+ .text          0x000020cc       0x40 crc8.o
+                0x000020cc                crc8
+ .text          0x0000210c       0x54 crc16.o
+                0x0000210c                crc16_calc
+ .text          0x00002160      0x502 net_io.o
+                0x00002194                process_rx_packet
+                0x00002390                process_rx_data
+                0x00002558                send_long_packet
+                0x00002192                process_broadcast_rx_packet
+                0x000025d4                send_protocol_replies
+                0x00002160                init_udp_net_io
+                0x000024ba                net_request_pong
+                0x0000243e                UDP_Recv
+                0x000024c6                send_pack
+ .text          0x00002662      0x1c2 adc.o
+                0x000026a6                adc_stop
+                0x000027b4                send_changed_adc_data
+                0x0000279a                request_adc_data_send
+                0x00002672                adc_start
+                0x00002662                adc_init
+                0x000026b0                __vector_21
+ .text          0x00002824       0x5c alarm.o
+                0x00002824                init_alarm
+ .text          0x00002880      0x28e dports.o
+                0x000028f4                port_init
+                0x000029f0                send_changed_dig_data
+                0x000028a2                set_ddr
+                0x000029d6                request_dig_data_send
+                0x00002a62                set_dig
+                0x00002ab4                get_dig_out
+                0x0000291e                check_digital_inputs
+ .text          0x00002b0e      0x420 cgi.o
+                0x00002f20                CgiOutputs
+                0x00002b0e                ShowTableCgi
+                0x00002e70                CgiNetwork
+                0x00002d3a                CgiInputs
+ .text          0x00002f2e      0x250 icp.o
+                0x00002f2e                disable_icp
+                0x00002f44                __vector_12
+                0x0000316c                icp_init
+                0x00003008                __vector_11
+                0x0000314c                icp_get_freq
+                0x00003162                icp_get_duty
+ .text          0x0000317e       0xc4 freq_send.o
+                0x00003198                send_changed_freq_data
+                0x0000317e                request_freq_data_send
+ .text          0x00003242      0x5f2 oscgi.o
+                0x00003420                ShowThreads
+                0x0000352a                ShowTimers
+                0x00003612                ShowSockets
+                0x00003242                ShowQuery
+ .text          0x00003834      0x31a ds18x20.o
+                0x00003834                dallasCommand
+                0x000039f0                DS18X20_start_meas
+                0x000039c0                DS18X20_get_power_status
+                0x0000390a                DS18X20_meas_to_word
+                0x00003872                DS18X20_meas_to_cel
+                0x00003a46                DS18X20_read_meas_word
+                0x0000397e                DS18X20_find_sensor
+ .text          0x00003b4e      0x272 temperature.o
+                0x00003c1a                init_temperature
+                0x00003c24                request_temp_data_send
+                0x00003d18                send_changed_temperature_data
+                0x00003c3e                read_temperature_data
+                0x00003cda                temp_meter_sec_timer
+                0x00003b4e                search_sensors
+ .text          0x00003dc0      0x236 onewire.o
+                0x00003fb8                ow_command
+                0x00003df8                ow_reset
+                0x00003dc0                ow_input_pin_state
+                0x00003ee0                ow_byte_rd
+                0x00003f22                ow_rom_search
+                0x00003de2                ow_parasite_disable
+                0x00003dcc                ow_parasite_enable
+                0x00003ebc                ow_byte_wr
+                0x00003e5a                ow_bit_io
+ .text          0x00003ff6       0x1a delay.o
+                0x00003ff6                delayloop32
+ .text          0x00004010      0x24c child-1wire.o
+                0x0000415c                ch1w_read_temperature
+                0x00004220                child_1wire_init
+                0x0000420e                ch1w_reset
+ .text          0x0000425c      0x400 ds2482.o
+                0x000042e0                ds2482Init
+                0x00004498                ds2482BusTransferBit
+                0x00004336                ds2482SendCmdArg
+                0x000043e6                ds2482ReadConfig
+                0x000045aa                ds2482BusWriteByte
+                0x0000425c                ds2482SendCmd
+                0x00004566                ds2482BusLevel
+                0x00004428                ds2482BusReset
+                0x000043ae                ds2482BusyWait
+                0x00004506                ds2482BusTriplet
+                0x000045e6                ds2482BusReadByte
+                0x000042d2                ds2482Reset
+ .text          0x0000465c      0x734 dallas_ds2482.o
+                0x00004cb6                dallasPrintError
+                0x0000467c                dallasWriteBit
+                0x0000489c                dallasCRC
+                0x00004682                dallasReadByte
+                0x00004744                dallasWriteRAM
+                0x000046c8                dallasReadRAM
+                0x000048b4                dallasFindNextDevice
+                0x00004850                dallasPrintROM
+                0x00004be4                dallasFindDevices
+                0x00004a94                OWSearch
+                0x00004806                dallasWaitUntilDone
+                0x00004690                dallasMatchROM
+                0x00004672                dallasReadBit
+                0x0000465c                dallasInit
+                0x00004888                dallasAddressCheck
+                0x0000465e                dallasReset
+                0x0000468a                dallasWriteByte
+                0x00004810                dallasReadROM
+                0x000049e8                owTriplet
+ .text          0x00004d90       0x78 util.o
+                0x00004da8                delay_thsec
+                0x00004db6                delay_esec
+                0x00004df0                delay_sec
+                0x00004de2                delay_halfsec
+                0x00004d90                led_ddr_init
+                0x00004dfa                delay_qsec
+                0x00004da6                fail_led
+                0x00004dc4                flash_led_once
+ .text          0x00004e08       0xea httpd.o
+                0x00004e08                Service
+ .text          0x00004ef2      0x16a websetup.o
+                0x00004ef2                ShowForm
+ .text          0x0000505c       0x58 G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+                0x00005062                NutIdle
+                0x0000505c                NutThreadSetSleepMode
+ .text          0x000050b4      0xb32 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+                0x000050b4                NutTcpDiscardBuffers
+                0x00005b8a                NutTcpDeviceIOCtl
+                0x0000518c                NutTcpFindSocket
+                0x00005872                NutTcpDeviceWrite
+                0x00005a0e                NutTcpCloseSocket
+                0x000055ac                NutTcpReceive
+                0x00005126                NutTcpDestroySocket
+                0x000054ca                NutTcpSend
+                0x00005a2a                NutTcpSetSockOpt
+                0x000053b0                NutTcpConnect
+                0x000057fa                NutTcpError
+                0x00005b2a                NutTcpDeviceWrite_P
+                0x000052e6                NutTcpGetSockOpt
+                0x00005218                NutTcpCreateSocket
+                0x000054b4                NutTcpAccept
+                0x00005810                NutTcpDeviceRead
+ .text          0x00005be6      0x2d4 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                0x00005e86                NutUdpGetSockOpt
+                0x00005cfc                NutUdpReceiveFrom
+                0x00005dce                NutUdpDestroySocket
+                0x00005e2e                NutUdpFindSocket
+                0x00005c7a                NutUdpSendTo
+                0x00005e5a                NutUdpSetSockOpt
+                0x00005be6                NutUdpCreateSocket
+ .text          0x00005eba      0x27e G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(route.o)
+                0x0000609c                NutIpRouteQuery
+                0x00005eba                NutIpRouteAdd
+ .text          0x00006138      0x14c G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(inet.o)
+                0x00006138                inet_addr
+                0x000061d8                inet_ntoa
+ .text          0x00006284       0x8c G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o)
+                0x000062d4                NutNetSaveConfig
+                0x00006284                NutNetLoadConfig
+ .text          0x00006310      0x43c G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o)
+                0x00006612                NutTcpReject
+                0x00006310                NutTcpOutput
+ .text          0x0000674c     0x10a2 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                0x00006ad6                NutTcpStatePassiveOpenEvent
+                0x000077b8                NutTcpInitStateMachine
+                0x00006eb6                NutTcpSm
+                0x00006bd4                NutTcpAbortSocket
+                0x00006c32                NutTcpStateRetranTimeout
+                0x00006b14                NutTcpStateActiveOpenEvent
+                0x00006b4a                NutTcpStateCloseEvent
+                0x00006bb0                NutTcpStateWindowEvent
+                0x000076f6                NutTcpStateMachine
+ .text          0x000077ee       0xc2 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcputil.o)
+                0x0000783e                NutTcpCalcRtt
+                0x000077ee                IsInLimits
+ .text          0x000078b0      0x136 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpout.o)
+                0x000078b0                NutUdpOutput
+ .text          0x000079e6      0x10a G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipcsum.o)
+                0x00007a4c                NutIpChkSum
+                0x00007abe                NutIpPseudoChkSum
+                0x000079e6                NutIpChkSumPartial
+                0x00007a56                NutIpPseudoChkSumPartial
+ .text          0x00007af0      0x254 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipout.o)
+                0x00007af0                NutIpOutput
+ .text          0x00007d44      0x326 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+                0x00007f78                NutArpCacheQuery
+                0x00007d44                NutArpExpire
+                0x00007ed8                NutArpCacheUpdate
+ .text          0x0000806a      0x112 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpout.o)
+                0x0000806a                NutArpAllocNetBuf
+                0x0000811c                NutArpOutput
+ .text          0x0000817c     0x1204 G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                0x0000933e                NutDhcpRelease
+                0x000091b0                NutDhcpIfConfig
+                0x000081d0                ParseReply
+                0x0000880c                NutDhcpClient
+ .text          0x00009380      0x7c4 G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+                0x0000952a                NutDnsGetResource
+                0x00009b20                NutDnsGetMxByDomain
+                0x00009b32                NutDnsGetHostByName
+                0x0000950e                NutDnsConfig
+                0x0000943a                NutDnsConfig2
+ .text          0x00009b44      0x15c G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o)
+                0x00009ba0                NutRegisterAuth
+                0x00009bea                NutHttpAuthValidate
+ .text          0x00009ca0       0xc8 G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(cgi.o)
+                0x00009cea                NutCgiProcessRequest
+                0x00009ca0                NutRegisterCgi
+ .text          0x00009d68      0x1c8 G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dencode.o)
+                0x00009e44                NutDecodeHex
+                0x00009d68                NutDecodeBase64
+                0x00009e88                NutDecodePath
+ .text          0x00009f30      0x98a G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                0x00009f30                NutHttpSendHeaderTop
+                0x0000a16e                NutGetMimeType
+                0x00009fac                NutHttpSendHeaderBot
+                0x0000a02c                NutHttpSendError
+                0x0000a2da                NutHttpProcessRequest
+                0x0000a282                NutRegisterHttpRoot
+ .text          0x0000a8ba      0x176 G:/Projects/avr/trunk/nut-21/lib\libnutfs.a(uromfs.o)
+ .text          0x0000aa30      0x216 G:/Projects/avr/trunk/nut-21/lib\libnutos.a(heap.o)
+                0x0000ac3c                NutHeapAvailable
+                0x0000ab3c                NutHeapFree
+                0x0000aa30                NutHeapAlloc
+                0x0000ac2e                NutHeapAdd
+                0x0000ab12                NutHeapAllocClear
+ .text          0x0000ac46      0x43c G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                0x0000ae9a                NutThreadWake
+                0x0000afb0                NutThreadSetPriority
+                0x0000af30                NutThreadDestroy
+                0x0000b03c                NutThreadExit
+                0x0000ae46                NutThreadRemoveQueue
+                0x0000acdc                NutThreadAddPriQueue
+                0x0000ad1a                NutThreadCreate
+                0x0000ae76                NutThreadResumeAsync
+                0x0000af56                NutThreadKill
+                0x0000ac8a                thread_start
+                0x0000aea8                NutThreadYield
+                0x0000b044                GetThreadByName
+                0x0000ac56                NutThreadSwitch
+ .text          0x0000b082      0x482 G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                0x0000b082                NutDelay
+                0x0000b378                NutSleep
+                0x0000b4a4                NutGetTickCount
+                0x0000b2da                NutTimerStart
+                0x0000b458                NutTimerStop
+                0x0000b2b8                NutTimerInit
+                0x0000b4e4                NutGetMillis
+                0x0000b3e4                NutTimerStopAsync
+                0x0000b4c4                NutGetSeconds
+                0x0000b49a                NutGetCpuClock
+ .text          0x0000b504      0x23a G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+                0x0000b6fe                NutEventBroadcast
+                0x0000b548                NutEventWait
+                0x0000b6be                NutEventBroadcastAsync
+                0x0000b630                NutEventWaitNext
+                0x0000b652                NutEventPostAsync
+                0x0000b69e                NutEventPost
+                0x0000b504                NutEventTimeout
+ .text          0x0000b73e       0xa2 G:/Projects/avr/trunk/nut-21/lib\libnutos.a(devreg.o)
+                0x0000b776                NutRegisterDevice
+                0x0000b73e                NutDeviceLookup
+ .text          0x0000b7e0       0x76 G:/Projects/avr/trunk/nut-21/lib\libnutos.a(confos.o)
+                0x0000b7e0                NutLoadConfig
+                0x0000b814                NutSaveConfig
+ .text          0x0000b856       0x10 G:/Projects/avr/trunk/nut-21/lib\libnutos.a(version.o)
+                0x0000b860                NutVersionString
+                0x0000b856                NutVersion
+ .text          0x0000b866       0x46 G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ihndlr.o)
+                0x0000b866                CallHandler
+                0x0000b892                NutRegisterIrqHandler
+ .text          0x0000b8ac       0x4c G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect15.o)
+                0x0000b8ac                __vector_15
+ .text          0x0000b8f8      0x132 G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(debug1.o)
+ .text          0x0000ba2a      0x760 G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+                0x0000bc66                NicRxLanc
+                0x0000bf1a                LancOutput
+                0x0000c136                LancInit
+ .text          0x0000c18a      0x910 G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+                0x0000c59e                TwMasterTransact
+                0x0000ca08                TwInit
+                0x0000c78e                TwSlaveRespond
+                0x0000c6c0                TwSlaveListen
+                0x0000c6b8                TwMasterError
+                0x0000c84c                TwIOCtl
+                0x0000c844                TwSlaveError
+ .text          0x0000ca9a      0x350 G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(netbuf.o)
+                0x0000caf0                NutNetBufAlloc
+                0x0000cce8                NutNetBufClone
+                0x0000ccba                NutNetBufFree
+ .text          0x0000cdea       0x4c G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect06.o)
+                0x0000cdea                __vector_6
+ .text          0x0000ce36       0x4c G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect33.o)
+                0x0000ce36                __vector_33
+ .text          0x0000ce82       0x5c G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethin.o)
+                0x0000ce82                NutEtherInput
+ .text          0x0000cede       0xb8 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethout.o)
+                0x0000cede                NutEtherOutput
+ .text          0x0000cf96      0x384 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ifconfig.o)
+                0x0000d192                NutNetIfConfig2
+                0x0000cf96                NutNetIfSetup
+                0x0000d2d6                NutNetIfConfig
+ .text          0x0000d31a      0x20a G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipin.o)
+                0x0000d31a                NutIpInput
+ .text          0x0000d524       0xd8 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpin.o)
+                0x0000d524                NutIcmpInput
+ .text          0x0000d5fc      0x178 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpout.o)
+                0x0000d5fc                NutIcmpOutput
+                0x0000d664                NutIcmpReply
+                0x0000d6d8                NutIcmpResponse
+ .text          0x0000d774       0xd2 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpin.o)
+                0x0000d774                NutArpInput
+ .text          0x0000d846       0x68 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpin.o)
+                0x0000d846                NutTcpInput
+ .text          0x0000d8ae       0xd2 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpin.o)
+                0x0000d8ae                NutUdpInput
+ .text          0x0000d980       0x2a G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(close.o)
+                0x0000d980                _close
+ .text          0x0000d9aa       0x24 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(ioctl.o)
+                0x0000d9aa                _ioctl
+ .text          0x0000d9ce       0xb6 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(open.o)
+                0x0000d9ce                _open
+ .text          0x0000da84       0x26 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(read.o)
+                0x0000da84                _read
+ .text          0x0000daaa       0x90 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fclose.o)
+                0x0000daaa                fclose
+ .text          0x0000db3a       0xb8 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fdopen.o)
+                0x0000db3a                _fdopen
+ .text          0x0000dbf2       0x1a G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fflush.o)
+                0x0000dbf2                fflush
+ .text          0x0000dc0c       0x82 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(filelength.o)
+                0x0000dc0c                _filelength
+ .text          0x0000dc8e        0x8 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fileno.o)
+                0x0000dc8e                _fileno
+ .text          0x0000dc96       0x76 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fmode.o)
+                0x0000dc96                _fmode
+ .text          0x0000dd0c       0xbe G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fopen.o)
+                0x0000dd0c                fopen
+ .text          0x0000ddca       0xe6 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(freopen.o)
+                0x0000ddca                freopen
+ .text          0x0000deb0       0x5a G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fgets.o)
+                0x0000deb0                fgets
+ .text          0x0000df0a       0x50 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputc.o)
+                0x0000df0a                fputc
+ .text          0x0000df5a       0x22 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputs.o)
+                0x0000df5a                fputs
+ .text          0x0000df7c       0x4a G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fwrite.o)
+                0x0000df7c                fwrite
+ .text          0x0000dfc6       0x2a G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(printf.o)
+                0x0000dfc6                printf
+ .text          0x0000dff0        0xe G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putchar.o)
+                0x0000dff0                putchar
+ .text          0x0000dffe       0x2a G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(puts.o)
+                0x0000dffe                puts
+ .text          0x0000e028       0x14 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf.o)
+                0x0000e028                vfprintf
+ .text          0x0000e03c       0x22 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fprintf_p.o)
+                0x0000e03c                fprintf_P
+ .text          0x0000e05e       0x28 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputs_p.o)
+                0x0000e05e                fputs_P
+ .text          0x0000e086       0x2a G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(puts_p.o)
+                0x0000e086                puts_P
+ .text          0x0000e0b0       0x72 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf_p.o)
+                0x0000e0b0                vfprintf_P
+ .text          0x0000e122        0xc G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(malloc.o)
+                0x0000e122                malloc
+                0x0000e128                free
+ .text          0x0000e12e      0x6e2 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putf.o)
+                0x0000e17e                _putf
+ .text          0x0000e810       0x26 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(write.o)
+                0x0000e810                _write
+ .text          0x0000e836       0x26 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(write_p.o)
+                0x0000e836                _write_P
+ .text          0x0000e85c       0x58 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fgetc.o)
+                0x0000e85c                fgetc
+ .text          0x0000e8b4       0x1a g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(memcpy_P.o)
+                0x0000e8b4                memcpy_P
+ .text          0x0000e8ce       0x14 g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcmp_P.o)
+                0x0000e8ce                strcmp_P
+ .text          0x0000e8e2        0xe g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcpy_P.o)
+                0x0000e8e2                strcpy_P
+ .text          0x0000e8f0       0x12 g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strlen_P.o)
+                0x0000e8f0                strlen_P
+ .text          0x0000e902       0x1a g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(memchr.o)
+                0x0000e902                memchr
+ .text          0x0000e91c       0x1a g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(memcpy.o)
+                0x0000e91c                memcpy
+ .text          0x0000e936       0x14 g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(memset.o)
+                0x0000e936                memset
+ .text          0x0000e94a       0x24 g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcasecmp.o)
+                0x0000e94a                strcasecmp
+ .text          0x0000e96e       0x16 g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcat.o)
+                0x0000e96e                strcat
+ .text          0x0000e984       0x18 g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strchr.o)
+                0x0000e984                strchr
+ .text          0x0000e99c       0x14 g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcmp.o)
+                0x0000e99c                strcmp
+ .text          0x0000e9b0        0xe g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcpy.o)
+                0x0000e9b0                strcpy
+ .text          0x0000e9be       0x2c g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strncasecmp.o)
+                0x0000e9be                strncasecmp
+ .text          0x0000e9ea       0x1c g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strncmp.o)
+                0x0000e9ea                strncmp
+ .text          0x0000ea06       0x16 g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strrchr.o)
+                0x0000ea06                strrchr
+ .text          0x0000ea1c       0x64 g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strtok_r.o)
+                0x0000ea1c                strtok_r
+                0x0000ea80                . = ALIGN (0x2)
+ *(.text.*)
+ .text.libgcc   0x0000ea80       0x3e g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_mulsi3.o)
+                0x0000ea80                __mulsi3
+ .text.libgcc   0x0000eabe       0x18 g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_udivmodqi4.o)
+                0x0000eabe                __udivmodqi4
+ .text.libgcc   0x0000ead6       0x28 g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_udivmodhi4.o)
+                0x0000ead6                __udivmodhi4
+ .text.libgcc   0x0000eafe       0x26 g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_divmodhi4.o)
+                0x0000eafe                __divmodhi4
+                0x0000eafe                _div
+ .text.libgcc   0x0000eb24       0x44 g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_udivmodsi4.o)
+                0x0000eb24                __udivmodsi4
+ .text.eeprom   0x0000eb68       0x10 g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(ee_rb.1C1D1E.o)
+                0x0000eb68                __eeprom_read_byte_1C1D1E
+ .text.eeprom   0x0000eb78        0xa g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(ee_rblk.1C1D1E.o)
+                0x0000eb78                __eeprom_read_block_1C1D1E
+ .text.eeprom   0x0000eb82       0x18 g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(ee_wb.1C1D1E.o)
+                0x0000eb82                __eeprom_write_byte_1C1D1E
+                0x0000eb9a                . = ALIGN (0x2)
+ *(.fini9)
+ *(.fini8)
+ *(.fini7)
+ *(.fini6)
+ *(.fini5)
+ *(.fini4)
+ *(.fini3)
+ *(.fini2)
+ *(.fini1)
+ *(.fini0)
+                0x0000eb9a                _etext = .
+
+.data           0x00800100      0x8b2 load address 0x0000eb9a
+                0x00800100                PROVIDE (__data_start, .)
+ *(.data)
+ .data          0x00800100      0x1ca servant.o
+                0x00800100                mac
+ .data          0x008002ca       0x1a urom.o
+                0x008002ca                romEntryList
+ .data          0x008002e4       0x8f net_io.o
+                0x008002e4                pongNo
+ .data          0x00800373        0x1 adc.o
+                0x00800373                current_ad_input
+ .data          0x00800374       0x34 cgi.o
+ .data          0x008003a8       0x88 oscgi.o
+ .data          0x00800430       0x32 temperature.o
+ .data          0x00800462       0xab child-1wire.o
+ .data          0x0080050d       0x2e ds2482.o
+ .data          0x0080053b      0x155 dallas_ds2482.o
+                0x0080053b                dallas_crc_table
+ .data          0x00800690       0x85 httpd.o
+ .data          0x00800715       0x13 websetup.o
+ .data          0x00800728       0x14 G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+                0x00800728                idle_sleep_mode
+ .data          0x0080073c        0x2 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+ .data          0x0080073e        0x2 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+ .data          0x00800740        0x6 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+ .data          0x00800746        0x6 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+ .data          0x0080074c        0xa G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+ .data          0x00800756        0x9 G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o)
+ .data          0x0080075f      0x153 G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+ .data          0x008008b2       0x23 G:/Projects/avr/trunk/nut-21/lib\libnutfs.a(uromfs.o)
+                0x008008b2                devUrom
+ .data          0x008008d5        0xc G:/Projects/avr/trunk/nut-21/lib\libnutos.a(version.o)
+ .data          0x008008e1       0x23 G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(debug1.o)
+                0x008008e1                devDebug1
+ .data          0x00800904       0x47 G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+                0x00800904                devSmsc111
+ .data          0x0080094b        0xe G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ifconfig.o)
+ .data          0x00800959       0x10 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fopen.o)
+                0x00800959                __iob
+ .data          0x00800969       0x49 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putf.o)
+ *(.gnu.linkonce.d*)
+                0x008009b2                . = ALIGN (0x2)
+                0x008009b2                _edata = .
+                0x008009b2                PROVIDE (__data_end, .)
+
+.bss            0x008009b2      0x2ec
+                0x008009b2                PROVIDE (__bss_start, .)
+ *(.bss)
+ .bss           0x008009b2        0x6 net_io.o
+                0x008009b5                send_pong_flag
+                0x008009b2                ourNodeNumber
+                0x008009b4                send_ack_flag
+                0x008009b3                send_nak_flag
+ .bss           0x008009b8        0x1 adc.o
+                0x008009b8                adc_send_mask
+ .bss           0x008009b9        0xf dports.o
+                0x008009b9                dig_send_mask
+ .bss           0x008009c8        0x1 icp.o
+ .bss           0x008009c9        0x1 freq_send.o
+                0x008009c9                freq_send_mask
+ .bss           0x008009ca        0x3 temperature.o
+                0x008009cb                nTempSensors
+                0x008009ca                temp_send_mask
+ .bss           0x008009cd        0x2 dallas_ds2482.o
+ .bss           0x008009cf        0x1 runtime_cfg.o
+                0x008009cf                onewire_2482_available
+ .bss           0x008009d0        0x3 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+                0x008009d0                tcpSocketList
+ .bss           0x008009d3        0x3 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(route.o)
+                0x008009d3                rteList
+ .bss           0x008009d6       0x10 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(inet.o)
+ .bss           0x008009e6        0x4 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+ .bss           0x008009ea        0x2 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+ .bss           0x008009ec        0xb G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+ .bss           0x008009f7        0xc G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+ .bss           0x00800a03        0x2 G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o)
+                0x00800a03                authList
+ .bss           0x00800a05        0x2 G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(cgi.o)
+                0x00800a05                cgiFunctionList
+ .bss           0x00800a07        0x2 G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+ .bss           0x00800a09        0x4 G:/Projects/avr/trunk/nut-21/lib\libnutos.a(heap.o)
+                0x00800a0b                heapFreeList
+                0x00800a09                available
+ .bss           0x00800a0d       0x12 G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                0x00800a0d                nutTimerPool
+                0x00800a0f                nutTimerList
+ .bss           0x00800a1f        0x2 G:/Projects/avr/trunk/nut-21/lib\libnutos.a(devreg.o)
+                0x00800a1f                nutDeviceList
+ .bss           0x00800a21        0x6 G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(debug1.o)
+ .bss           0x00800a27       0x26 G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+ .bss           0x00800a4d       0x25 G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+ *(COMMON)
+ COMMON         0x00800a72       0xa3 servant.o
+                0x00800a72                dallas_roms
+                0x00800b12                temperatureMeterCnt
+                0x00800b13                sendOutEvent
+ COMMON         0x00800b15        0x4 net_io.o
+                0x00800b15                multicast_addr
+ COMMON         0x00800b19       0x20 adc.o
+                0x00800b19                adc_prev
+                0x00800b29                adc_value
+ COMMON         0x00800b39       0x3c alarm.o
+                0x00800b39                al_mask
+                0x00800b40                al_byte
+                0x00800b47                warn_max
+                0x00800b4f                warn_min
+                0x00800b57                al_max
+                0x00800b5f                warn_byte
+                0x00800b66                warn_mask
+                0x00800b6d                al_min
+ COMMON         0x00800b75        0xe dports.o
+                0x00800b75                dig_prev
+                0x00800b7c                dig_value
+ COMMON         0x00800b83        0xd icp.o
+                0x00800b83                icp_start_time
+                0x00800b85                icp_stop_time
+                0x00800b87                icp_rx_q
+                0x00800b89                icp_total
+                0x00800b8d                icp_rx_tail
+                0x00800b8e                icp_period
+ COMMON         0x00800b90       0x10 freq_send.o
+                0x00800b90                freq_outs
+                0x00800b98                freq_prev
+ COMMON         0x00800ba0       0x58 temperature.o
+                0x00800ba0                gTempSensorIDs
+                0x00800be0                oldTemperature
+                0x00800bf0                serialNumber
+ COMMON         0x00800bf8        0x1 ds2482.o
+                0x00800bf8                DS2482I2cAddr
+ COMMON         0x00800bf9        0xa dallas_ds2482.o
+                0x00800bf9                dallas_crc
+                0x00800bfa                LastDiscrepancy
+                0x00800bfb                SearchSerialNum
+ COMMON         0x00800c03       0x40 G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+                0x00800c03                nutmem_onchip
+ COMMON         0x00800c43        0x2 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                0x00800c43                udpSocketList
+ COMMON         0x00800c45       0x20 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o)
+                0x00800c45                confnet
+ COMMON         0x00800c65        0x4 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                0x00800c65                tcp_in_nbq
+                0x00800c67                tcp_in_rdy
+ COMMON         0x00800c69        0x8 G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                0x00800c69                nutThreadList
+                0x00800c6b                runQueue
+                0x00800c6d                runningThread
+                0x00800c6f                killedThread
+ COMMON         0x00800c71       0x13 G:/Projects/avr/trunk/nut-21/lib\libnutos.a(confos.o)
+                0x00800c71                confos
+ COMMON         0x00800c84        0x8 G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect15.o)
+                0x00800c84                sig_OUTPUT_COMPARE0
+ COMMON         0x00800c8c        0x8 G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect06.o)
+                0x00800c8c                sig_INTERRUPT5
+ COMMON         0x00800c94        0x8 G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect33.o)
+                0x00800c94                sig_2WIRE_SERIAL
+ COMMON         0x00800c9c        0x2 G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(errno.o)
+                0x00800c9c                errno
+                0x00800c9e                PROVIDE (__bss_end, .)
+                0x0000eb9a                __data_load_start = LOADADDR (.data)
+                0x0000f44c                __data_load_end = (__data_load_start + SIZEOF (.data))
+
+.noinit         0x00800c9e        0x0
+                0x00800c9e                PROVIDE (__noinit_start, .)
+ *(.noinit*)
+                0x00800c9e                PROVIDE (__noinit_end, .)
+                0x00800c9e                _end = .
+                0x00800c9e                PROVIDE (__heap_start, .)
+
+.eeprom         0x00810000        0x0
+ *(.eeprom*)
+                0x00810000                __eeprom_end = .
+
+.stab           0x00000000      0x408
+ *(.stab)
+ .stab          0x00000000      0x408 g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+
+.stabstr        0x00000000       0x84
+ *(.stabstr)
+ .stabstr       0x00000000       0x84 g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment
+ *(.comment)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges
+ *(.debug_aranges)
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.debug_info
+ *(.debug_info)
+ *(.gnu.linkonce.wi.*)
+
+.debug_abbrev
+ *(.debug_abbrev)
+
+.debug_line
+ *(.debug_line)
+
+.debug_frame
+ *(.debug_frame)
+
+.debug_str
+ *(.debug_str)
+
+.debug_loc
+ *(.debug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo)
+OUTPUT(servant.elf elf32-avr)
+
+Cross Reference Table
+
+Symbol                                            File
+CallHandler                                       G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ihndlr.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect33.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect06.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect15.o)
+CgiInputs                                         cgi.o
+                                                  servant.o
+CgiNetwork                                        cgi.o
+                                                  servant.o
+CgiOutputs                                        cgi.o
+                                                  servant.o
+DS18X20_find_sensor                               ds18x20.o
+                                                  temperature.o
+DS18X20_get_power_status                          ds18x20.o
+DS18X20_meas_to_cel                               ds18x20.o
+DS18X20_meas_to_word                              ds18x20.o
+DS18X20_read_meas_word                            ds18x20.o
+                                                  temperature.o
+DS18X20_start_meas                                ds18x20.o
+                                                  temperature.o
+DS2482I2cAddr                                     ds2482.o
+GetThreadByName                                   G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+IsInLimits                                        G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcputil.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+LancInit                                          G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+LancOutput                                        G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+LastDiscrepancy                                   dallas_ds2482.o
+NicRxLanc                                         G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+NutAppMain                                        servant.o
+                                                  G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+NutArpAllocNetBuf                                 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+NutArpCacheQuery                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipout.o)
+NutArpCacheUpdate                                 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpin.o)
+NutArpExpire                                      G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+NutArpInput                                       G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethin.o)
+NutArpOutput                                      G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+NutCgiProcessRequest                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(cgi.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+NutDecodeBase64                                   G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dencode.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o)
+NutDecodeHex                                      G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dencode.o)
+NutDecodePath                                     G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dencode.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+NutDelay                                          G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+NutDeviceLookup                                   G:/Projects/avr/trunk/nut-21/lib\libnutos.a(devreg.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(open.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ifconfig.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+NutDhcpClient                                     G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+NutDhcpIfConfig                                   G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  servant.o
+NutDhcpRelease                                    G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+NutDnsConfig                                      G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+NutDnsConfig2                                     G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+NutDnsGetHostByName                               G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+NutDnsGetMxByDomain                               G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+NutDnsGetResource                                 G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+NutEtherInput                                     G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+NutEtherOutput                                    G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+NutEventBroadcast                                 G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ifconfig.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+NutEventBroadcastAsync                            G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+NutEventPost                                      G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+NutEventPostAsync                                 G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  servant.o
+NutEventTimeout                                   G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+NutEventWait                                      G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ifconfig.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+                                                  servant.o
+NutEventWaitNext                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+NutGetCpuClock                                    G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(debug1.o)
+NutGetMillis                                      G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcputil.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o)
+NutGetMimeType                                    G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+NutGetSeconds                                     G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+NutGetTickCount                                   G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+NutHeapAdd                                        G:/Projects/avr/trunk/nut-21/lib\libnutos.a(heap.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+NutHeapAlloc                                      G:/Projects/avr/trunk/nut-21/lib\libnutos.a(heap.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(malloc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(netbuf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutfs.a(uromfs.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(cgi.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(route.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutHeapAllocClear                                 G:/Projects/avr/trunk/nut-21/lib\libnutos.a(heap.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(netbuf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutfs.a(uromfs.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutHeapAvailable                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(heap.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  httpd.o
+NutHeapFree                                       G:/Projects/avr/trunk/nut-21/lib\libnutos.a(heap.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(malloc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(netbuf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutfs.a(uromfs.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutHttpAuthValidate                               G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+NutHttpProcessRequest                             G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                                                  httpd.o
+NutHttpSendError                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(cgi.o)
+NutHttpSendHeaderBot                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                                                  websetup.o
+                                                  oscgi.o
+                                                  cgi.o
+NutHttpSendHeaderTop                              G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                                                  websetup.o
+                                                  oscgi.o
+                                                  cgi.o
+NutIcmpInput                                      G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipin.o)
+NutIcmpOutput                                     G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpin.o)
+NutIcmpReply                                      G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpout.o)
+NutIcmpResponse                                   G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipin.o)
+NutIdle                                           G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+NutInit                                           G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+NutIpChkSum                                       G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipcsum.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o)
+NutIpChkSumPartial                                G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipcsum.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o)
+NutIpInput                                        G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethin.o)
+NutIpOutput                                       G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o)
+NutIpPseudoChkSum                                 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipcsum.o)
+NutIpPseudoChkSumPartial                          G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipcsum.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o)
+NutIpRouteAdd                                     G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(route.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ifconfig.o)
+NutIpRouteQuery                                   G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(route.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutLoadConfig                                     G:/Projects/avr/trunk/nut-21/lib\libnutos.a(confos.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+NutNetBufAlloc                                    G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(netbuf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+NutNetBufClone                                    G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(netbuf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o)
+NutNetBufFree                                     G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(netbuf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutNetIfConfig                                    G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ifconfig.o)
+NutNetIfConfig2                                   G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ifconfig.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+NutNetIfSetup                                     G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ifconfig.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+NutNetLoadConfig                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+NutNetSaveConfig                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ifconfig.o)
+NutRegisterAuth                                   G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o)
+                                                  servant.o
+NutRegisterCgi                                    G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(cgi.o)
+                                                  servant.o
+NutRegisterDevice                                 G:/Projects/avr/trunk/nut-21/lib\libnutos.a(devreg.o)
+                                                  servant.o
+NutRegisterHttpRoot                               G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+NutRegisterIrqHandler                             G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ihndlr.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+NutSaveConfig                                     G:/Projects/avr/trunk/nut-21/lib\libnutos.a(confos.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+NutSleep                                          G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+                                                  httpd.o
+                                                  util.o
+                                                  child-1wire.o
+                                                  servant.o
+NutTcpAbortSocket                                 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpin.o)
+NutTcpAccept                                      G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+                                                  httpd.o
+NutTcpCalcRtt                                     G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcputil.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+NutTcpCloseSocket                                 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+                                                  httpd.o
+NutTcpConnect                                     G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutTcpCreateSocket                                G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+                                                  httpd.o
+NutTcpDestroySocket                               G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+NutTcpDeviceIOCtl                                 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutTcpDeviceRead                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutTcpDeviceWrite                                 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutTcpDeviceWrite_P                               G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutTcpDiscardBuffers                              G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+NutTcpError                                       G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutTcpFindSocket                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+NutTcpGetSockOpt                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutTcpInitStateMachine                            G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutTcpInput                                       G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipin.o)
+NutTcpOutput                                      G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutTcpReceive                                     G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutTcpReject                                      G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+NutTcpSend                                        G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutTcpSetSockOpt                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutTcpSm                                          G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+NutTcpStateActiveOpenEvent                        G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutTcpStateCloseEvent                             G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutTcpStateMachine                                G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpin.o)
+NutTcpStatePassiveOpenEvent                       G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutTcpStateRetranTimeout                          G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+NutTcpStateWindowEvent                            G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+NutThreadAddPriQueue                              G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+NutThreadCreate                                   G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+                                                  net_io.o
+                                                  servant.o
+NutThreadDestroy                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+NutThreadExit                                     G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+NutThreadKill                                     G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+NutThreadRemoveQueue                              G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+NutThreadResumeAsync                              G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+NutThreadSetPriority                              G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+                                                  servant.o
+NutThreadSetSleepMode                             G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+                                                  servant.o
+NutThreadSwitch                                   G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+NutThreadWake                                     G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+NutThreadYield                                    G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+                                                  cgi.o
+                                                  net_io.o
+NutTimerInit                                      G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+NutTimerStart                                     G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+                                                  servant.o
+NutTimerStop                                      G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+NutTimerStopAsync                                 G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+NutUdpCreateSocket                                G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  net_io.o
+NutUdpDestroySocket                               G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+NutUdpFindSocket                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpin.o)
+NutUdpGetSockOpt                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+NutUdpInput                                       G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipin.o)
+NutUdpOutput                                      G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+NutUdpReceiveFrom                                 G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  net_io.o
+NutUdpSendTo                                      G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  net_io.o
+NutUdpSetSockOpt                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  net_io.o
+NutVersion                                        G:/Projects/avr/trunk/nut-21/lib\libnutos.a(version.o)
+NutVersionString                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(version.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                                                  servant.o
+OWSearch                                          dallas_ds2482.o
+ParseReply                                        G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+SearchSerialNum                                   dallas_ds2482.o
+Service                                           httpd.o
+                                                  servant.o
+ShowForm                                          websetup.o
+                                                  servant.o
+ShowQuery                                         oscgi.o
+                                                  servant.o
+ShowSockets                                       oscgi.o
+                                                  servant.o
+ShowTableCgi                                      cgi.o
+ShowThreads                                       oscgi.o
+                                                  servant.o
+ShowTimers                                        oscgi.o
+                                                  servant.o
+TwIOCtl                                           G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+                                                  servant.o
+TwInit                                            G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+                                                  servant.o
+TwMasterError                                     G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+                                                  ds2482.o
+                                                  child-1wire.o
+TwMasterTransact                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+                                                  ds2482.o
+                                                  child-1wire.o
+TwSlaveError                                      G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+TwSlaveListen                                     G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+TwSlaveRespond                                    G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+UDP_Recv                                          net_io.o
+__bad_interrupt                                   g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__bss_end                                         g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_clear_bss.o)
+__bss_start                                       g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_clear_bss.o)
+__data_end                                        g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__data_load_start                                 g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__data_start                                      g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__divmodhi4                                       g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_divmodhi4.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                                                  oscgi.o
+__do_clear_bss                                    g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_clear_bss.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fgetc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(write_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(write.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(malloc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(errno.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(puts_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputs_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fprintf_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(puts.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putchar.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(printf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fwrite.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputs.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fgets.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(freopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fmode.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fileno.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(filelength.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fflush.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fdopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fclose.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(read.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(open.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(ioctl.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(close.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ifconfig.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect33.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect06.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(netbuf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(debug1.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect15.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ihndlr.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(version.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(confos.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(devreg.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(heap.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutfs.a(uromfs.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dencode.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(cgi.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipcsum.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcputil.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(inet.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(route.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+                                                  websetup.o
+                                                  httpd.o
+                                                  util.o
+                                                  runtime_cfg.o
+                                                  dallas_ds2482.o
+                                                  ds2482.o
+                                                  child-1wire.o
+                                                  spi.o
+                                                  delay.o
+                                                  onewire.o
+                                                  temperature.o
+                                                  ds18x20.o
+                                                  oscgi.o
+                                                  freq_send.o
+                                                  icp.o
+                                                  cgi.o
+                                                  dports.o
+                                                  alarm.o
+                                                  adc.o
+                                                  net_io.o
+                                                  crc16.o
+                                                  crc8.o
+                                                  urom.o
+                                                  servant.o
+__do_copy_data                                    g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fgetc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(write_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(write.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(malloc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(errno.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(puts_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputs_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fprintf_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(puts.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putchar.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(printf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fwrite.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputs.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fgets.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(freopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fmode.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fileno.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(filelength.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fflush.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fdopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fclose.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(read.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(open.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(ioctl.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(close.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(icmpin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ifconfig.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethin.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect33.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect06.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(netbuf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(debug1.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect15.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ihndlr.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(version.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(confos.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(devreg.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(heap.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutfs.a(uromfs.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dencode.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(cgi.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipcsum.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcputil.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(inet.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(route.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+                                                  websetup.o
+                                                  httpd.o
+                                                  util.o
+                                                  runtime_cfg.o
+                                                  dallas_ds2482.o
+                                                  ds2482.o
+                                                  child-1wire.o
+                                                  spi.o
+                                                  delay.o
+                                                  onewire.o
+                                                  temperature.o
+                                                  ds18x20.o
+                                                  oscgi.o
+                                                  freq_send.o
+                                                  icp.o
+                                                  cgi.o
+                                                  dports.o
+                                                  alarm.o
+                                                  adc.o
+                                                  net_io.o
+                                                  crc16.o
+                                                  crc8.o
+                                                  urom.o
+                                                  servant.o
+__eeprom_read_block_1C1D1E                        g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(ee_rblk.1C1D1E.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(confos.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o)
+__eeprom_read_byte_1C1D1E                         g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(ee_rb.1C1D1E.o)
+                                                  g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(ee_rblk.1C1D1E.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(confos.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o)
+__eeprom_write_byte_1C1D1E                        g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(ee_wb.1C1D1E.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(confos.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o)
+__heap_end                                        g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__heap_start                                      G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+__init                                            g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__iob                                             G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(puts_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(puts.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putchar.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(printf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(freopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fdopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fclose.o)
+                                                  servant.o
+__mulsi3                                          g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_mulsi3.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+__stack                                           g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__udivmodhi4                                      g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_udivmodhi4.o)
+                                                  g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_divmodhi4.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fwrite.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcputil.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+                                                  icp.o
+__udivmodqi4                                      g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_udivmodqi4.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(inet.o)
+__udivmodsi4                                      g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_udivmodsi4.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(debug1.o)
+__vector_1                                        g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_10                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_11                                       icp.o
+                                                  g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_12                                       icp.o
+                                                  g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_13                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_14                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_15                                       G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect15.o)
+                                                  g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_16                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_17                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_18                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_19                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_2                                        g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_20                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_21                                       adc.o
+                                                  g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_22                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_23                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_24                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_25                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_26                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_27                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_28                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_29                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_3                                        g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_30                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_31                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_32                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_33                                       G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect33.o)
+                                                  g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_34                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_4                                        g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_5                                        g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_6                                        G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect06.o)
+                                                  g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_7                                        g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_8                                        g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_9                                        g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vector_default                                  g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+__vectors                                         g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+_close                                            G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(close.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fclose.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+_div                                              g:/Bin/WinAVR/lib/gcc/avr/3.4.6/avr5\libgcc.a(_divmodhi4.o)
+_fdopen                                           G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fdopen.o)
+                                                  httpd.o
+_filelength                                       G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(filelength.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+_fileno                                           G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fileno.o)
+                                                  servant.o
+_fmode                                            G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fmode.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(freopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fdopen.o)
+_ioctl                                            G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(ioctl.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ifconfig.o)
+                                                  servant.o
+_open                                             G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(open.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(freopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+_putf                                             G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf.o)
+_read                                             G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(read.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fgetc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+_write                                            G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(write.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fwrite.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputs.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fflush.o)
+_write_P                                          G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(write_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputs_p.o)
+adc_init                                          adc.o
+                                                  servant.o
+adc_prev                                          adc.o
+adc_send_mask                                     adc.o
+adc_start                                         adc.o
+                                                  servant.o
+adc_stop                                          adc.o
+adc_value                                         cgi.o
+                                                  adc.o
+al_byte                                           alarm.o
+                                                  net_io.o
+al_mask                                           alarm.o
+                                                  net_io.o
+al_max                                            alarm.o
+                                                  net_io.o
+al_min                                            alarm.o
+                                                  net_io.o
+authList                                          G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o)
+available                                         G:/Projects/avr/trunk/nut-21/lib\libnutos.a(heap.o)
+cgiFunctionList                                   G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(cgi.o)
+ch1w_read_temperature                             child-1wire.o
+                                                  servant.o
+ch1w_reset                                        child-1wire.o
+check_digital_inputs                              dports.o
+child_1wire_init                                  child-1wire.o
+                                                  servant.o
+confnet                                           G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ifconfig.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o)
+                                                  cgi.o
+                                                  servant.o
+confos                                            G:/Projects/avr/trunk/nut-21/lib\libnutos.a(confos.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+crc16_calc                                        crc16.o
+                                                  net_io.o
+crc8                                              crc8.o
+                                                  ds18x20.o
+current_ad_input                                  adc.o
+dallasAddressCheck                                dallas_ds2482.o
+dallasCRC                                         dallas_ds2482.o
+dallasCommand                                     ds18x20.o
+dallasFindDevices                                 dallas_ds2482.o
+dallasFindNextDevice                              dallas_ds2482.o
+dallasInit                                        dallas_ds2482.o
+dallasMatchROM                                    dallas_ds2482.o
+dallasPrintError                                  dallas_ds2482.o
+dallasPrintROM                                    dallas_ds2482.o
+dallasReadBit                                     dallas_ds2482.o
+dallasReadByte                                    dallas_ds2482.o
+                                                  onewire.o
+dallasReadRAM                                     dallas_ds2482.o
+dallasReadROM                                     dallas_ds2482.o
+dallasReset                                       dallas_ds2482.o
+                                                  ds18x20.o
+                                                  servant.o
+dallasWaitUntilDone                               dallas_ds2482.o
+dallasWriteBit                                    dallas_ds2482.o
+dallasWriteByte                                   dallas_ds2482.o
+                                                  ds18x20.o
+dallasWriteRAM                                    dallas_ds2482.o
+dallas_crc                                        dallas_ds2482.o
+dallas_crc_table                                  dallas_ds2482.o
+dallas_roms                                       servant.o
+delay_esec                                        util.o
+delay_halfsec                                     util.o
+delay_qsec                                        util.o
+delay_sec                                         util.o
+delay_thsec                                       util.o
+delayloop32                                       delay.o
+devDebug1                                         G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(debug1.o)
+                                                  servant.o
+devSmsc111                                        G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+                                                  servant.o
+devUrom                                           G:/Projects/avr/trunk/nut-21/lib\libnutfs.a(uromfs.o)
+                                                  servant.o
+dig_prev                                          dports.o
+dig_send_mask                                     dports.o
+dig_value                                         cgi.o
+                                                  dports.o
+disable_icp                                       icp.o
+ds2482BusLevel                                    ds2482.o
+                                                  dallas_ds2482.o
+ds2482BusReadByte                                 ds2482.o
+                                                  dallas_ds2482.o
+ds2482BusReset                                    ds2482.o
+                                                  dallas_ds2482.o
+ds2482BusTransferBit                              ds2482.o
+                                                  dallas_ds2482.o
+ds2482BusTriplet                                  ds2482.o
+ds2482BusWriteByte                                ds2482.o
+                                                  dallas_ds2482.o
+ds2482BusyWait                                    ds2482.o
+                                                  dallas_ds2482.o
+                                                  servant.o
+ds2482Init                                        ds2482.o
+                                                  servant.o
+ds2482ReadConfig                                  ds2482.o
+                                                  servant.o
+ds2482Reset                                       ds2482.o
+ds2482SendCmd                                     ds2482.o
+ds2482SendCmdArg                                  ds2482.o
+                                                  dallas_ds2482.o
+                                                  servant.o
+errno                                             G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(errno.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(freopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fmode.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(filelength.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fdopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fclose.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(open.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutfs.a(uromfs.o)
+fail_led                                          util.o
+                                                  servant.o
+fclose                                            G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fclose.o)
+                                                  httpd.o
+fflush                                            G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fflush.o)
+                                                  websetup.o
+                                                  oscgi.o
+                                                  cgi.o
+fgetc                                             G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fgetc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fgets.o)
+fgets                                             G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fgets.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+file1data                                         urom.o
+file1name                                         urom.o
+file2data                                         urom.o
+file2name                                         urom.o
+file3data                                         urom.o
+file3name                                         urom.o
+flash_led_once                                    util.o
+                                                  servant.o
+fopen                                             G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fopen.o)
+fprintf_P                                         G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fprintf_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                                                  websetup.o
+                                                  oscgi.o
+                                                  cgi.o
+fputc                                             G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(puts_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(puts.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putchar.o)
+                                                  cgi.o
+fputs                                             G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputs.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(puts.o)
+                                                  oscgi.o
+                                                  cgi.o
+fputs_P                                           G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputs_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(puts_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                                                  websetup.o
+                                                  oscgi.o
+                                                  cgi.o
+free                                              G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(malloc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(freopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fclose.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  net_io.o
+freopen                                           G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(freopen.o)
+                                                  servant.o
+freq_outs                                         freq_send.o
+                                                  cgi.o
+freq_prev                                         freq_send.o
+freq_send_mask                                    freq_send.o
+fwrite                                            G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fwrite.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+gTempSensorIDs                                    temperature.o
+                                                  servant.o
+get_dig_out                                       dports.o
+                                                  cgi.o
+heapFreeList                                      G:/Projects/avr/trunk/nut-21/lib\libnutos.a(heap.o)
+icp_get_duty                                      icp.o
+                                                  freq_send.o
+icp_get_freq                                      icp.o
+                                                  freq_send.o
+icp_init                                          icp.o
+                                                  servant.o
+icp_period                                        icp.o
+icp_rx_q                                          icp.o
+icp_rx_tail                                       icp.o
+icp_start_time                                    icp.o
+icp_stop_time                                     icp.o
+icp_total                                         icp.o
+idle_sleep_mode                                   G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+inet_addr                                         G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(inet.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ifconfig.o)
+                                                  net_io.o
+                                                  servant.o
+inet_ntoa                                         G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(inet.o)
+                                                  oscgi.o
+                                                  cgi.o
+                                                  servant.o
+init_alarm                                        alarm.o
+init_devices                                      servant.o
+init_temperature                                  temperature.o
+                                                  servant.o
+init_udp_net_io                                   net_io.o
+                                                  servant.o
+killedThread                                      G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+led_ddr_init                                      util.o
+                                                  dports.o
+                                                  servant.o
+mac                                               servant.o
+                                                  cgi.o
+main                                              g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5/crtm128.o
+main_loop                                         servant.o
+malloc                                            G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(malloc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(freopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fdopen.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  net_io.o
+memchr                                            g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(memchr.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putf.o)
+memcpy                                            g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(memcpy.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(netbuf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(dhcpc.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+                                                  net_io.o
+memcpy_P                                          g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(memcpy_P.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutfs.a(uromfs.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+memset                                            g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(memset.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ethout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(heap.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipout.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o)
+multicast_addr                                    net_io.o
+nTempSensors                                      temperature.o
+net_request_pong                                  net_io.o
+                                                  servant.o
+nutDeviceList                                     G:/Projects/avr/trunk/nut-21/lib\libnutos.a(devreg.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(arpcache.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(ipout.o)
+nutThreadList                                     G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                                                  oscgi.o
+nutTimerList                                      G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  oscgi.o
+nutTimerPool                                      G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+nutmem_onchip                                     G:/Projects/avr/trunk/nut-21/lib/nutinit.o
+oldTemperature                                    temperature.o
+                                                  cgi.o
+onewire_2482_available                            runtime_cfg.o
+                                                  onewire.o
+                                                  ds18x20.o
+                                                  servant.o
+ourNodeNumber                                     net_io.o
+owTriplet                                         dallas_ds2482.o
+ow_bit_io                                         onewire.o
+                                                  ds18x20.o
+ow_byte_rd                                        onewire.o
+                                                  ds18x20.o
+ow_byte_wr                                        onewire.o
+ow_command                                        onewire.o
+                                                  ds18x20.o
+ow_input_pin_state                                onewire.o
+                                                  ds18x20.o
+ow_parasite_disable                               onewire.o
+ow_parasite_enable                                onewire.o
+                                                  ds18x20.o
+ow_reset                                          onewire.o
+                                                  ds18x20.o
+ow_rom_search                                     onewire.o
+                                                  ds18x20.o
+pongNo                                            net_io.o
+port_init                                         dports.o
+                                                  servant.o
+printf                                            G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(printf.o)
+                                                  httpd.o
+                                                  dallas_ds2482.o
+                                                  ds2482.o
+                                                  child-1wire.o
+                                                  temperature.o
+                                                  net_io.o
+                                                  servant.o
+process_broadcast_rx_packet                       net_io.o
+process_rx_data                                   net_io.o
+process_rx_packet                                 net_io.o
+putchar                                           G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putchar.o)
+                                                  dallas_ds2482.o
+                                                  net_io.o
+                                                  servant.o
+puts                                              G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(puts.o)
+                                                  dallas_ds2482.o
+                                                  child-1wire.o
+                                                  servant.o
+puts_P                                            G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(puts_p.o)
+                                                  dallas_ds2482.o
+                                                  temperature.o
+read_temperature_data                             temperature.o
+request_adc_data_send                             adc.o
+                                                  net_io.o
+request_dig_data_send                             dports.o
+                                                  net_io.o
+request_freq_data_send                            freq_send.o
+                                                  net_io.o
+request_temp_data_send                            temperature.o
+                                                  net_io.o
+romEntryList                                      urom.o
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutfs.a(uromfs.o)
+rteList                                           G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(route.o)
+runQueue                                          G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+runningThread                                     G:/Projects/avr/trunk/nut-21/lib\libnutos.a(event.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+search_sensors                                    temperature.o
+sendOutEvent                                      servant.o
+send_ack_flag                                     net_io.o
+send_changed_adc_data                             adc.o
+                                                  servant.o
+send_changed_dig_data                             dports.o
+                                                  servant.o
+send_changed_freq_data                            freq_send.o
+                                                  servant.o
+send_changed_temperature_data                     temperature.o
+                                                  servant.o
+send_long_packet                                  net_io.o
+send_nak_flag                                     net_io.o
+send_pack                                         net_io.o
+                                                  temperature.o
+                                                  freq_send.o
+                                                  dports.o
+                                                  adc.o
+send_pong_flag                                    net_io.o
+send_protocol_replies                             net_io.o
+                                                  servant.o
+serialNumber                                      temperature.o
+                                                  net_io.o
+                                                  servant.o
+set_ddr                                           dports.o
+                                                  net_io.o
+set_dig                                           dports.o
+                                                  net_io.o
+sig_2WIRE_SERIAL                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect33.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(twif.o)
+sig_INTERRUPT5                                    G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect06.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(lanc111.o)
+sig_OUTPUT_COMPARE0                               G:/Projects/avr/trunk/nut-21/lib\libnutdev.a(ivect15.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(timer.o)
+strcasecmp                                        g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcasecmp.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(cgi.o)
+strcat                                            g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcat.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+strchr                                            g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strchr.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+strcmp                                            g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcmp.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(devreg.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(confnet.o)
+strcmp_P                                          g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcmp_P.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutfs.a(uromfs.o)
+strcpy                                            g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcpy.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(resolv.o)
+strcpy_P                                          g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strcpy_P.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putf.o)
+strlen_P                                          g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strlen_P.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(putf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fputs_p.o)
+strncasecmp                                       g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strncasecmp.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+strncmp                                           g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strncmp.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o)
+strrchr                                           g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strrchr.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(httpd.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutpro.a(auth.o)
+strtok_r                                          g:/Bin/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr5\libc.a(strtok_r.o)
+                                                  websetup.o
+tcpSocketList                                     G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsock.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+                                                  oscgi.o
+tcp_in_nbq                                        G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+tcp_in_rdy                                        G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(tcpsm.o)
+temp_meter_sec_timer                              temperature.o
+                                                  servant.o
+temp_send_mask                                    temperature.o
+temperatureMeterCnt                               servant.o
+thread_start                                      G:/Projects/avr/trunk/nut-21/lib\libnutos.a(thread.o)
+triggerSendOut                                    servant.o
+                                                  adc.o
+udpSocketList                                     G:/Projects/avr/trunk/nut-21/lib\libnutnet.a(udpsock.o)
+                                                  oscgi.o
+vfprintf                                          G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(printf.o)
+vfprintf_P                                        G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(vfprintf_p.o)
+                                                  G:/Projects/avr/trunk/nut-21/lib\libnutcrt.a(fprintf_p.o)
+warn_byte                                         alarm.o
+                                                  net_io.o
+warn_mask                                         alarm.o
+                                                  net_io.o
+warn_max                                          alarm.o
+                                                  net_io.o
+warn_min                                          alarm.o
+                                                  net_io.o
