@@ -1,0 +1,2 @@
+Dummy file.
+This file has no intention, except that a CVS checkout will create the directory.

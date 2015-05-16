@@ -1,0 +1,78 @@
+#
+# Copyright (C) 2001-2006 by egnite Software GmbH
+# Copyright (C) 2009 by egnite GmbH
+#
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. Neither the name of the copyright holders nor the names of
+#    contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+# OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+# AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+# THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+#
+# For additional information see http://www.ethernut.de/
+#
+# $Id: Makedefs.avrext-icc 2599 2009-04-15 13:09:02Z haraldkipp $
+#
+
+include $(top_srcdir)/Makedefs.avrext-icc
+
+TARG      = $(PROJ).hex
+ITARG     = $(PROJ).bin
+
+ELFCOF    = elfcoff
+BIN       = $(TRGT)objcopy
+
+BINDIR    = $(top_srcdir)/bin/$(MCU)
+
+# -v      Verbose mode. Prints out each compiler pass as it is being executed.
+# -m      Generates a map file.
+# -g      Generates debug information. The debug file has the .DBG extension.
+# -L<dir> Specifies the library directory. Multiple directories may be 
+#         specified and they are searched in the reverse order 
+#         (i.e., last directory specified is searched first).
+# -u<crt> Use <crt> as the startup file. If the file is just a name without 
+#         path information, then it must be located in the library directory.
+# -dram_end:<address> Defines the end of the internal RAM area. This is used 
+#         by the Startup File to initialize the value of the hardware stack. 
+#         For the classic non-Mega devices, ram_end is the size of the SRAM 
+#         plus 96 bytes of IO and CPU registers minus one. For the Mega devices, 
+#         it is the size of the SRAM minus one. External SRAM does not affect 
+#         this value, since the hardware stack is always allocated in the 
+#         internal RAM for faster execution speed.
+# -bdata:<address ranges> Assigns the address ranges for the area or section 
+#         named data, which is the data memory on the AVR.
+# -bfunc_lit:<address ranges> Assigns the address ranges for the area named 
+#         func_lit. The format is <start address>[.<end address>], where 
+#         addresses are byte addresses. Any memory not used by this area will 
+#         be consumed by areas that follow it, so this effectively declares 
+#         the size of the FLASH memory.
+# -dhwstk_size:<size> Defines the size of the hardware stack. The hardware is 
+#         allocated at the top of SRAM, and then the software stack follows it.
+# -beeprom:<address ranges> Assigns the address ranges for the EEPROM. EEPROM 
+#         data is written to <output file>.eep as an Intel HEX file regardless 
+#         of the output file format. 
+# -fihx_coff Output format is both COFF and Intel HEX.
+# -S2     Generates COFF format compatible with AVR Studio 4.06+.
+
+LDFLAGS   = -L$(LIBDIR) -v -m -g -dFRAM:1 -xcall -u$(CRTNAME).o -dram_end:0x21ff -bdata:0x2200.0x7fff -bfunc_lit:0xcc.0x40000 -bappcode:0x20000.0x3FFFF -dhwstk_size:48 -beeprom:0.4096 -fihx_coff $(LIBS) -lcatm256 -S2

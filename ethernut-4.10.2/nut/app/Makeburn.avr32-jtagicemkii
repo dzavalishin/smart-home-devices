@@ -1,0 +1,3 @@
+# Atmel JTAGICE mk-II Programmer
+BURN=avr32program
+BURNFLAGS=program -finternal@0x80000000 -e -v -R -r $(DTARG)

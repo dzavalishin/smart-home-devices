@@ -1,0 +1,2 @@
+Nut/OS Atmel AVR at90can128 libraries, compiled with gcc,
+will be copied to this directory during 'make install'.

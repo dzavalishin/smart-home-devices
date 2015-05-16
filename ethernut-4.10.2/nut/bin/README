@@ -1,0 +1,6 @@
+When executing 'make install' in any application directory, then
+the resulting binaries are copied to here. In fact, two binaries
+are created for each application. One with the extension .hex
+contains Intel Hex Code and can be used by most programmers. The
+other one with the extension .bin contains a binary image to be
+used for tftp upload as well as SAM-BA and SAM-PROG.

@@ -1,0 +1,492 @@
+#! /bin/sh
+
+if [ "x`uname`" != "xLinux"  ]; then
+if [ "x`uname`" != "xDarwin" ]; then
+if [ "x`uname -o`" != "xCygwin"  ]; then
+  echo "This is not a Linux, Cygwin or Mac OS X system."
+  echo "I'm so confused!"
+  exit 1
+fi
+fi
+fi
+
+# Ask user which device to target
+unset HWDEF
+unset DEV
+
+while [ "x$DEV" = "x" ]
+do
+	echo "Select a target device:"
+	echo ""
+	echo "  1) Atmel ATmega128"
+	echo "  2) Atmel ATmega103"
+	echo "  3) Atmel AT90CAN128"
+	echo "  4) Renesas H8/3068F"
+	echo "  5) UNIX Emulation"
+#	echo "  6) Renesas H8/3069F" # just an example
+#	echo "  7) Renesas H8S/2676F" # just an example
+#	echo "  8) OKI ML67Q5003" # just an example
+	echo "  a) Atmel AT91R40008"
+	echo "  b) Atmel AT91SAM7X(C)256"
+	echo "  c) Atmel AT91SAM9260"
+	echo ""
+	echo -n "Selection -> "
+	read answ
+
+	case "$answ" in
+	1) DEV=atmega128; ARCH=avr; CPU=m128 ;;
+	2) DEV=atmega103; ARCH=avr; CPU=m103 ;;
+	3) DEV=at90can128; ARCH=avr; CPU=c128; HWDEF="-DMCU_AT90CAN128 -DNUTMEM_STACKHEAP=4096" ;;
+	4) DEV=H8/3068F; ARCH=h8300h ;;
+	5) DEV=mac; ARCH=unix ;;
+#	6) DEV=H8/3069F; ARCH=h8300h ;; # just an example
+#	7) DEV=H8S/2676F; ARCH=h8300s ;; # just an example
+#	8) DEV=ML67Q5003; ARCH=arm ;; # just an example
+        a) DEV=AT91R40008; ARCH=arm; CPU=arm7tdmi ;;
+	b) DEV=AT91SAM7X256; ARCH=arm; CPU=arm7tdmi ;;
+	c) DEV=AT91SAM9260; ARCH=arm; CPU=arm9 ;;
+	*)
+		echo "invalid choice" ;;
+	esac
+done
+
+# Set up environment for AVR microcontrollers
+
+if [ "$ARCH" = "avr" ]; then
+
+    # Verify that avr-gcc is in the users PATH
+
+    if ! avr-gcc --version >/dev/null 2>&1
+    then
+	    echo "Can't find avr-gcc. :-("
+	    echo ""
+	    echo "This could mean either of the following:"
+	    echo "  1: You don't have avr-gcc installed."
+	    echo "  2: You don't have your PATH environment variable set right."
+	    echo "Here is your PATH variable:"
+	    echo ""
+	    echo $PATH
+	    echo ""
+	    exit 1
+    fi
+
+    # Make links to included make fragments
+
+    ln -s -f Makedefs.avr-gcc Makedefs
+    ln -s -f Makerules.avr-gcc Makerules
+
+    ln -s -f Makedefs.avr-gcc app/Makedefs
+    ln -s -f Makerules.avr-gcc app/Makerules
+
+    # Ask which target board is being used
+
+    unset PLATFORM
+    while [ "x$PLATFORM" = "x" ]
+    do 
+        echo "Do you use a standard Ethernut board?"
+        echo ""
+        echo "  0) No standard"
+        echo "  1) Ethernut 1 (10 Mbit Realtek RTL8019AS)"
+        echo "  2) Ethernut 2 (10/100 Mbit SMSC LAN91C111)"
+        echo ""
+        echo -n "Selection -> "
+        read answ
+        
+        case "$answ" in
+        0) ;;
+        1) PLATFORM=ETHERNUT1 ;;
+        2) PLATFORM=ETHERNUT2 ;;
+	    *)
+		    echo "invalid choice" ;;
+        esac
+    done
+
+    # Ask which crystal is being used
+
+    unset CRYSTAL
+    while [ "x$CLOCKSEL" = "x" ]
+    do 
+        echo "Do you want to set a fixed cpu clock?"
+        echo ""
+        echo "  1) don't set clock"
+        echo "  2)  7.3728 Mhz"
+        echo "  3)  8.0000 Mhz"
+        echo "  4) 12.0000 Mhz"
+        echo "  5) 14.7456 Mhz"
+        echo "  6) 16.0000 Mhz"
+        echo ""
+        echo -n "Selection -> "
+        read answ
+        
+        case "$answ" in
+        1) CLOCKSEL=1 ;;
+        2) CLOCKSEL=2 ; CLOCK=-DNUT_CPU_FREQ=7372800 ;;
+        3) CLOCKSEL=3 ; CLOCK=-DNUT_CPU_FREQ=8000000 ;;
+        4) CLOCKSEL=4 ; CLOCK=-DNUT_CPU_FREQ=12000000 ;;
+        5) CLOCKSEL=5 ; CLOCK=-DNUT_CPU_FREQ=14745600 ;;
+        6) CLOCKSEL=6 ; CLOCK=-DNUT_CPU_FREQ=16000000 ;;
+	    *)
+		    echo "invalid choice" ;;
+        esac
+    done
+
+    # Ask which isp programmer is being used
+
+    unset UISP_PROG
+    while [ "x$UISP_PROG" = "x" ]
+    do
+	    echo "Which isp programmer are you using?"
+	    echo ""
+	    echo "  1) stk200, stk300 or compatible"
+	    echo "  2) skt500"
+	    echo ""
+	    echo -n "Selection -> "
+	    read answ
+
+	    case "$answ" in
+	    1) UISP_PROG=stk200 ;;
+	    2) UISP_PROG=stk500 ;;
+	    *)
+		    echo "invalid choice" ;;
+	    esac
+    done
+
+    unset PROGRAMMER
+    while [ "x$PROGRAMMER" = "x" ]
+    do
+        echo "Which programming software are you using?"
+        echo ""
+        echo "  1) uisp"
+        echo "  2) avrdude"
+        echo "  9) mine is not listed here"
+        echo ""
+        echo -n "Selection -> "
+        read answ
+        
+        case "$answ" in
+        1) PROGRAMMER=usip ; BURNFLAGS="-dprog=$UISP_PROG --erase --upload --verify if=\$(TARG)" ;;
+        2) PROGRAMMER=avrdude ; BURNFLAGS="-p $CPU -c $UISP_PROG -U flash:w:\$(TARG) -E noreset" ;;
+        9) PROGRAMMER="echo" ; BURNFLAGS="See UserConf.mk" ;;
+        *)
+            echo "invalid choice" ;;
+        esac
+    done
+
+    # Generate the config file
+
+    cat <<EOF > UserConf.mk
+PLATFORM=$PLATFORM
+MCU=$DEV
+ARCH=$ARCH
+HWDEF=-D__HARVARD_ARCH__ $CLOCK -D\$(PLATFORM) $HWDEF
+BURN=$PROGRAMMER
+BURNFLAGS=$BURNFLAGS
+CRUROM=crurom
+EOF
+
+    echo "Your system is now configured to build for $DEV."
+    echo "Change to subdirectory lib and type \`make clean\` "
+    echo "and \`make install\` to build the system."
+
+    exit 0
+
+fi
+
+# Set up environment for H8/300H and H8S  microcontrollers
+
+if [ "$ARCH" = "h8300h" -o "$ARCH" = "h8300s" ]; then
+
+    # Verify if h8300-elf-gcc is in the users PATH
+
+    if ! h8300-elf-gcc --version >/dev/null 2>&1
+    then
+	    echo "Can't find H8 gcc. :-("
+	    echo ""
+	    echo "This could mean either of the following:"
+	    echo "  1: You don't have H8 gcc installed. Go to http://www.kpitgnutools.com"
+	    echo "  2: You don't have your PATH environment variable set right."
+	    echo "Here is your PATH variable:"
+	    echo ""
+	    echo $PATH
+    	    echo ""
+	    exit 1
+    fi
+
+    # Set up device dependant compiler flags
+
+    if [ "$ARCH" = "h8300h" ]; then
+	# flags for H8/300H micros
+	MCUOPTS="-mh -mint32"
+    else
+	# flags for H8S micros
+	MCUOPTS="-ms -mint32"
+    fi
+
+    # Setup paths to libc and libgcc for linker
+
+    GCCVER=`h8300-elf-gcc --version|grep h8300-elf-gcc|cut -d ' ' -f 3`
+    GCCDIR=`dirname \`which h8300-elf-gcc\``
+    LIBGCCDIR="lib/gcc-lib/h8300-elf/$GCCVER/$ARCH/int32"
+    LIBCDIR="h8300-elf/lib/$ARCH/int32"
+    LDDIRS="-L $GCCDIR/../$LIBGCCDIR -L $GCCDIR/../$LIBCDIR"
+
+    # Select whether code is to be executed from ROM or RAM
+
+    CODEMEM="rom"
+    unset RUNFLAG
+    echo "Ethernut code can be run from RAM. This is useful when you are"
+    echo "debugging your application. Remember that your hardware must"
+    echo "have enough RAM to store data and program code."
+    echo ""
+    echo -n "Should Ethernut be executed from RAM (default=No)? Y(es)/N(o) "
+    read answ
+
+    if [ "$answ" = "y" -o "$answ" = "Y" ]; then
+	RUNFLAG="-DTEXT_IN_RAM"
+	CODEMEM="ram"
+    fi
+    echo ""
+
+    # Choose appropriate linker script
+
+    case "$DEV" in
+	# H8/300H micros
+	H8/3068F) LDSCRIPT=nut-h8-3068f-$CODEMEM.ld ;;
+	H8/3069F) LDSCRIPT=nut-h8-3069f-$CODEMEM.ld ;; # just an example
+
+	# H8S micros
+	H8S/2676F) LDSCRIPT=nut-h8s-2676f-$CODEMEM.ld ;; # just an example
+    esac
+
+    # Make links to included make fragments
+
+    ln -s -f Makedefs.h8-gcc Makedefs
+    ln -s -f Makerules.h8-gcc Makerules
+
+    ln -s -f Makedefs.h8-gcc app/Makedefs
+    ln -s -f Makerules.h8-gcc app/Makerules
+
+    # Generate config file
+    cat <<EOF > UserConf.mk
+DEVICE=$DEV # for future use
+MCU=$ARCH
+ARCH=$ARCH
+MCUOPTS=$MCUOPTS
+RUNFLAG=$RUNFLAG
+LDSCRIPT=\$(top_srcdir)/arch/$ARCH/ldscripts/$LDSCRIPT
+LDDIRS=$LDDIRS
+BURN=h8write
+BURNFLAGS=-3068 \$(TARG)
+CRUROM = \$(top_srcdir)/tools/crurom/crurom
+EOF
+
+    echo "Your system is now configured to build for $DEV."
+    echo "Type \`make\` to build the system."
+
+    exit 0
+fi
+
+# Set up environment for ARM  microcontrollers ======================================================
+
+if [ "$ARCH" = "arm" ]; then
+
+    # Verify if arm-elf-gcc is in the users PATH
+
+    if ! arm-elf-gcc --version >/dev/null 2>&1
+    then
+	    echo "Can't find ARM gcc. :-("
+	    echo ""
+	    echo "This could mean either of the following:"
+	    echo "  1: You don't have ARM GCC installed."
+	    echo "  2: You don't have your PATH environment variable set right."
+	    echo "Here is your PATH variable:"
+	    echo ""
+	    echo $PATH
+    	    echo ""
+	    exit 1
+    fi
+
+    # Set up device dependant compiler flags
+
+#    if [ "$ARCH" = "h8300h" ]; then
+#	# flags for H8/300H micros
+#	MCUOPTS="-mh -mint32"
+#    else
+#	# flags for H8S micros
+#	MCUOPTS="-ms -mint32"
+#    fi
+    MCUOPTS="-mcpu=$CPU"
+
+    # Setup paths to libc and libgcc for linker
+
+#    GCCVER=`arm-elf-gcc --version|grep arm-elf-gcc|cut -d ' ' -f 3`
+#    GCCDIR=`dirname \`which arm-elf-gcc\``
+#    LIBGCCDIR="lib/gcc-lib/arm-elf/$GCCVER/$ARCH"
+#    LIBCDIR="arm-elf/lib/$ARCH"
+#    LDDIRS="-L $GCCDIR/../$LIBGCCDIR -L $GCCDIR/../$LIBCDIR"
+
+    # Ask which target board is being used
+
+    unset PLATFORM
+    while [ "x$PLATFORM" = "x" ]
+    do 
+        echo "Do you use a standard board?"
+        echo ""
+        echo "  0) No standard"
+	if [ "$DEV" = "AT91R40008" ]; then
+            echo "  1) Ethernut 3"
+	fi
+	if [ "$DEV" = "AT91SAM7X256" ]; then
+            echo "  2) Atmel AT91SAM7X Evaluation Kit"
+	fi
+	if [ "$DEV" = "AT91SAM9260" ]; then
+	    echo "  3) Atmel AT91SAM9260 Evaluation Kit"
+	fi
+        echo ""
+        echo -n "Selection -> "
+        read answ
+
+        case "$answ" in
+        0) ;;
+        1) PLATFORM=ETHERNUT3 ;;
+        2) PLATFORM=AT91SAM7X_EK ;;
+        3) PLATFORM=AT91SAM9260_EK ;;
+	*)
+	    echo "invalid choice" ;;
+        esac
+    done
+
+    # Select linker script
+
+    if [ "$DEV" = "AT91SAM7X256" ]; then
+        LDNAME="at91sam7x256_rom"
+    else
+        echo "Nut/OS can be run from RAM. This is useful when you are"
+        echo "using a TFTP bootloader or debugging your application."
+        echo "Remember that your hardware must have enough RAM"
+        echo "to store data and program code."
+        echo ""
+        echo -n "Should Nut/OS be executed from RAM (default=Yes)? Y(es)/N(o) "
+        read answ
+
+        if [ "$answ" = "n" -o "$answ" = "N" ]; then
+            if [ "$DEV" = "AT91SAM9260" ]; then
+                LDNAME="at91sam9260_ram"
+            else
+                LDNAME="at91_boot"
+            fi
+        else
+            if [ "$DEV" = "AT91SAM9260" ]; then
+                LDNAME="at91sam9260_ram"
+            else
+                LDNAME="at91_ram"
+            fi
+        fi
+    fi
+    echo ""
+
+    # Make links to included make fragments
+
+    ln -s -f Makedefs.arm-gcc Makedefs
+    ln -s -f Makerules.arm-gcc Makerules
+
+    ln -s -f Makedefs.arm-gcc app/Makedefs
+    ln -s -f Makerules.arm-gcc app/Makerules
+
+    # Generate config file
+    cat <<EOF > UserConf.mk
+PLATFORM=$PLATFORM
+HWDEF+=-D\$(PLATFORM)
+DEVICE=$DEV
+MCU=$CPU
+ARCH=$ARCH
+MCUOPTS=$MCUOPTS
+RUNFLAG=$RUNFLAG
+LDNAME=$LDNAME
+LDSCRIPT=\$(top_srcdir)/arch/arm/ldscripts/\$(LDNAME).ld
+#LDDIRS=$LDDIRS
+#BURN=jtagomat
+#BURNFLAGS=\$(TARG)
+CRUROM=crurom
+EOF
+
+    echo "Your system is now configured to build for $DEV."
+    echo "Change to subdirectory lib and type \`make clean\` "
+    echo "and \`make install\` to build the system."
+
+    exit 0
+fi
+
+
+if [ "$ARCH" = "unix" ]; then
+
+    # Verify that gcc is in the users PATH
+
+    if ! gcc --version >/dev/null 2>&1
+    then
+	    echo "Can't find gcc. :-("
+	    echo ""
+	    echo "This could mean either of the following:"
+	    echo "  1: You don't have gcc installed."
+	    echo "  2: You don't have your PATH environment variable set right."
+	    echo "Here is your PATH variable:"
+	    echo ""
+	    echo $PATH
+	    echo ""
+	    exit 1
+    fi
+
+    # Make links to included make fragments
+
+    ln -s -f Makedefs.unix-gcc Makedefs
+    ln -s -f Makerules.unix-gcc Makerules
+
+    ln -s -f Makedefs.unix-gcc app/Makedefs
+    ln -s -f Makerules.unix-gcc app/Makerules
+
+    # Generate the config file
+
+    cat <<EOF > UserConf.mk
+CRUROM = \$(top_srcdir)/tools/crurom/crurom
+ARCH=$ARCH
+MCU=$ARCH
+EOF
+
+    # Get system include paths for stdio.h, errno.h, sys/types.h, fcntl.h
+    echo "#include <stdio.h>"       > include_test.c
+    echo "#include <fcntl.h>"      >> include_test.c
+    echo "#include <errno.h>"      >> include_test.c
+    echo "#include <unistd.h>"     >> include_test.c
+    echo "#include <netdb.h>"      >> include_test.c
+    echo "#include <netinet/in.h>" >> include_test.c
+    echo "#include <sys/types.h>"  >> include_test.c
+    echo "#include <sys/socket.h>" >> include_test.c
+    gcc -E include_test.c | grep stdio | head -1 | \
+         sed 's/#....\(\/.*\/stdio.h\).*/#include "\1"/'  > include/stdio_orig.h
+    gcc -E include_test.c | grep unistd | head -1 | \
+         sed 's/#....\(\/.*\/unistd.h\).*/#include "\1"/' > include/unistd_orig.h
+    gcc -E include_test.c | grep fcntl | head -1 | \
+         sed 's/#....\(\/.*\/fcntl.h\).*/#include "\1"/'  > include/fcntl_orig.h
+    gcc -E include_test.c | grep errno | head -1 | \
+         sed 's/#....\(\/.*\/errno.h\).*/#include "\1"/'  > include/errno_orig.h
+    gcc -E include_test.c | grep "sys/types.h" | head -1 | \
+         sed 's/#....\(\/.*\/sys\/types.h\).*/#include "\1"/' > include/sys/types_orig.h
+    gcc -E include_test.c | grep "sys/socket" | head -1 | \
+         sed 's/#....\(\/.*\/sys\/socket.h\).*/#include "\1"/'  > include/sys/socket_orig.h
+    gcc -E include_test.c | grep netdb | head -1 | \
+         sed 's/#....\(\/.*\/netdb.h\).*/#include "\1"/'  > include/netdb_orig.h
+    gcc -E include_test.c | grep "netinet/in" | head -1 | \
+         sed 's/#....\(\/.*\/netinet\/in.h\).*/#include "\1"/'  > include/netinet/in_orig.h
+    rm include_test.c
+
+    # assert lib dirs
+    mkdir -p lib/gcc/$ARCH
+
+    # ready
+
+    echo "Your system is now configured to build for your native system."
+    echo "Change to lib and type \`make\` to build the system."
+
+    exit 0
+
+fi

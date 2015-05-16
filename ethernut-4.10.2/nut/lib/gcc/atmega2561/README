@@ -1,0 +1,2 @@
+Nut/OS Atmel AVR atmega2561 libraries, compiled with gcc,
+will be copied to this directory during 'make install'.

@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Comm5 Tecnologia Ltda</author>
+ <class>SettingsDialogClass</class>
+ <widget class="QDialog" name="SettingsDialogClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>378</width>
+    <height>472</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>SettingsDialog</string>
+  </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="tabPosition">
+      <enum>QTabWidget::North</enum>
+     </property>
+     <property name="tabShape">
+      <enum>QTabWidget::Rounded</enum>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="repositoryTab">
+      <attribute name="title">
+       <string>Repository</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Repository File</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QLineEdit" name="e_RepositoryFile"/>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btn_BrowseRepository">
+              <property name="text">
+               <string>Browse...</string>
+              </property>
+              <property name="browseTarget" stdset="0">
+               <string>e_RepositoryFile</string>
+              </property>
+              <property name="fileFilter" stdset="0">
+               <string>*.nut</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Configurations</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QCheckBox" name="cb_MultiConfig">
+            <property name="text">
+             <string>Enable multiple configurations</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>174</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="buildTab">
+      <attribute name="title">
+       <string>Build</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QGroupBox" name="groupBox_9">
+         <property name="title">
+          <string>General</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_11">
+          <item>
+           <widget class="QCheckBox" name="cb_LogVerbose">
+            <property name="text">
+             <string>Verbose compiler log messages</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cb_ClearLogBeforeBuild">
+            <property name="text">
+             <string>Clear build log before builds</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Source Directory</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QLineEdit" name="e_SourceDirectory"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btn_BrowseSource">
+              <property name="text">
+               <string>Browse...</string>
+              </property>
+              <property name="browseTarget" stdset="0">
+               <string>e_SourceDirectory</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Platform</string>
+              </property>
+              <property name="buddy">
+               <cstring>cb_Platform</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cb_Platform"/>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="title">
+          <string>Include Directories</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>First</string>
+            </property>
+            <property name="buddy">
+             <cstring>e_IncludeFirst</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="e_IncludeFirst"/>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="btn_BrowseIncludeFirst">
+            <property name="text">
+             <string>Browse...</string>
+            </property>
+            <property name="browseTarget" stdset="0">
+             <string>e_IncludeFirst</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Last</string>
+            </property>
+            <property name="buddy">
+             <cstring>e_IncludeLast</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="e_IncludeLast"/>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="btn_BrowseIncludeLast">
+            <property name="text">
+             <string>Browse...</string>
+            </property>
+            <property name="browseTarget" stdset="0">
+             <string>e_IncludeLast</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="title">
+          <string>Build Directory</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLineEdit" name="e_BuildDirectory"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_BrowseBuildDirectory">
+            <property name="text">
+             <string>Browse...</string>
+            </property>
+            <property name="browseTarget" stdset="0">
+             <string>e_BuildDirectory</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_6">
+         <property name="title">
+          <string>Install Directory</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QLineEdit" name="e_InstallDirectory"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_BrowseInstallDirectory">
+            <property name="text">
+             <string>Browse...</string>
+            </property>
+            <property name="browseTarget" stdset="0">
+             <string>e_InstallDirectory</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="toolsTab">
+      <attribute name="title">
+       <string>Tools</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
+       <item>
+        <widget class="QGroupBox" name="groupBox_7">
+         <property name="title">
+          <string>Tool Paths</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="QLineEdit" name="e_ToolPath"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>265</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="samplesTab">
+      <attribute name="title">
+       <string>Samples</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_10">
+       <item>
+        <widget class="QGroupBox" name="groupBox_8">
+         <property name="title">
+          <string>Application Directory</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_9">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QLineEdit" name="e_AppDirectory"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btn_BrowseAppDirectory">
+              <property name="text">
+               <string>Browse...</string>
+              </property>
+              <property name="browseTarget" stdset="0">
+               <string>e_AppDirectory</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Programmer</string>
+              </property>
+              <property name="buddy">
+               <cstring>cb_Platform</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cb_Programmer"/>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cb_AbsolutePathInSamples">
+            <property name="text">
+             <string>Use absolute paths in generated Makefiles</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>230</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>e_RepositoryFile</tabstop>
+  <tabstop>btn_BrowseRepository</tabstop>
+  <tabstop>cb_MultiConfig</tabstop>
+  <tabstop>cb_LogVerbose</tabstop>
+  <tabstop>cb_ClearLogBeforeBuild</tabstop>
+  <tabstop>e_SourceDirectory</tabstop>
+  <tabstop>btn_BrowseSource</tabstop>
+  <tabstop>cb_Platform</tabstop>
+  <tabstop>e_IncludeFirst</tabstop>
+  <tabstop>btn_BrowseIncludeFirst</tabstop>
+  <tabstop>e_IncludeLast</tabstop>
+  <tabstop>btn_BrowseIncludeLast</tabstop>
+  <tabstop>e_BuildDirectory</tabstop>
+  <tabstop>btn_BrowseBuildDirectory</tabstop>
+  <tabstop>e_InstallDirectory</tabstop>
+  <tabstop>btn_BrowseInstallDirectory</tabstop>
+  <tabstop>e_ToolPath</tabstop>
+  <tabstop>e_AppDirectory</tabstop>
+  <tabstop>btn_BrowseAppDirectory</tabstop>
+  <tabstop>cb_Programmer</tabstop>
+  <tabstop>cb_AbsolutePathInSamples</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>SettingsDialogClass</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>262</x>
+     <y>462</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>141</x>
+     <y>417</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>SettingsDialogClass</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>344</x>
+     <y>462</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>308</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_BrowseAppDirectory</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialogClass</receiver>
+   <slot>browseFolder()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>301</x>
+     <y>75</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>371</x>
+     <y>310</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_BrowseSource</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialogClass</receiver>
+   <slot>browseFolder()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>344</x>
+     <y>165</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>372</x>
+     <y>81</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_BrowseIncludeFirst</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialogClass</receiver>
+   <slot>browseFolder()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>345</x>
+     <y>256</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>372</x>
+     <y>165</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_BrowseIncludeLast</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialogClass</receiver>
+   <slot>browseFolder()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>345</x>
+     <y>285</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>376</x>
+     <y>206</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_BrowseBuildDirectory</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialogClass</receiver>
+   <slot>browseFolder()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>345</x>
+     <y>347</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>376</x>
+     <y>271</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_BrowseInstallDirectory</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialogClass</receiver>
+   <slot>browseFolder()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>345</x>
+     <y>410</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>374</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_BrowseRepository</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsDialogClass</receiver>
+   <slot>browseFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>301</x>
+     <y>97</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>377</x>
+     <y>116</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>browseFolder()</slot>
+  <slot>browseFile()</slot>
+ </slots>
+</ui>

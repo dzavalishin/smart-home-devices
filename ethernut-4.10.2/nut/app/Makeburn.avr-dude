@@ -1,0 +1,46 @@
+# Programming support using avrdude. Settings and variables.
+
+# Programming hardware: alf avr910 avrisp bascom bsd
+# dt006 pavr picoweb pony-stk200 sp12 stk200 stk500
+#
+# Type: avrdude -c ?
+# to get a full listing.
+#
+
+BURN=avrdude
+BURNPORT=com2
+
+ifeq ($(MCU),atmega128)
+BURNTARGET=m128
+endif
+ifeq ($(MCU),atmega2561)
+BURNTARGET=m2561
+endif
+ifeq ($(BURNTARGET),)
+BURNTARGET=$(MCU)
+endif
+
+#BURNFLAGS=-dprog=stk500 -dserial=$(BURNPORT) -dspeed=115200 -dpart=$(BURNTARGET) --erase --upload if=$(TARG)
+
+AVRDUDE_PROGRAMMER = stk500v2
+
+AVRDUDE_WRITE_FLASH = -U flash:w:$(TARG)
+#AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
+
+AVRDUDE_FLAGS = -p $(BURNTARGET) -P $(BURNPORT) -c $(AVRDUDE_PROGRAMMER)
+
+# Uncomment the following if you want avrdude's erase cycle counter.
+# Note that this counter needs to be initialized first using -Yn,
+# see avrdude manual.
+#AVRDUDE_ERASE += -y
+
+# Uncomment the following if you do /not/ wish a verification to be
+# performed after programming the device.
+AVRDUDE_FLAGS += -V
+
+# Increase verbosity level.  Please use this when submitting bug
+# reports about avrdude. See <http://savannah.nongnu.org/projects/avrdude>
+# to submit bug reports.
+#AVRDUDE_FLAGS += -v -v
+
+BURNFLAGS = $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)

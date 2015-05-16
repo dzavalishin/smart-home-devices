@@ -1,0 +1,2 @@
+BURN=xpcomm
+BURNFLAGS=$(ITARG)

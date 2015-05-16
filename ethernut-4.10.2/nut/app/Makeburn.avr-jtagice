@@ -1,0 +1,5 @@
+# Atmel JTAGICE Programmer (all COM ports are scanned)
+BURN=jtagice
+BURNTARGET=$(MCU)
+BURNFLAGS=-d$(BURNTARGET) -e -pf -if$(TARG)
+

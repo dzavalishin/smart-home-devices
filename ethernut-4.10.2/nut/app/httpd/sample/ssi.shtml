@@ -1,0 +1,25 @@
+<html>
+<head>
+</head>
+<body>
+
+<img src="enlogo.gif"><img src="entail.gif"><p>
+
+<h1>Server side include demo.</h1>
+
+<h3>The following part is included as static content</h3>
+----- Included part start -----<br>
+<!-- #include virtual="/include.inc" -->
+----- Included part end   -----<br>
+
+<h3>Now we include a cgi with dynamic output.</h3>
+----- Included CGI -----<br>
+<!-- #exec cgi="/cgi-bin/ssi-demo.cgi" -->
+----- Included part end   -----<br>
+
+<h3>The follwing example shows how to pass the request parameters of this website down to the included cgi.</h3>
+----- Included CGI -----<br>
+<!-- #exec cgi="/cgi-bin/ssi-demo.cgi?$QUERY_STRING" -->
+----- Included part end   -----<br>
+</body>
+</html>

@@ -1,0 +1,137 @@
+#
+# Copyright (C) 2006-2008 by egnite Software GmbH
+# Copyright (C) 2009 by egnite GmbH
+#
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. Neither the name of the copyright holders nor the names of
+#    contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+# OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+# AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+# THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+#
+# For additional information see http://www.ethernut.de/
+#
+# $Id: Makerules.npl-xc95 2787 2009-11-15 15:15:40Z haraldkipp $
+#
+
+.SUFFIXES: .ngc .ngd .ucf .jed .svf .xsvf
+
+#
+# Create the netlist from Verilog sources.
+#
+%.ngc: %.prj $(XSTSCRIPT)
+	$(XST) $(XSTFLAGS) -ifn $(XSTSCRIPT) -ofn $(XSTLOG)
+
+#
+# Create a native generic database file from the netlist.
+#
+%.ngd: %.ngc
+	$(NGDBUILD) $(NGDBFLAGS) -uc $(NPL_UCF) -p $(NPL_PART) $< $@
+
+#
+# Create a CPLD design file from the native generic database file.
+#
+%.vm6: %.ngd
+	$(CPLDFIT) $(FITFLAGS) $<
+
+#
+# Create a JEDEC file from the CPLD desgin file.
+#
+%.jed: %.vm6
+	$(HPREP6) $(PREPFLAGS) -i $<
+
+%.xsvf: %.jed $(IMPSCRIPT)
+	$(IMPACT) -batch $(IMPSCRIPT)
+
+#
+# Create a project file
+#
+$(PROJ).prj:
+ifeq ($(HDL), VHDL)
+	echo vhdl work "$(PROJ).vhd" > $(PROJ).prj
+else
+	echo verilog work "$(PROJ).v" > $(PROJ).prj
+endif
+
+#
+# Create an Impact script
+#
+$(IMPSCRIPT):
+	echo setPreference -pref UserLevel:NOVICE > $(IMPSCRIPT)
+	echo setPreference -pref MessageLevel:DETAILED >> $(IMPSCRIPT)
+	echo setPreference -pref ConcurrentMode:FALSE >> $(IMPSCRIPT)
+	echo setPreference -pref UseHighz:FALSE >> $(IMPSCRIPT)
+	echo setPreference -pref ConfigOnFailure:STOP >> $(IMPSCRIPT)
+	echo setPreference -pref StartupCLock:AUTO_CORRECTION >> $(IMPSCRIPT)
+	echo setPreference -pref AutoSignature:FALSE >> $(IMPSCRIPT)
+	echo setPreference -pref svfUseTime:FALSE >> $(IMPSCRIPT)
+	echo setMode -bsfile >> $(IMPSCRIPT)
+	echo setCable -port xsvf -file $(PROJ).xsvf >> $(IMPSCRIPT)
+	echo addDevice -position 1 -file $(PROJ).jed >> $(IMPSCRIPT)
+	echo program -e -v -p 1 >> $(IMPSCRIPT)
+	echo quit >> $(IMPSCRIPT)
+
+$(XSTSCRIPT):
+	echo run > $(XSTSCRIPT)
+	echo -ifn $(PROJ).prj >> $(XSTSCRIPT)
+	echo -ifmt mixed >> $(XSTSCRIPT)
+	echo -ofn $(PROJ) >> $(XSTSCRIPT)
+	echo -p $(NPL_FAM) >> $(XSTSCRIPT)
+	echo -top $(PROJ) >> $(XSTSCRIPT)
+	echo -opt_level 2 >> $(XSTSCRIPT)
+	echo -opt_mode SPEED >> $(XSTSCRIPT)
+
+
+.PHONY: npl_clean
+npl_clean:
+	-$(RM) $(XSTLOG)
+	-$(RM) $(FITLOG)
+	-$(RM) netlist.lst
+	-$(RM) $(PROJ).ngc
+	-$(RM) $(PROJ).lso
+	-$(RM) $(PROJ).bld
+	-$(RM) $(PROJ).ngd
+	-$(RM) $(PROJ).ngc
+	-$(RM) $(PROJ)_pad.csv
+	-$(RM) $(PROJ).gyd
+	-$(RM) $(PROJ).mfd
+	-$(RM) $(PROJ).pad
+	-$(RM) $(PROJ).pnx
+	-$(RM) $(PROJ).rpt
+	-$(RM) $(PROJ).tspec
+	-$(RM) $(PROJ).vm6
+	-$(RM) $(PROJ).xml
+	-$(RM) $(PROJ)_build.xml
+	-$(RM) $(PROJ)_ngdbuild.xrpt
+	-$(RM) $(PROJ)_xst.xrpt
+	-$(RM) $(PROJ)_vhdl.prj
+	-$(RM) _impact.cmd
+	-$(RM) _impactbatch.log
+	-$(RM) tmperr.err
+	-$(RM) xlnx_auto_0.ise
+	-$(RM) -r xst
+	-$(RM) -r xlnx_auto_0_xdb
+	-$(RM) $(PROJ).prj
+	-$(RM) $(IMPSCRIPT)
+	-$(RM) $(XSTSCRIPT)

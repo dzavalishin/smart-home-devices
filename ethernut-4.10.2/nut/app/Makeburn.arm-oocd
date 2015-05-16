@@ -1,0 +1,104 @@
+## Upload Configuration for OpenOCD
+## ================================
+## When properly configured, you can conveniently use
+##  make clean all burn
+## to build, upload and run the binary.
+
+
+## Choose the programming adapter
+## ------------------------------
+## A file with this name and extension .cfg must exist in
+## the OpenOCD interface directory.
+
+## Use this with Turtelizer 2:
+# BURNDONGLE=turtelizer2
+
+## Original configuration:
+BURNDONGLE = openocd-usb
+
+
+## Choose the target board
+## -----------------------
+## A file with this name and extension .cfg must exist in
+## the OpenOCD board directory.
+
+# BURNBOARD = myboard
+
+## Try to determine this automatically.
+
+ifeq ($(PLATFORM), ETHERNUT2)
+BURNBOARD = ethernut5
+endif
+ifeq ($(PLATFORM), ETHERNUT3)
+BURNBOARD = ethernut3
+endif
+ifeq ($(PLATFORM), ELEKTOR_IR1)
+BURNBOARD = eir
+endif
+ifeq ($(PLATFORM), AT91SAM9260_EK)
+BURNBOARD = atmel_at91sam9260-ek
+endif
+ifeq ($(PLATFORM), AT91SAM7X_EK)
+BURNBOARD = olimex_sam7_ex256
+endif
+
+
+## Choose the target CPU
+## ---------------------
+## Typically this is specified in the board configuration.
+
+# BURNTARGET = sam7x256
+
+
+## Choose the command sequence
+## ---------------------------
+##
+
+## Terminates configuration stage. Use with all targets.
+BURNCMDS  = -c init
+
+## Works fine with the latest eir config.
+#BURNCMDS += -c "run_flash_image ./$(TARG)"
+#BURNCMDS += -c shutdown
+
+## Running Ethernut 3 RAM images.
+# BURNCMDS=-c init -c "run_ram_image ./$(TARG)" -c shutdown
+
+## Example for an explicit command sequence.
+# BURNCMDS=-c init -c "reset init" -c "load_image $IMGFILE 0" -c "verify_image $IMGFILE 0" -c "resume 0" -c shutdown
+
+## Example for an command line chaining.
+# BURNCMDS += -f $(top_srcdir)/tools/flash/flash.script
+BURNCMDS += -c "reset init"
+BURNCMDS += -c "halt"
+BURNCMDS += -c "arm7_9 dcc_downloads enable"
+BURNCMDS += -c "flash write_image erase ./$(ITARG) 0x00100000 bin"
+BURNCMDS += -c "reset run"
+# BURNCMDS += -f $(top_srcdir)/tools/flash/flash-exit.script
+
+# Terminate OpenOCD. Use with all targets.
+BURNCMDS += -c shutdown
+
+
+# Choose the executable
+# ---------------------
+# Your OpenOCD executable may have a different name.
+#
+BURN=openocd
+
+
+# No change required
+# ------------------
+# Anything below this line will typically work out of the box.
+#
+ifneq ($(BURNDONGLE),)
+BURNCONFIG += -c "source [find interface/$(BURNDONGLE).cfg]"
+endif
+ifneq ($(BURNBOARD),)
+BURNCONFIG += -c "source [find board/$(BURNBOARD).cfg]"
+endif
+ifneq ($(BURNTARGET),)
+BURNCONFIG += -c "source [find target/$(BURNTARGET).cfg]"
+endif
+
+BURNFLAGS=-s $(top_srcdir)/tools/turtelizer2 $(BURNCONFIG) $(BURNCMDS)
