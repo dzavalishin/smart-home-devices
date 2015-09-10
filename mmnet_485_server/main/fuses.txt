@@ -1,0 +1,25 @@
+AVaRICE version 2.9, Jan  7 2010 22:42:57
+
+JTAG config starting.
+Hardware Version: 0xce
+Software Version: 0x80
+Reported JTAG device ID: 0x9702
+Configured for device ID: 0x9702 atmega128
+JTAG config complete.
+
+Reading Fuse Bytes:
+  Extended Fuse byte -> 0xff
+      High Fuse byte -> 0x97
+       Low Fuse byte -> 0x2f
+
+Reading Lock Bits:
+Lock bits -> 0xff
+
+    Bit 7 [ Reserved ] -> 1
+    Bit 6 [ Reserved ] -> 1
+    Bit 5 [ BLB12    ] -> 1
+    Bit 4 [ BLB11    ] -> 1
+    Bit 3 [ BLB02    ] -> 1
+    Bit 2 [ BLB01    ] -> 1
+    Bit 1 [ LB2      ] -> 1
+    Bit 0 [ LB1      ] -> 1
