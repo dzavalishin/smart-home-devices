@@ -1,6 +1,10 @@
+#include <sys/event.h>
+#include <sys/timer.h>
 #include <sys/heap.h>
 #include <sys/socket.h>
 #include <stdio.h>
+#include <string.h>
+
 
 #include "modbus_srv.h"
 #include "modbus_reg.h"
@@ -58,7 +62,7 @@ THREAD(ModbusService, arg)
 
         if( (pkt_len < 2) || (pkt_len > 1024) ) goto die;
 
-        char *bigbuf = malloc( pkt_len + 6 );
+        unsigned char *bigbuf = malloc( pkt_len + 6 );
         if( bigbuf == 0 ) goto die;
 
         nread = NutTcpDeviceRead( modbus_sock, bigbuf+6, pkt_len );

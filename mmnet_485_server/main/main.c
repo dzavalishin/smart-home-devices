@@ -20,11 +20,14 @@
 #include <arpa/inet.h>
 
 #include <pro/dhcp.h>
+#include <pro/sntp.h>
 
 #ifdef NUTDEBUG
 #include <sys/osdebug.h>
 #include <net/netdebug.h>
 #endif
+
+#include <sys/syslog.h>
 
 #include "oscgi.h"
 #include "cgi.h"
@@ -254,6 +257,10 @@ static void init_sntp(void)
 
 static void init_syslog(void)
 {
+    uint32_t syslog_server = inet_addr(MYSYSLOGD);
+    openlog("logtime", LOG_PERROR, LOG_USER);
+    setlogserver( syslog_server, 0);
+    syslog(LOG_INFO, "%s started on Nut/OS %s", DEVICE_NAME, NutVersionString());
 }
 
 
