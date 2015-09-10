@@ -1,6 +1,0 @@
-# Atmel JTAGICE mk-II Programmer
-BURN=jtagiceii
-BURNPORT=auto
-BURNTARGET=$(MCU)
-BURNFLAGS=-c$(BURNPORT) -d$(BURNTARGET) -e -pf -if$(TARG)
-

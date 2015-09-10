@@ -1,4 +1,0 @@
-BURN=uisp
-BURNPORT=/dev/ttyS0
-BURNTARGET=$(MCU)
-BURNFLAGS=-dprog=stk500 -dserial=$(BURNPORT) -dspeed=115200 -dpart=$(BURNTARGET) --erase --upload if=$(TARG)
