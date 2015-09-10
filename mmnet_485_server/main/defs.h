@@ -1,18 +1,53 @@
+// ------------------------------------------------------------------------
+// Configuration (on/off/number of ins/outs)
+// ------------------------------------------------------------------------
+
 #define TEST_PWM 0
+#define USE_TWI 0
 
 
+#define	SERVANT_NPWM	0	// количество аналоговых выходов -- PWM
+#define	SERVANT_NADC	8	// количество аналоговых входов
 
+#define	SERVANT_NDIG	7	// количество цифровых портов (входы)  - в байтах
+#define	SERVANT_NDIGOUT	0	// количество цифровых портов (выходы) - в байтах
 
-//definitions
+#define	SERVANT_DHT11   1       // Have or not DHT11/22
 
-#if 1
+// FREQ/PWM duty inputs
+// pos 0 is freq for first channel, 1 is duty cycle for first channel
+// pos 2 is freq for second channel, 3 is duty cycle for it
+
+#define SERVANT_NFREQ 0
+
+#define N_TEMPERATURE_IN 0
+
+#define ENABLE_SPI 0
+
+// 1-wire child processor
+#define ENABLE_CH1W 0
+
 
 // ------------------------------------------------------------------------
-// MMnet101
+// Network
 // ------------------------------------------------------------------------
 
-// We have 16 MHz on MMNet101
-#define F_CPU     16000000
+
+
+/* These values are used if there is no valid configuration in EEPROM. */
+
+#define MYMAC   0x02, 0x06, 0x98, 0x00, 0x00, 0x00
+#define MYIP    "192.168.88.127"
+#define MYMASK  "255.255.0.0"
+
+// For sntp time setup
+#define MYTZ    -3
+
+
+
+// ------------------------------------------------------------------------
+// Hardware connections
+// ------------------------------------------------------------------------
 
 #define LED_EXCLPOS  6
 #define LED_DDR  DDRG
@@ -30,53 +65,6 @@
 
 #endif
 
-#define ALARM_OUTPUTS_USED 0
-
-#if ALARM_OUTPUTS_USED
-// TODO - WRONG!
-#define	SERVANT_ALARM_PIN	0	//PB0
-#define	SERVANT_WARN_PIN	1	//PB1
-
-#define SERVANT_ALARM_PORT      PORTB
-#define SERVANT_WARN_PORT       PORTB
-
-#define SERVANT_ALARM_EXCLPOS   1
-#define SERVANT_WARN_EXCLPOS    1
-
-#endif
-
-
-//#define	SERVANT_NPWM	4	// количество аналоговых выходов -- PWM
-#define	SERVANT_NPWM	0	// количество аналоговых выходов -- PWM
-
-#define	SERVANT_NADC	0	// количество АЦП
-#define	SERVANT_NDIG	0	// количество цифровых портов (входы)
-#define	SERVANT_NDIGOUT	0	// количество цифровых портов - вывод
-
-
-
-// FREQ/PWM duty inputs
-// pos 0 is freq for first channel, 1 is duty cycle for first channel
-// pos 2 is freq for second channel, 3 is duty cycle for it
-
-#define SERVANT_NFREQ 0
-
-
-#define	SERVANT_PWM_SPEED	10	// количество машинных циклов на один интервал PWM
-						// период модуляции разделяется на 256 интервалов
-						// частота PWM: 4.0000Mhz/256/PWM_SPEED = 1.5 Кгц.
-
-#define DEVICE_NAME "DZ128A-MMNET"
-
-#define N_TEMPERATURE_IN 0
-//#define N_TEMPERATURE_IN 0
-
-#define ENABLE_SPI 0
-
-// 1-wire child processor
-#define ENABLE_CH1W 0
-
-#define HALF_DUPLEX 0
 
 // OneWire
 #define OW_EXCLPOS  6 // Port G
@@ -87,79 +75,53 @@
 #define OW_CONF_DELAYOFFSET 0
 
 
+// DHT11/22 port
+#define DHT_DDR DDRD
+#define DHT_PORT PORTD
+#define DHT_PIN PIND
+#define DHT_INPUTPIN PD5
 
+// TODO! Excl HDT11 pin from dig data ports
 
-
-
-
-
-
-
-
-
-
-
-#else
-
-
-#ifdef __AVR_ATmega128__
 
 // ------------------------------------------------------------------------
-// Atmega 128
+// Hardware definitions
 // ------------------------------------------------------------------------
 
 
-#define ALARM_OUTPUTS_USED 1
 
-#if ALARM_OUTPUTS_USED
-// TODO - WRONG!
-#define	SERVANT_ALARM_PIN	0	//PB0
-#define	SERVANT_WARN_PIN	1	//PB1
-
-#define SERVANT_ALARM_PORT      PORTB
-#define SERVANT_WARN_PORT       PORTB
-
-#define SERVANT_ALARM_EXCLPOS   1
-#define SERVANT_WARN_EXCLPOS    1
-
-#endif
+// We have 16 MHz on MMNet101
+#define F_CPU     16000000
 
 
-#define	SERVANT_NPWM	4	// количество аналоговых выходов -- PWM
+// количество машинных циклов на один интервал PWM
+// период модуляции разделяется на 256 интервалов
+// частота PWM: 4.0000Mhz/256/PWM_SPEED = 1.5 Кгц.
+#define	SERVANT_PWM_SPEED	10	
 
-#define	SERVANT_NADC	8	// количество АЦП
-#define	SERVANT_NDIG	7	// количество цифровых портов
+#define DEVICE_NAME "DZ-MMNET-MODBUS"
 
-#define	SERVANT_PWM_SPEED	10	// количество машинных циклов на один интервал PWM
-						// период модуляции разделяется на 256 интервалов
-						// частота PWM: 4.0000Mhz/256/PWM_SPEED = 1.5 Кгц.
-
-#define DEVICE_NAME "DZ128A-USB"
-
-#define N_TEMPERATURE_IN 8
-
-
-#define ENABLE_SPI 1
 
 #define HALF_DUPLEX 0
 
-// OneWire
-#define OW_EXCLPOS  6 // Port G
-#define OW_PIN  PG2
-#define OW_IN   PING
-#define OW_OUT  PORTG
-#define OW_DDR  DDRG
-#define OW_CONF_DELAYOFFSET 0
 
 
 
 
 
-#else
 
-// ------------------------------------------------------------------------
-// Atmega 8
-// ------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -182,50 +144,11 @@
 #endif
 
 
-//#define	SERVANT_NPWM	4	// количество аналоговых выходов -- PWM
-#define	SERVANT_NPWM	0	// количество аналоговых выходов -- PWM
-
-#define	SERVANT_NADC	6	// количество АЦП
-#define	SERVANT_NDIG	7	// количество цифровых портов - ввод
-#define	SERVANT_NDIGOUT	7	// количество цифровых портов - вывод
-
-#define	SERVANT_PWM_SPEED	10	// количество машинных циклов на один интервал PWM
-						// период модуляции разделяется на 256 интервалов
-						// частота PWM: 4.0000Mhz/256/PWM_SPEED = 1.5 Кгц.
-
-
-// NB! TODO - disabling temp code stops hardware serial from working too.
-
-//#define N_TEMPERATURE_IN 8
-#define N_TEMPERATURE_IN 2
-
-
-#define ENABLE_SPI 0
-
-#define DEVICE_NAME "DZ8A-485"
-
-
-
-#define HALF_DUPLEX 1
-#define HALF_DUPLEX_EXCLPOS 3 // port d
-#define HALF_DUPLEX_PORT PORTD
-#define HALF_DUPLEX_PIN PD6
-#define HALF_DUPLEX_DDR DDRD
-
-// OneWire
-#define OW_EXCLPOS  1 // Port B
-#define OW_PIN  PB1
-#define OW_IN   PINB
-#define OW_OUT  PORTB
-#define OW_DDR  DDRB
-#define OW_CONF_DELAYOFFSET 0
 
 
 
 
-#endif
 
-#endif
 
 
 

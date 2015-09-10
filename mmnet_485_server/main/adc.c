@@ -1,7 +1,7 @@
 #include "adc.h"
 #include "defs.h"
 #include "util.h"
-#include "packet_types.h"
+//#include "packet_types.h"
 
 #include "net_io.h"
 
@@ -14,27 +14,27 @@
 
 // Keeps current ADC channel value
 unsigned volatile int adc_value[SERVANT_NADC];
+
 // input we are converting now
 unsigned volatile char current_ad_input = SERVANT_NADC-1;
 
 //unsigned char get_an(unsigned char port_num) { return adc_value[port_num]; }
 
-static void postProcessAdc(unsigned char channel);
+//static void postProcessAdc(unsigned char channel);
 
 // no left align ADLAR=0
 // internal reference, AREF with external capacitor
 #define ADMUX_REFS (_BV(REFS1)|_BV(REFS0))
-//#define ADMUX_REFS 0b11100000
 
-//ADC initialize
+
+// ADC initialize
 void adc_init(void)
 {
- ADCSRA = 0x00; //disable adc
- ADMUX = ADMUX_REFS; //0b11100000; 
- 
- ACSR  = 0x80; // disable analog comparator
- //ADCSRA = 0x87; //_BV(ADEN), PreScaler = 111
- ADCSRA = 0x7|_BV(ADEN); // enabled, PreScaler = 111
+    ADCSRA = 0x00; //disable adc
+    ADMUX = ADMUX_REFS; //0b11100000;
+
+    ACSR  = 0x80; // disable analog comparator
+    ADCSRA = 0x7|_BV(ADEN); // enabled, PreScaler = 111
 }
 
 
@@ -42,8 +42,6 @@ void adc_start()
 {
     cli();
     current_ad_input++;
-    //current_ad_input &= 0x7u;
-    //current_ad_input %= SERVANT_NADC;
 
     if(current_ad_input >= SERVANT_NADC)
         current_ad_input = 0;
@@ -54,9 +52,9 @@ void adc_start()
     ADCSRA |= _BV(ADIF); // reset IF by WRITING ONE!! to it
 
     ADCSRA |= _BV(ADSC)|_BV(ADIE); // enable interrupts and start conversion
-    //flash_led_once();
     sei();
 }
+
 
 void adc_stop(void)
 {
@@ -71,19 +69,22 @@ ISR(ADC_vect)
 {
     ADCSRA &= ~_BV(ADIE); // no more ints
 
-    adc_value[current_ad_input] = 0xFF & ADCL;
-    adc_value[current_ad_input] |= 0x300 & (((int)ADCH) << 8);
+//    adc_value[current_ad_input] = 0xFF & ADCL;
+//    adc_value[current_ad_input] |= 0x300 & (((int)ADCH) << 8);
 
-    //adc_value[current_ad_input] = ADCH;
+    adc_value[current_ad_input] = (0xFFu & ADCL) | (0x300u & (((unsigned int)ADCH) << 8));
+
 
     sei();
-    postProcessAdc(current_ad_input);
+    //postProcessAdc(current_ad_input);
     adc_start();
 }
 
 // ----------------------------------------------------------------------
 // Postprocessing - called after each adc cycle
 // ----------------------------------------------------------------------
+
+#if 0
 
 unsigned volatile char adc_send_mask = 0; // bit 0 == 1 -> need to send ch 0
 unsigned volatile int adc_prev[SERVANT_NADC];
@@ -99,7 +100,7 @@ void postProcessAdc(unsigned char channel)
         adc_prev[channel] = adc_value[channel];
         adc_send_mask |= _BV(channel);
 
-        triggerSendOut(); // Ask sending thread to do its job
+        //triggerSendOut(); // Ask sending thread to do its job
         // TODO check alarm here or in send changed
     }
 
@@ -107,15 +108,15 @@ void postProcessAdc(unsigned char channel)
     if( adc_value[channel] != adc_prev[channel] ) { // без лишних проверок
         adc_prev[channel] = adc_value[channel];
         adc_send_mask |= _BV(channel);
-//flash_led_once();
-//ua rt_sendbyte(hexdigit(channel&0xFu));
+        //flash_led_once();
+        //ua rt_sendbyte(hexdigit(channel&0xFu));
         // TODO check alarm here or in send changed
 
     }
 #endif
 }
 
-
+#if 0
 // called from packet reception code
 void request_adc_data_send(unsigned char channel)
 {
@@ -125,6 +126,7 @@ void request_adc_data_send(unsigned char channel)
 
 void send_changed_adc_data()
 {
+#if 0
     unsigned char i;
     for( i = 0; i < SERVANT_NADC; i++ )
     {
@@ -134,5 +136,10 @@ void send_changed_adc_data()
             send_pack(TOHOST_ANALOG_VALUE, i, adc_value[i] );
         }
     }
+#endif
 }
 
+
+#endif
+
+#endif

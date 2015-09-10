@@ -1,11 +1,15 @@
 # Do not edit! Automatically generated on Sat Jun 21 17:27:42 2008
 
-top_srcdir = G:/Projects/avr/trunk/nut
-top_appdir = G:/Projects/avr/trunk/nutapps
-LIBDIR = G:/Projects/avr/trunk/nut-21/lib
+top_srcdir = P:/ethernut-5.1/nut
+top_blddir = P:/ethernut-5.1/nutbld
+top_appdir = P:/ethernut-5.1/nutapp
 
-INCFIRST = $(INCPRE)G:/Projects/avr/trunk/nut-21/include
+LIBDIR = P:/ethernut-5.1-install
+INCFIRST=$(INCPRE)$(top_blddir)/include 
+
 include $(top_appdir)/NutConf.mk
 include $(top_srcdir)/app/Makedefs.avr-gcc
-include $(top_srcdir)/app/Makeburn.avr-uisp-stk500
+include $(top_srcdir)/app/Makeburn.avr-jtagice
+
+
 

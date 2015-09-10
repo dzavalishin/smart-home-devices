@@ -4,27 +4,28 @@ WEBDIR = html-small
 
 WEBFILE= urom.c
 
+JTAG_CONF= -B 1000 -j /dev/com6
+
 include ../Makedefs
 
-SRCS =  $(PROJ).c $(WEBFILE) crc8.c crc16.c cgi.c oscgi.c delay.c spi.c runtime_cfg.c util.c httpd.c websetup.c
-# i2c.c net_io.c adc.c alarm.c dports.c icp.c freq_send.c ds18x20.c temperature.c onewire.c ds2482.c dallas_ds2482.c  child-1wire.c 
+SRCS =  main.c $(PROJ).c $(WEBFILE) crc8.c crc16.c cgi.c oscgi.c delay.c spi.c runtime_cfg.c util.c httpd.c websetup.c adc.c dports.c modbus.c dht.c
+# i2c.c net_io.c alarm.c icp.c freq_send.c ds18x20.c temperature.c onewire.c ds2482.c dallas_ds2482.c  child-1wire.c 
 OBJS =  $(SRCS:.c=.o)
-#MODS =  $(MODDIR)/dev/lanc111.o
-LIBS =  $(LIBDIR)/nutinit.o $(MODS) -lnutnet -lnutpro -lnutfs -lnutos -lnutdev -lnutnet -lnutcrt
+
+LIBS =  $(LIBDIR)/nutinit.o $(MODS) -lnutnet -lnutpro -lnutfs -lnutos -lnutdev -lnutnet -lnutcrt -lnutarch -lnutgorp ../../modbus-lib/libmodbus.a 
 TARG =  $(PROJ).hex $(PROJ).elf
 
-ifneq (, $(findstring h8300, $(ARCH)))
-# Libraries specific for H8 port
-LIBS += -lnutentry -lc -lgcc
-endif
+CFLAGS += -I../../modbus-lib/
 
 
 
 all: $(OBJS) $(TARG)
-	avarice -j /dev/com6 -e -p -f $(PROJ).hex
+	avarice $(JTAG_CONF) -e -p -f $(PROJ).hex
 
 exe: $(TARG)
 
+wfuses:
+	avarice $(JTAG_CONF) -W ff972f
 
 $(WEBFILE): $(WEBDIR)/*.* $(WEBDIR)/i/*.*
 	$(CRUROM) -r -o$(WEBFILE) $(WEBDIR)

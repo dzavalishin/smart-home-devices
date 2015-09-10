@@ -53,43 +53,11 @@
 #
 
 all:
-	$(MAKE) -C basemon
-	$(MAKE) -C httpd
-	$(MAKE) -C inetq
-	$(MAKE) -C nutpiper
-	$(MAKE) -C portdio
-	$(MAKE) -C pppc
-	$(MAKE) -C rs232d
-	$(MAKE) -C simple
-	$(MAKE) -C tcps
-	$(MAKE) -C threads
-	$(MAKE) -C timers
-	$(MAKE) -C uart
+	$(MAKE) -C main
 
 install:
-	$(MAKE) -C basemon install
-	$(MAKE) -C httpd install
-	$(MAKE) -C inetq install
-	$(MAKE) -C nutpiper install
-	$(MAKE) -C portdio install
-	$(MAKE) -C pppc install
-	$(MAKE) -C rs232d install
-	$(MAKE) -C simple install
-	$(MAKE) -C tcps install
-	$(MAKE) -C threads install
-	$(MAKE) -C timers install
-	$(MAKE) -C uart install
+	$(MAKE) -C main install
 
 clean:
-	$(MAKE) -C basemon clean
-	$(MAKE) -C httpd clean
-	$(MAKE) -C inetq clean
-	$(MAKE) -C nutpiper clean
-	$(MAKE) -C portdio clean
-	$(MAKE) -C pppc clean
-	$(MAKE) -C rs232d clean
-	$(MAKE) -C simple clean
-	$(MAKE) -C tcps clean
-	$(MAKE) -C threads clean
-	$(MAKE) -C timers clean
-	$(MAKE) -C uart clean
+	$(MAKE) -C main clean
+

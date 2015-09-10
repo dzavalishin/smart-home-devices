@@ -5,6 +5,9 @@
 
 extern u_char mac[];
 
+int CgiNetIO( FILE * stream, REQUEST * req );
+
+
 
 // Returns 0 if nothing to show more
 typedef int (*table_print_func_t)( FILE * stream, int row_no ) ;
