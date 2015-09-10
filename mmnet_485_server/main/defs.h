@@ -43,6 +43,10 @@
 // For sntp time setup
 #define MYTZ    -3
 
+// Broadcast syslogd
+//#define MYSYSLOGD  "255.255.255.255"
+//#define MYSYSLOGD  "192.168.1.130"
+#define MYSYSLOGD  "syslog."
 
 
 // ------------------------------------------------------------------------
@@ -100,7 +104,8 @@
 #define	SERVANT_PWM_SPEED	10	
 
 #define DEVICE_NAME "DZ-MMNET-MODBUS"
-
+#define DEVICE_REV "$Revision: 0 $"
+#define DEVICE_DATE "$Date: $"
 
 #define HALF_DUPLEX 0
 
