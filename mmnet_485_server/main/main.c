@@ -3,6 +3,7 @@
 #include "defs.h"
 #include "util.h"
 #include "net_io.h"
+#include "runtime_cfg.h"
 
 #include <dev/nicrtl.h>
 #include <dev/debug.h>
@@ -27,6 +28,8 @@
 #include <net/netdebug.h>
 #endif
 
+#include <io.h>
+
 #include <sys/syslog.h>
 
 #include "oscgi.h"
@@ -38,6 +41,10 @@
 #include <modbus.h>
 
 //#include "dht.h"
+
+// NB - contains var def and init
+#include "makedate.h"
+
 
 static int tryToFillMac(char *mac, char *oneWireId);
 
@@ -60,9 +67,16 @@ u_char mac[] = { MYMAC };
 
 
 
+THREAD(long_init, arg)
+{
+    while(1) // to satisfy no return
+    {
+        init_sntp();
+        init_syslog();
 
-
-
+        NutThreadExit();
+    }
+}
 
 
 
@@ -96,7 +110,7 @@ int main(void)
 
     _ioctl(_fileno(stdout), UART_SETSPEED, &baud);
     NutSleep(50);
-    printf("\n\nController %s, Nut/OS %s\n", DEVICE_NAME, NutVersionString());
+    printf("\n\nController %s, Nut/OS %s, build from %s\n", DEVICE_NAME, NutVersionString(), makeDate );
 
 
 #if 0 || defined(NUTDEBUG)
@@ -111,8 +125,7 @@ int main(void)
 
     init_net();
 
-    init_sntp();
-    init_syslog();
+    NutThreadCreate("LongInit", long_init, 0, 2640);
 
 
     // Register our device for the file system.
@@ -252,15 +265,17 @@ static void init_sntp(void)
     {
         stime(&now);
         puts("Got SNTP time");
+        sntp_available = 1;
     }
 }
 
 static void init_syslog(void)
 {
-    uint32_t syslog_server = inet_addr(MYSYSLOGD);
-    openlog("logtime", LOG_PERROR, LOG_USER);
-    setlogserver( syslog_server, 0);
-    syslog(LOG_INFO, "%s started on Nut/OS %s", DEVICE_NAME, NutVersionString());
+    uint32_t syslog_server = inet_addr( MYSYSLOGD );
+
+    openlog( DEVICE_NAME, LOG_PERROR, LOG_USER );
+    setlogserver( syslog_server, 0 );
+    syslog( LOG_INFO, "%s started on Nut/OS %s, build from %s", DEVICE_NAME, NutVersionString(), makeDate );
 }
 
 

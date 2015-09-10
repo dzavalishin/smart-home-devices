@@ -479,8 +479,8 @@ static char * getNamedParameter( const char *name )
 
         if( nin < 0 ) return 0;
 
-        char port = nin / 8;
-        char bit = nin % 8;
+        unsigned char port = nin / 8;
+        unsigned char bit = nin % 8;
 
         sprintf( out, "%d", (dig_value[port] >> bit) & 1 );
         return out;

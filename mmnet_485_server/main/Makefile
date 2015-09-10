@@ -1,3 +1,5 @@
+.SILENT:
+
 PROJ   = servant
 WEBDIR = html-small
 #WEBDIR = html
@@ -19,7 +21,7 @@ CFLAGS += -I../../modbus-lib/
 
 
 
-all: $(OBJS) $(TARG)
+all: makedate.h $(OBJS) $(TARG)
 	avarice $(JTAG_CONF) -e -p -f $(PROJ).hex
 
 exe: $(TARG)
@@ -30,7 +32,10 @@ wfuses:
 $(WEBFILE): $(WEBDIR)/*.* $(WEBDIR)/i/*.*
 	$(CRUROM) -r -o$(WEBFILE) $(WEBDIR)
 
+date_now := $(shell date)
 
+makedate.h: *.c *.h
+	echo char *makeDate = \"$(date_now)\"\; > makedate.h
 
 include ../Makerules
 

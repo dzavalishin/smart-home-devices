@@ -19,7 +19,7 @@ int ShowForm(FILE * stream, REQUEST * req)
     static prog_char html_body[] = "<BR><BR><p><a href=\"../index.html\">return to main</a></BODY></HTML></p>";
 
     NutHttpSendHeaderTop(stream, req, 200, "Ok");
-    NutHttpSendHeaderBot(stream, html_mt, -1);
+    NutHttpSendHeaderBottom(stream, req, html_mt, -1);
 
     /* Send HTML header. */
     fputs_P(html_head, stream);

@@ -28,7 +28,7 @@ int ShowQuery(FILE * stream, REQUEST * req)
      */
     static prog_char head[] = "<HTML><HEAD><TITLE>Parameters</TITLE></HEAD><BODY><H1>Parameters</H1>";
     static prog_char foot[] = "</BODY></HTML>";
-    static prog_char req_fmt[] = "Method: %s<BR>\r\nVersion: HTTP/%d.%d<BR>\r\nContent length: %d<BR>\r\n";
+    static prog_char req_fmt[] = "Method: %s<BR>\r\nVersion: HTTP/%d.%d<BR>\r\nContent length: %ld<BR>\r\n";
     static prog_char url_fmt[] = "URL: %s<BR>\r\n";
     static prog_char query_fmt[] = "Argument: %s<BR>\r\n";
     static prog_char type_fmt[] = "Content type: %s<BR>\r\n";
@@ -38,7 +38,7 @@ int ShowQuery(FILE * stream, REQUEST * req)
 
     /* These useful API calls create a HTTP response for us. */
     NutHttpSendHeaderTop(stream, req, 200, "Ok");
-    NutHttpSendHeaderBot(stream, html_mt, -1);
+    NutHttpSendHeaderBottom(stream, req, html_mt, -1);
 
     /* Send HTML header. */
     fputs_P(head, stream);
@@ -105,7 +105,7 @@ int ShowThreads(FILE * stream, REQUEST * req)
 
     /* Send HTTP response. */
     NutHttpSendHeaderTop(stream, req, 200, "Ok");
-    NutHttpSendHeaderBot(stream, html_mt, -1);
+    NutHttpSendHeaderBottom(stream, req, html_mt, -1);
 
     /* Send HTML header. */
     fputs_P(head, stream);
@@ -143,7 +143,7 @@ int ShowTimers(FILE * stream, REQUEST * req)
     u_long ticks_left;
 
     NutHttpSendHeaderTop(stream, req, 200, "Ok");
-    NutHttpSendHeaderBot(stream, html_mt, -1);
+    NutHttpSendHeaderBottom(stream, req, html_mt, -1);
 
     /* Send HTML header. */
     fputs_P(head, stream);
@@ -200,7 +200,7 @@ int ShowSockets(FILE * stream, REQUEST * req)
     TCPSOCKET *ts;
 
     NutHttpSendHeaderTop(stream, req, 200, "Ok");
-    NutHttpSendHeaderBot(stream, html_mt, -1);
+    NutHttpSendHeaderBottom(stream, req, html_mt, -1);
 
     /* Send HTML header. */
     fputs_P(head, stream);
@@ -260,8 +260,8 @@ int ShowSockets(FILE * stream, REQUEST * req)
 
     extern UDPSOCKET *udpSocketList;
     for (us = udpSocketList; us; us = us->so_next) {
-        fprintf_P(stream, utfmt1, (uptr_t) us, 0, ntohs(us->so_local_port));
-        fprintf_P(stream, tfmt2, 0, 0);
+        fprintf_P(stream, utfmt1, (uptr_t) us, ""/* was 0*/, ntohs(us->so_local_port));
+        fprintf_P(stream, tfmt2, ""/* was 0*/, 0);
         //fputs_P("", stream);
         fputs("</TD></TR>\r\n", stream);
         fflush(stream);
