@@ -53,7 +53,7 @@
 // Hardware connections
 // ------------------------------------------------------------------------
 
-#define LED_EXCLPOS  6
+#define LED_EXCLPOS  6 // Port G
 #define LED_DDR  DDRG
 #define LED_PORT PORTG
 #define LED_PIN  PING
@@ -80,12 +80,21 @@
 
 
 // DHT11/22 port
-#define DHT_DDR DDRD
-#define DHT_PORT PORTD
-#define DHT_PIN PIND
-#define DHT_INPUTPIN PD5
+#define DHT_EXCLPOS  1 // Port B
+#define DHT_DDR DDRB
+#define DHT_PORT PORTB
+#define DHT_PIN PINB
+#define DHT_INPUTPIN PB4
 
-// TODO! Excl HDT11 pin from dig data ports
+
+#define ETHERNET_INTERRUPT_EXCLPOS      4 // Port E
+#define ETHERNET_INTERRUPT_PIN 		PE5
+
+#define DATAFLASH_EXCLPOS      		1 // Port B
+#define DATAFLASH_SCK_PIN 		PB1
+#define DATAFLASH_MOSI_PIN 		PB2
+#define DATAFLASH_MISO_PIN 		PB3
+#define DATAFLASH_CS_PIN 		PB5
 
 
 // ------------------------------------------------------------------------

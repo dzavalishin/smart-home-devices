@@ -70,7 +70,7 @@ THREAD(main_loop, arg)
         LED_OFF;
 
 #if SERVANT_NDIG > 0
-        check_digital_inputs();
+        //check_digital_inputs();
 #endif
 
 

@@ -40,7 +40,7 @@
 #include "modbus_srv.h"
 #include <modbus.h>
 
-//#include "dht.h"
+#include "dports.h"
 
 // NB - contains var def and init
 #include "makedate.h"
@@ -378,7 +378,7 @@ void init_devices(void)
     cli(); //disable all interrupts
 
 
-//    port_init();
+    dio_init();
 #if SERVANT_NADC > 0
     adc_init();
 #endif

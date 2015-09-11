@@ -115,11 +115,28 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
 #if SERVANT_NDIG > 0
     if( row_no  < SERVANT_NDIG )
     {
-        static prog_char tfmt[] = "<TR><TD> Dig </TD><TD> %u </TD><TD> 0x%02X (";
-        static prog_char te[] = " ) </TD></TR>\r\n";
-        fprintf_P(stream, tfmt,  row_no, dig_value[row_no] );
+        unsigned char pv = dio_read_port( row_no );
+        unsigned char ddrv = dio_get_port_ouput_mask( row_no );
 
-        char bit, c = dig_value[row_no];
+        static prog_char tfmt[] = "<TR><TD> Dig </TD><TD> %u </TD><TD> 0x%02X (";
+        static prog_char dfmt[] = "<TR><TD> &nbsp;ddr </TD><TD> %u </TD><TD> 0x%02X (";
+        static prog_char te[] = " ) </TD></TR>\r\n";
+
+        fprintf_P(stream, tfmt,  row_no, pv );	//dig_value[row_no] );
+
+        char bit, c = pv;
+        for( bit = 7; bit >=0; bit-- )
+        {
+            fputs(" ", stream);
+            fputs( c & 0x80 ? "1" : "0", stream);
+            c <<= 1;
+        }
+
+        fputs_P(te, stream);
+
+        fprintf_P(stream, dfmt,  row_no, ddrv );
+
+        c = ddrv;
         for( bit = 7; bit >=0; bit-- )
         {
             fputs(" ", stream);
@@ -276,6 +293,7 @@ static int CgiOutputsRow( FILE * stream, int row_no )
     row_no -= SERVANT_NFREQ;
 #endif
 
+#if 0 // inputs shows actual walue
     if( row_no  < SERVANT_NDIGOUT )
     {
         static prog_char tfmt[] = "<TR><TD> Dig </TD><TD> %u </TD><TD> 0x%02X (";
@@ -296,7 +314,7 @@ static int CgiOutputsRow( FILE * stream, int row_no )
     }
 
     row_no -= SERVANT_NDIGOUT;
-
+#endif
 
     return 0;
 }
@@ -482,7 +500,8 @@ static char * getNamedParameter( const char *name )
         unsigned char port = nin / 8;
         unsigned char bit = nin % 8;
 
-        sprintf( out, "%d", (dig_value[port] >> bit) & 1 );
+        //sprintf( out, "%d", (dig_value[port] >> bit) & 1 );
+        sprintf( out, "%d", dio_read_port_bit( port, bit ) );
         return out;
     }
 #endif
