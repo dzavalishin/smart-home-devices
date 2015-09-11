@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ *
+ * HTTP daemon.
+ *
+**/
+
 #include <sys/heap.h>
 
 #include "web.h"

@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ *
+ * HTTPD/CGI - OS stats (threads, sockets, etc).
+ *
+**/
+
 #include <sys/thread.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>

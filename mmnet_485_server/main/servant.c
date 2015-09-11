@@ -1,6 +1,10 @@
-/*!
- * Gardemarine servant code for MMNet101 UDP.
- */
+/**
+ *
+ * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ *
+ * Main loop.
+ *
+**/
 
 #include "defs.h"
 #include "util.h"

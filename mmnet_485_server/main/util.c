@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ *
+ * Misc code - LED, delays.
+ *
+**/
+
 #include "util.h"
 #include "defs.h"
 

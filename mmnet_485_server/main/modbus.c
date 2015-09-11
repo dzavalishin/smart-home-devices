@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ *
+ * Modbus/TCP interface to general Modbus library.
+ *
+**/
+
 #include <sys/event.h>
 #include <sys/timer.h>
 #include <sys/heap.h>

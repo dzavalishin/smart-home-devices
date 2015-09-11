@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ *
+ * Short (spin based) delays.
+ *
+**/
+
 /* 
    Precise Delay Functions 
    V 0.5, Martin Thomas, 9/2004

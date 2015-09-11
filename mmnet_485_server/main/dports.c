@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ *
+ * Digital ports I/O.
+ *
+**/
+
 #include "util.h"
 #include "dports.h"
 #include "defs.h"

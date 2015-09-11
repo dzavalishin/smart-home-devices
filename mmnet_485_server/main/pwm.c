@@ -1,3 +1,13 @@
+/**
+ *
+ * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ *
+ * Software PWM.
+ *
+ * Multiple-output PWM using one HW timer.
+ *
+**/
+
 //#include "freq_defs.h"
 #include "defs.h"
 #include "pwm.h"

@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ *
+ * Main: startup code.
+ *
+**/
+
 #include <dev/lanc111.h>
 
 #include "defs.h"
@@ -73,6 +81,10 @@ THREAD(long_init, arg)
     {
         init_sntp();
         init_syslog();
+
+#if SERVANT_TCP_COM0 || SERVANT_TCP_COM1
+        init_tcp_com();
+#endif
 
         NutThreadExit();
     }
@@ -432,6 +444,9 @@ void init_devices(void)
 }
 
 
+
+#if 0
+
 #include <dev/nvmem.h>
 
 // eeprom
@@ -461,6 +476,7 @@ void sv()
     OnChipNvMemSave( EEPROM_CFG_BASE, &crc, 1 );
 }
 
+#endif
 
 
 

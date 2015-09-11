@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ *
+ * Analog inputs (ADC).
+ *
+**/
+
 #include "adc.h"
 #include "defs.h"
 #include "util.h"

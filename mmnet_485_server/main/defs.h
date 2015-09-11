@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ *
+ * Global configuration definitions.
+ *
+**/
+
 // ------------------------------------------------------------------------
 // Configuration (on/off/number of ins/outs)
 // ------------------------------------------------------------------------
@@ -18,6 +26,11 @@
 // pos 2 is freq for second channel, 3 is duty cycle for it
 
 #define SERVANT_NFREQ 0
+
+// RS232 on dev board
+#define SERVANT_TCP_COM0        0
+// USB serial on dev board
+#define SERVANT_TCP_COM1        0
 
 #define N_TEMPERATURE_IN 0
 

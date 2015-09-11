@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ *
+ * DHT11/22 interface code.
+ *
+**/
+
 /*
  DHT Library 0x03
 

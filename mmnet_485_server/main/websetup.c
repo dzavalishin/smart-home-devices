@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ *
+ * HTTPD/CGI code for web configuration.
+ *
+**/
+
 #include "web.h"
 
 
