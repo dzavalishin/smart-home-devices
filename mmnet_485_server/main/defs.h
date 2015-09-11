@@ -124,7 +124,7 @@ extern char *makeDate; // filled in by makefile
 
 
 
-
+#define EEPROM_CFG_BASE 0
 
 
 

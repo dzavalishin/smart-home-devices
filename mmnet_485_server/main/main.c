@@ -432,6 +432,37 @@ void init_devices(void)
 }
 
 
+#include <dev/nvmem.h>
+
+// eeprom
+
+int ld(void)
+{
+    char buf[sizeof( ee_cfg )+1];
+
+
+    OnChipNvMemLoad( EEPROM_CFG_BASE, buf,  sizeof(ee_cfg) + 1 );
+    uint8_t crc = crc8 ( buf+1, sizeof(ee_cfg) );
+
+    if( crc != buf[0] ) return -1;
+
+    ee_cfg = *((struct ee_cfg *) buf+1);
+    return 0;
+}
+
+void sv()
+{
+    void *mem = &ee_cfg;
+
+    uint8_t crc = crc8 ( mem, sizeof(ee_cfg) );
+
+
+    OnChipNvMemSave( EEPROM_CFG_BASE+1, mem, sizeof( ee_cfg ) );
+    OnChipNvMemSave( EEPROM_CFG_BASE, &crc, 1 );
+}
+
+
+
 
 
 
