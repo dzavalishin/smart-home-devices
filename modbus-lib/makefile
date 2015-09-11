@@ -6,8 +6,8 @@ BUILD      = 000000
 PROGRAM    = libmodbus
 
 
-# MCU_TARGET = atmega128
-MCU_TARGET = atmega32
+MCU_TARGET = atmega128
+#MCU_TARGET = atmega32
 
 LDSECTION  = --section-start=.text=0x00000
 
