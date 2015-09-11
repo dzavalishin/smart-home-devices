@@ -122,9 +122,6 @@ THREAD(main_loop, arg)
 #endif
 
 
-#if TEST_PWM
-        OCR2 += 1; // temp - pwm duty change
-#endif
 
 
 

@@ -385,7 +385,7 @@ void init_devices(void)
 
 
 #if SERVANT_NPWM > 0
-    //timer1_init();
+    timer1_init();
 #endif
 
 
@@ -422,13 +422,10 @@ void init_devices(void)
 #endif
 
 #if SERVANT_NPWM > 0
-    //timer1_start();
+    timer1_start();
 #endif
 
 
-#if TEST_PWM
-    pwm_init();
-#endif
 
 
 

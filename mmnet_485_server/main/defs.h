@@ -2,7 +2,6 @@
 // Configuration (on/off/number of ins/outs)
 // ------------------------------------------------------------------------
 
-#define TEST_PWM 0
 #define USE_TWI 0
 
 
@@ -111,6 +110,9 @@
 // период модуляции разделяется на 256 интервалов
 // частота PWM: 4.0000Mhz/256/PWM_SPEED = 1.5 Кгц.
 #define	SERVANT_PWM_SPEED	10	
+#define	SERVANT_PWM_PORT        PORTD
+// PWM bits start at this bit, so now it's PD4..7
+#define SERVANT_PWM_BIT         4
 
 #define DEVICE_NAME "DZ-MMNET-MODBUS"
 //#define DEVICE_REV "$Revision: 0 $"
