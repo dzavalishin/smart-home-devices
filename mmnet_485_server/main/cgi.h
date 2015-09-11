@@ -3,7 +3,7 @@
 
 #include "adc.h"
 
-extern u_char mac[];
+//extern u_char mac[];
 
 int CgiNetIO( FILE * stream, REQUEST * req );
 

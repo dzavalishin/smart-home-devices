@@ -11,6 +11,8 @@
 #include "defs.h"
 #include "net_io.h"
 
+#include "runtime_cfg.h"
+
 #include <inttypes.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -46,6 +48,12 @@ static void add_exclusion_mask( unsigned char exclPos, unsigned char bitmask )
 
 void dio_init(void)
 {
+    // Totally unavailable on MMNET101 ports
+
+    add_exclusion_mask( 0, 0xFF ); // Port A
+    add_exclusion_mask( 2, 0xFF ); // Port C
+
+
     add_exclusion_pin( ETHERNET_INTERRUPT_EXCLPOS, ETHERNET_INTERRUPT_PIN );
 
     add_exclusion_pin( DATAFLASH_EXCLPOS, DATAFLASH_SCK_PIN );
@@ -85,6 +93,24 @@ void dio_init(void)
     }
 
     // TODO fixme read DDR mask from EEPROM
+
+    // Set port values BEFORE enabling DDE
+    PORTB = ee_cfg.start_b;
+    PORTD = ee_cfg.start_d;
+    PORTE = ee_cfg.start_e;
+    PORTF = ee_cfg.start_f;
+    PORTG = ee_cfg.start_g;
+
+    DDRB = ee_cfg.ddr_b;
+    DDRD = ee_cfg.ddr_d;
+#ifdef __AVR_ATmega128__
+    DDRE = ee_cfg.ddr_e;
+    DDRF = ee_cfg.ddr_f;
+    DDRG = ee_cfg.ddr_g;
+#endif
+
+
+    // Now set dde for pins we use in a dedicated way
 
 #if HALF_DUPLEX
     HALF_DUPLEX1_DDR |= _BV(HALF_DUPLEX1_PIN);

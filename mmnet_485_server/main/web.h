@@ -13,3 +13,7 @@ THREAD(Service, arg);
 
 int ShowForm(FILE * stream, REQUEST * req);
 
+
+#define HTML(__text) do {     static prog_char form[] = __text;    fputs_P(form, stream); } while(0)
+
+

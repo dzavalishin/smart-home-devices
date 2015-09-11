@@ -17,7 +17,9 @@ OBJS =  $(SRCS:.c=.o)
 LIBS =  $(LIBDIR)/nutinit.o $(MODS) -lnutnet -lnutpro -lnutfs -lnutos -lnutdev -lnutnet -lnutcrt -lnutarch -lnutgorp ../../modbus-lib/libmodbus.a  ../../avr-util-lib/libdz-avr-util.a 
 TARG =  $(PROJ).hex $(PROJ).elf
 
+
 CFLAGS += -I../../modbus-lib/ -I../../avr-util-lib/
+# -g
 
 
 
@@ -28,6 +30,10 @@ exe: $(TARG)
 
 wfuses:
 	avarice $(JTAG_CONF) -W ff972f
+
+debug::
+	avarice -B 1000 -j /dev/com6 --ignore-intr :1234 &
+	avr-gdb servant.elf
 
 $(WEBFILE): $(WEBDIR)/*.* $(WEBDIR)/i/*.*
 	$(CRUROM) -r -o$(WEBFILE) $(WEBDIR)

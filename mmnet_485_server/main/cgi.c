@@ -8,8 +8,10 @@
 
 #include <sys/thread.h>
 
-#include "cgi.h"
 #include "defs.h"
+#include "runtime_cfg.h"
+
+#include "cgi.h"
 #include "dports.h"
 #include "dht.h"
 //#include "freq.h"
@@ -198,7 +200,12 @@ int CgiInputs( FILE * stream, REQUEST * req )
 
 
 
-
+static void put_addr_row( FILE * stream, char *n1, char *n2, uint32_t addr )
+{
+    static prog_char tfmt[] = "<TR><TD>&nbsp;%s&nbsp;</TD><TD>&nbsp;%s&nbsp;</TD><TD>&nbsp;%s&nbsp;</TD></TR>\r\n";
+    if( n1 == 0 ) n1 = "IP Address";
+    fprintf_P( stream, tfmt, n1, n2, inet_ntoa(addr) );
+}
 
 
 
@@ -212,16 +219,7 @@ static int CgiNetworkRow( FILE * stream, int row_no )
         return 1;
     }
 
-
-    if( row_no  == 0 )
-    {
-        static prog_char tfmt[] = "<TR><TD> Address </TD><TD> MAC </TD><TD> %02X:%02X:%02X:%02X:%02X:%02X </TD></TR>\r\n";
-        fprintf_P(stream, tfmt,
-                  mac[0],mac[1],mac[2],
-                  mac[3],mac[4],mac[5]
-                 );
-        return 1;
-    }
+/*
 
     if( row_no  == 1 )
     {
@@ -246,8 +244,36 @@ static int CgiNetworkRow( FILE * stream, int row_no )
                  );
         return 1;
     }
+*/
+    switch( row_no )
+    {
+    case 0:
+    {
+        static prog_char tfmt[] = "<TR><TD>&nbsp;MAC Address&nbsp;</TD><TD>&nbsp;MAC&nbsp;</TD><TD>&nbsp;%02X:%02X:%02X:%02X:%02X:%02X&nbsp;</TD></TR>\r\n";
+        fprintf_P(stream, tfmt,
+                  ee_cfg.mac_addr[0], ee_cfg.mac_addr[1], ee_cfg.mac_addr[2],
+                  ee_cfg.mac_addr[3], ee_cfg.mac_addr[4], ee_cfg.mac_addr[5]
+                 );
 
-    return 0;
+    }
+    break;
+
+    case 1: put_addr_row( stream, 0, "Net Mask", confnet.cdn_ip_mask );		break;
+    case 2: put_addr_row( stream, 0, "Current", confnet.cdn_ip_addr );       	break;
+    case 3: put_addr_row( stream, 0, "Configured", confnet.cdn_cip_addr );	break;
+    case 4: put_addr_row( stream, 0, "Gateway", confnet.cdn_gateway );		break;
+
+    case 5: put_addr_row( stream, 0, "EEPROM Net Mask", ee_cfg.ip_mask );	break;
+    case 6: put_addr_row( stream, 0, "EEPROM Address", ee_cfg.ip_addr );       	break;
+
+    case 7: put_addr_row( stream, 0, "EEPROM NNTP server", ee_cfg.ip_nntp );	break;
+    case 8: put_addr_row( stream, 0, "EEPROM Syslog server", ee_cfg.ip_syslog );break;
+
+    default:
+        return 0;
+    }
+
+    return 1;
 }
 
 

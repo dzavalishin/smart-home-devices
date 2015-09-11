@@ -71,7 +71,7 @@ void each_second(HANDLE h, void *arg);
 
 
 
-u_char mac[] = { MYMAC };
+//u_char mac[] = { MYMAC };
 
 
 
@@ -79,8 +79,9 @@ THREAD(long_init, arg)
 {
     while(1) // to satisfy no return
     {
-        init_sntp();
-        init_syslog();
+        // SNTP kills us :(
+//        init_sntp();
+//        init_syslog();
 
 #if SERVANT_TCP_COM0 || SERVANT_TCP_COM1
         init_tcp_com();
@@ -107,6 +108,9 @@ int main(void)
     u_long baud = 38400;
 
     NutThreadSetSleepMode(SLEEP_MODE_IDLE); // Let the CPU sleep in idle
+
+    init_runtime_cfg(); // DO VERY EARLY!
+
 
     led_ddr_init(); // Before using LED!
     LED_ON;
@@ -137,6 +141,7 @@ int main(void)
 
     init_net();
 
+
     NutThreadCreate("LongInit", long_init, 0, 2640);
 
 
@@ -146,6 +151,7 @@ int main(void)
     init_cgi();
     init_httpd();
 
+    printf("httpd ready\n");
 
 
 
@@ -199,9 +205,12 @@ static void init_net(void)
 
     printf("Configure LAN... ");
 
+    // No. Prevents DHCP.
+    //confnet.cdn_cip_addr = ee_cfg.ip_addr; // OS will use it as default if no DHCP - do we need NutNetIfConfig?
+
     while( tries-- > 0 )
     {
-        if( 0 == NutDhcpIfConfig("eth0", mac, 60000) )
+        if( 0 == NutDhcpIfConfig("eth0", ee_cfg.mac_addr, 60000) )
             goto dhcp_ok;
 
         puts("EEPROM/DHCP/ARP config failed");
@@ -212,11 +221,8 @@ static void init_net(void)
     }
 
     // Use static ip address
-    {
-        u_long ip_addr = inet_addr( MYIP );
-        u_long ip_mask = inet_addr( MYMASK );
-        NutNetIfConfig("eth0", mac, ip_addr, ip_mask);
-    }
+    NutNetIfConfig("eth0", ee_cfg.mac_addr, ee_cfg.ip_addr, ee_cfg.ip_mask);
+
 
 
 dhcp_ok:
@@ -272,7 +278,7 @@ static void init_sntp(void)
     uint32_t timeserver = confnet.cdn_gateway; // inet_addr(MYTIMED);
     time_t now;
 
-    _timezone = MYTZ * 60L * 60L;
+    _timezone = ee_cfg.timezone * 60L * 60L;
     if(NutSNTPGetTime(&timeserver, &now) == 0)
     {
         stime(&now);
@@ -283,10 +289,8 @@ static void init_sntp(void)
 
 static void init_syslog(void)
 {
-    uint32_t syslog_server = inet_addr( MYSYSLOGD );
-
     openlog( DEVICE_NAME, LOG_PERROR, LOG_USER );
-    setlogserver( syslog_server, 0 );
+    setlogserver( ee_cfg.ip_syslog, 0 );
     syslog( LOG_INFO, "%s started on Nut/OS %s, build from %s", DEVICE_NAME, NutVersionString(), makeDate );
 }
 

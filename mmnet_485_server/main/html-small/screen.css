@@ -1,6 +1,16 @@
 body {
- background-color: #A3BAFF;
+background-color: #A3BAFF;
 #background-color: #AAAAAA;
+
+padding: 20px 20px 20px 20px;
+
+}
+
+form {
+padding: 10px 10px 10px 10px;
+background-color:#BAFFA3;
+border:2px solid #444444;
+
 }
 
 table.main {

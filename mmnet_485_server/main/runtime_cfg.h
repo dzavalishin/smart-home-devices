@@ -10,5 +10,44 @@
 
 extern uint8_t		sntp_available;
 
+// For defaults see runtime_cfg.c
+
+struct eeprom_cfg
+{
+    unsigned char	timezone;       // For SNTP/time code
+
+    unsigned char	mac_addr[6];    // Default MAC address
+
+    // Startup port direction bits (1 = out)
+    unsigned char	ddr_b;
+    unsigned char	ddr_d;
+    unsigned char	ddr_e;
+    unsigned char	ddr_f;
+    unsigned char	ddr_g;
+
+    // Startup port data
+    unsigned char	start_b;
+    unsigned char	start_d;
+    unsigned char	start_e;
+    unsigned char	start_f;
+    unsigned char	start_g;
+
+    unsigned long	ip_addr;        // Default IP address
+    unsigned long	ip_mask;        // Default IP net mask
+    unsigned long	ip_route;       // Default IP route
+
+    unsigned long	ip_nntp;       	// IP address of SNTP (time) server
+    unsigned long	ip_syslog;     	// IP address of Syslog server
+};
+
+
+
+extern struct eeprom_cfg        ee_cfg;
+
+void    init_runtime_cfg(void);
+
+void    runtime_cfg_eeprom_read(void);
+int     runtime_cfg_eeprom_write(void);
+
 
 #endif /*RUNTIME_CFG_H_*/

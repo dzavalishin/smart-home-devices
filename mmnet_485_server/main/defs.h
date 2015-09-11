@@ -48,16 +48,16 @@
 
 /* These values are used if there is no valid configuration in EEPROM. */
 
-#define MYMAC   0x02, 0x06, 0x98, 0x00, 0x00, 0x00
-#define MYIP    "192.168.88.127"
-#define MYMASK  "255.255.0.0"
+#define DEFAULT_MAC   0x02, 0x06, 0x98, 0x00, 0x00, 0x00
+#define DEFAULT_IP    "192.168.88.127"
+#define DEFAULT_MASK  "255.255.0.0"
 
 // For sntp time setup
-#define MYTZ    -3
+#define DEFAULT_TZ    -3
 
 // Broadcast syslogd
 //#define MYSYSLOGD  "255.255.255.255"
-#define MYSYSLOGD  "192.168.1.130"
+#define DEFAULT_SYSLOGD  "192.168.1.130"
 //#define MYSYSLOGD  "syslog."
 
 
