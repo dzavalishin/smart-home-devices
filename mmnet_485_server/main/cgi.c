@@ -13,6 +13,7 @@
 
 #include "cgi.h"
 #include "dports.h"
+#include "adc.h"
 #include "dht.h"
 //#include "freq.h"
 //#include "temperature.h"
@@ -22,64 +23,10 @@
 
 #include <string.h>
 
-
-static char *html_mt = "text/html";
-
+#include "web.h"
 
 
 
-int
-    ShowTableCgi(FILE * stream, REQUEST * req,
-                 prog_char *header, table_print_func_t print_next )
-{
-    static prog_char thead[] =
-        //"<TABLE BORDER><TR><TH>Handle</TH><TH>Countdown</TH><TH>Tick Reload</TH><TH>Callback<BR>Address</TH><TH>Callback<BR>Argument</TH></TR>\r\n";
-        "<TABLE BORDER>\r\n";
-
-#if defined(__AVR_ATmega128__) || defined(__AVR_ATmega103__)
-    //static prog_char tfmt[] = "<TR><TD>%04X</TD><TD>%lu</TD><TD>%lu</TD><TD>%04X</TD><TD>%04X</TD></TR>\r\n";
-#else
-    //static prog_char tfmt[] = "<TR><TD>%08lX</TD><TD>%lu</TD><TD>%lu</TD><TD>%08lX</TD><TD>%08lX</TD></TR>\r\n";
-#endif
-
-    static prog_char foot[] = "</TABLE></BODY></HTML>";
-
-    NutHttpSendHeaderTop(stream, req, 200, "Ok");
-    NutHttpSendHeaderBottom(stream, req, html_mt, -1);
-
-
-    {
-        static prog_char h1[] = "<HTML><HEAD><TITLE>";
-        fputs_P(h1, stream);
-        fputs(header, stream);
-        static prog_char h2[] = "</TITLE>\r\n<link href=\"/screen.css\" rel=\"stylesheet\" type=\"text/css\">\r\n</HEAD><BODY><H1>";
-        fputs_P(h2, stream);
-        fputs(header, stream);
-        static prog_char h3[] = "</H1>\r\n";
-        fputs_P(h3, stream);
-    }
-
-    fputs_P(thead, stream);
-    //fputs_P(columns, stream);
-    print_next( stream, -1 ); // Show table header
-
-    int i;
-    for(i = 0; 1; i++) {
-
-        //fprintf_P(stream, tfmt, (uptr_t) tnp, ticks_left, tnp->tn_ticks, (uptr_t) tnp->tn_callback, (uptr_t) tnp->tn_arg);
-
-        if( 0 == print_next( stream, i ) )
-            break;
-
-        NutThreadYield();
-    }
-
-
-    fputs_P(foot, stream);
-    fflush(stream);
-
-    return 0;
-}
 
 
 
@@ -360,7 +307,6 @@ int CgiOutputs( FILE * stream, REQUEST * req )
 }
 
 
-static void  httpSendString( FILE * stream, REQUEST * req, char *data );
 static char * getNamedParameter( const char *name );
 
 
@@ -465,8 +411,7 @@ int CgiNetIO( FILE * stream, REQUEST * req )
         //httpSendString( stream, "Error: must be 'name' and, possibly, 'value' parameters" );
 //    errmsg:
         //NutHttpSendHeaderTop(stream, req, 500, "Must have ?name= or ?name=&value=, name: adc{0-7}, dig{0-63}, temp{0-7}");
-        NutHttpSendHeaderTop(stream, req, 200, "Ok");
-        NutHttpSendHeaderBottom(stream, req, html_mt, -1);
+        web_header_200(stream, req);
         static prog_char h1[] = "<HTML><body> Must have ?name= or ?name=&value=, name: adc{0-7}, dig{0-63}, temp{0-7}, q='%s' </body></HTML>";
         fprintf_P( stream, h1, tmp );
         return 0;
@@ -476,8 +421,7 @@ int CgiNetIO( FILE * stream, REQUEST * req )
     if( data == 0 )
     {
         //        goto errmsg;
-        NutHttpSendHeaderTop(stream, req, 200, "Ok");
-        NutHttpSendHeaderBottom(stream, req, html_mt, -1);
+        web_header_200(stream, req);
         static prog_char h1[] = "<HTML><body>no data for %s</body></HTML>";
         fprintf_P(stream, h1, name );
         return 0;
@@ -490,21 +434,6 @@ int CgiNetIO( FILE * stream, REQUEST * req )
 
 
 
-static void  httpSendString( FILE * stream, REQUEST * req, char *data )
-{
-    NutHttpSendHeaderTop(stream, req, 200, "Ok");
-    NutHttpSendHeaderBottom(stream, req, html_mt, -1);
-
-    static prog_char h1[] = "<HTML><body>";
-    fputs_P(h1, stream);
-
-    fputs(data, stream);
-
-    static prog_char h2[] = "</body></HTML>";
-    fputs_P(h2, stream);
-
-    fflush(stream);
-}
 
 static char * getNamedParameter( const char *name )
 {

@@ -4,6 +4,8 @@
  *
  * HTTPD/CGI code for web configuration.
  *
+ * URL: cgi-bin/form.cgi
+ *
 **/
 
 
@@ -13,37 +15,22 @@
 #include "web.h"
 
 
-static char *html_mt = "text/html";
 
 
 static void form_element( FILE * stream, char *title, char *field_name, char *curr_value );
 
-/*
- * CGI Sample: Proccessing a form.
- *
- * This routine must have been registered by NutRegisterCgi() and is 
- * automatically called by NutHttpProcessRequest() when the client 
- * request the URL 'cgi-bin/form.cgi'.
- *
- * Thanks to Tom Boettger, who provided this sample for ICCAVR.
- */
+
 int ShowForm(FILE * stream, REQUEST * req)
 {
-    //static prog_char html_head[] = "<H2>Configuration</H2><BR><table>";
-    //static prog_char html_body[] = "</table><BR><BR><p><a href=\"/\">return to main</a> <a href=\"/form.html\">return to form</a></BODY></HTML></p>";
 
     char buf[64];
     static char modified = 0;
 
-    NutHttpSendHeaderTop(stream, req, 200, "Ok");
-    NutHttpSendHeaderBottom(stream, req, html_mt, -1);
+    web_header_200(stream, req);
 
     HTML("<HTML><head><link href=\"/screen.css\" rel=\"stylesheet\" type=\"text/css\"></head><BODY>\r\n");
     HTML("<H2>Configuration</H2><BR>\r\n");
 
-    //fputs_P(html_head, stream);
-
-    //static prog_char form[] = "<form>\r\n";    fputs_P(form, stream);
 
     if (req->req_query)
     {
@@ -130,13 +117,12 @@ int ShowForm(FILE * stream, REQUEST * req)
     form_element( stream, "NNTP server", "ip_nntp", inet_ntoa(ee_cfg.ip_nntp) );
 
 
-    //static prog_char button[] = "<input type = \"submit\" value=\"send\" size=\"8\"></form>\r\n";
-    //fputs_P(button, stream);
 
     HTML("</table><BR>");
-    HTML("<input type = \"submit\" value=\"Send\" size=\"8\"></form>\r\n");
+    HTML("<input type = \"submit\" value=\"Send\" size=\"8\">\r\n");
+    HTML("</form><\r\n");
 
-    //fputs_P(html_body, stream);
+
 
     HTML("<p></p>");
     if( modified )

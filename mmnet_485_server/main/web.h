@@ -1,3 +1,12 @@
+/**
+ *
+ * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ *
+ * General HTML code/helpers.
+ *
+**/
+
+
 #include <string.h>
 #include <stdio.h>
 
@@ -15,5 +24,22 @@ int ShowForm(FILE * stream, REQUEST * req);
 
 
 #define HTML(__text) do {     static prog_char form[] = __text;    fputs_P(form, stream); } while(0)
+
+extern char *html_mtype; // "text/html"
+
+
+void web_header_200(FILE * stream, REQUEST * req);
+
+void httpSendString( FILE * stream, REQUEST * req, char *data ); // Send full HTTP reply with this string in body. Good for err msg.
+
+
+// Returns 0 if nothing to show more
+typedef int (*table_print_func_t)( FILE * stream, int row_no ) ;
+
+// Generate page with table-structured data printout
+int ShowTableCgi(FILE * stream, REQUEST * req, prog_char *header, table_print_func_t print_next );
+
+
+
 
 

@@ -49,6 +49,7 @@
 #include <modbus.h>
 
 #include "dports.h"
+#include "adc.h"
 
 // NB - contains var def and init
 #include "makedate.h"
@@ -81,6 +82,7 @@ THREAD(long_init, arg)
     {
         // SNTP kills us :(
 //        init_sntp();
+        _timezone = ee_cfg.timezone * 60L * 60L;
 //        init_syslog();
 
 #if SERVANT_TCP_COM0 || SERVANT_TCP_COM1
@@ -243,14 +245,15 @@ static void init_cgi(void)
     NutRegisterCgi("timers.cgi", ShowTimers);
     NutRegisterCgi("sockets.cgi", ShowSockets);
 
-	// Register our app CGI
+    // Register our app CGI - i/o/net reports
     NutRegisterCgi("inputs.cgi", CgiInputs);
     NutRegisterCgi("outputs.cgi", CgiOutputs);
 
     NutRegisterCgi("network.cgi", CgiNetwork);
 
-    // Finally a CGI example to process a form.
+    // Web config and general status
     NutRegisterCgi("form.cgi", ShowForm);
+    NutRegisterCgi("status.cgi", CgiStatus);
 
     // OpenHAB integration - read (/write&) value with http
     NutRegisterCgi("item.cgi", CgiNetIO );
@@ -279,7 +282,6 @@ static void init_sntp(void)
     uint32_t timeserver = confnet.cdn_gateway; // inet_addr(MYTIMED);
     time_t now;
 
-    _timezone = ee_cfg.timezone * 60L * 60L;
     if(NutSNTPGetTime(&timeserver, &now) == 0)
     {
         stime(&now);

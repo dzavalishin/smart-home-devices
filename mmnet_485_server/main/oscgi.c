@@ -13,8 +13,8 @@
 
 #include "oscgi.h"
 
+#include "web.h"
 
-static char *html_mt = "text/html";
 
 /*
  * CGI Sample: Show request parameters.
@@ -44,9 +44,7 @@ int ShowQuery(FILE * stream, REQUEST * req)
     static prog_char auth_fmt[] = "Auth info: %s<BR>\r\n";
     static prog_char agent_fmt[] = "User agent: %s<BR>\r\n";
 
-    /* These useful API calls create a HTTP response for us. */
-    NutHttpSendHeaderTop(stream, req, 200, "Ok");
-    NutHttpSendHeaderBottom(stream, req, html_mt, -1);
+    web_header_200(stream, req);
 
     /* Send HTML header. */
     fputs_P(head, stream);
@@ -112,8 +110,7 @@ int ShowThreads(FILE * stream, REQUEST * req)
     NUTTHREADINFO *tdp = nutThreadList;
 
     /* Send HTTP response. */
-    NutHttpSendHeaderTop(stream, req, 200, "Ok");
-    NutHttpSendHeaderBottom(stream, req, html_mt, -1);
+    web_header_200(stream, req);
 
     /* Send HTML header. */
     fputs_P(head, stream);
@@ -150,8 +147,7 @@ int ShowTimers(FILE * stream, REQUEST * req)
     NUTTIMERINFO *tnp;
     u_long ticks_left;
 
-    NutHttpSendHeaderTop(stream, req, 200, "Ok");
-    NutHttpSendHeaderBottom(stream, req, html_mt, -1);
+    web_header_200(stream, req);
 
     /* Send HTML header. */
     fputs_P(head, stream);
@@ -207,8 +203,7 @@ int ShowSockets(FILE * stream, REQUEST * req)
     extern TCPSOCKET *tcpSocketList;
     TCPSOCKET *ts;
 
-    NutHttpSendHeaderTop(stream, req, 200, "Ok");
-    NutHttpSendHeaderBottom(stream, req, html_mt, -1);
+    web_header_200(stream, req);
 
     /* Send HTML header. */
     fputs_P(head, stream);
