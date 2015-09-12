@@ -40,7 +40,6 @@
 
 #include <sys/syslog.h>
 
-#include "oscgi.h"
 #include "cgi.h"
 
 #include "web.h"
@@ -76,18 +75,26 @@ void each_second(HANDLE h, void *arg);
 
 
 
-THREAD(long_init, arg)
+THREAD(long_init, __arg)
 {
     while(1) // to satisfy no return
     {
         // SNTP kills us :(
-//        init_sntp();
-        _timezone = ee_cfg.timezone * 60L * 60L;
-//        init_syslog();
+#if ENABLE_SNTP
+        init_sntp();
+#endif
+
+//        _timezone = -((long)ee_cfg.timezone) * 60L * 60L;
+//        _daylight = 0; // No DST in Russia now
+#if ENABLE_SYSLOG
+        init_syslog();
+#endif
 
 #if SERVANT_TCP_COM0 || SERVANT_TCP_COM1
         init_tcp_com();
 #endif
+
+        while( 1 ) NutSleep(1000); // remove
 
         NutThreadExit();
     }
@@ -145,6 +152,10 @@ int main(void)
     init_net();
 
 
+    _timezone = (((long)ee_cfg.timezone) * 60L * 60L);
+    //_timezone = -(((long)ee_cfg.timezone) * 60L * 60L);
+    //_timezone = ((long)1) * 60L * 60L;
+    _daylight = 0; // No DST in Russia now
     NutThreadCreate("LongInit", long_init, 0, 2640);
 
 
@@ -238,7 +249,7 @@ static void init_cgi(void)
 {
 
     // Register our CGI sample. This will be called  by http://host/cgi-bin/test.cgi?anyparams
-    NutRegisterCgi("test.cgi", ShowQuery );
+    //NutRegisterCgi("test.cgi", ShowQuery );
 
     // Register some CGI samples, which display interesting system informations.
     NutRegisterCgi("threads.cgi", ShowThreads);
@@ -277,6 +288,7 @@ static void init_httpd(void)
 
 }
 
+#if ENABLE_SNTP
 static void init_sntp(void)
 {
     uint32_t timeserver = confnet.cdn_gateway; // inet_addr(MYTIMED);
@@ -289,14 +301,16 @@ static void init_sntp(void)
         sntp_available = 1;
     }
 }
+#endif
 
+#if ENABLE_SYSLOG
 static void init_syslog(void)
 {
     openlog( DEVICE_NAME, LOG_PERROR, LOG_USER );
     setlogserver( ee_cfg.ip_syslog, 0 );
     syslog( LOG_INFO, "%s started on Nut/OS %s, build from %s", DEVICE_NAME, NutVersionString(), makeDate );
 }
-
+#endif
 
 
 static int tryToFillMac(char *mac, char *oneWireId)

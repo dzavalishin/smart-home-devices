@@ -58,8 +58,14 @@ static int CgiStatusRow( FILE * stream, int row_no )
 
     case 2:
         {
+            char minus = _timezone < 0;
+            int32_t seconds = labs(_timezone);
+            int32_t minutes = seconds / 60UL;
+            int32_t hours = minutes / 60UL;
+            minutes %= 60UL;
+            seconds %= 60UL;
             HTML("<TR><TD>&nbsp;TimeZone </TD><TD>&nbsp;");
-            fprintf(stream, "%d", (signed char)_timezone );
+            fprintf(stream, "%s%ld:%ld:%ld (%ld)", (minus ? "-" : ""), hours, minutes, seconds, _timezone );
             HTML(" </TD></TR>\r\n");
         }
         break;
@@ -81,8 +87,9 @@ static int CgiStatusRow( FILE * stream, int row_no )
         }
         break;
 
-    case 4: ShowTableRow2( stream, "Got SNTP", (sntp_available ? "Yes" : "No") );	break;
-    case 5: ShowTableRow2( stream, "FirmWare build", makeDate );                	break;
+    case 4: ShowTableRow2( stream, "DST", (_daylight ? "Yes" : "No") );			break;
+    case 5: ShowTableRow2( stream, "Got SNTP", (sntp_available ? "Yes" : "No") );	break;
+    case 6: ShowTableRow2( stream, "FirmWare build", makeDate );                	break;
 
     default:
         return 0;

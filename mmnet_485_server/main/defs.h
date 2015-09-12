@@ -7,11 +7,8 @@
 **/
 
 // ------------------------------------------------------------------------
-// Configuration (on/off/number of ins/outs)
+// Configuration (on/off/number) of ins/outs
 // ------------------------------------------------------------------------
-
-#define USE_TWI 0
-
 
 #define	SERVANT_NPWM	0	// количество аналоговых выходов -- PWM
 #define	SERVANT_NADC	8	// количество аналоговых входов
@@ -25,19 +22,34 @@
 // pos 0 is freq for first channel, 1 is duty cycle for first channel
 // pos 2 is freq for second channel, 3 is duty cycle for it
 
-#define SERVANT_NFREQ 0
+#define SERVANT_NFREQ 	0
+
+#define N_TEMPERATURE_IN 0
 
 // RS232 on dev board
 #define SERVANT_TCP_COM0        0
 // USB serial on dev board
 #define SERVANT_TCP_COM1        0
 
-#define N_TEMPERATURE_IN 0
 
+
+
+// ------------------------------------------------------------------------
+// Configuration (on/off/number) of components
+// ------------------------------------------------------------------------
+
+// SNTP/Syslog kills us :(
+#define ENABLE_SNTP 1
+#define ENABLE_SYSLOG 1
+
+
+// Unused
 #define ENABLE_SPI 0
-
 // 1-wire child processor
 #define ENABLE_CH1W 0
+#define USE_TWI 0
+
+
 
 
 // ------------------------------------------------------------------------
@@ -156,6 +168,9 @@ extern char *makeDate; // filled in by makefile
 
 
 
+// ------------------------------------------------------------------------
+// Alarms - unused, delete
+// ------------------------------------------------------------------------
 
 
 
@@ -180,6 +195,9 @@ extern char *makeDate; // filled in by makefile
 
 
 
+// ------------------------------------------------------------------------
+// CPU freq macros
+// ------------------------------------------------------------------------
 
 
 

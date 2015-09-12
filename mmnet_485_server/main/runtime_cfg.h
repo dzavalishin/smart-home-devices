@@ -14,7 +14,7 @@ extern uint8_t		sntp_available;
 
 struct eeprom_cfg
 {
-    unsigned char	timezone;       // For SNTP/time code
+    signed char		timezone;       // For SNTP/time code
 
     unsigned char	mac_addr[6];    // Default MAC address
 

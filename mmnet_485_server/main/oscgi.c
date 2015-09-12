@@ -11,11 +11,10 @@
 #include <sys/socket.h>
 #include <sys/timer.h>
 
-#include "oscgi.h"
-
+#include "cgi.h"
 #include "web.h"
 
-
+#if 0
 /*
  * CGI Sample: Show request parameters.
  *
@@ -86,6 +85,7 @@ int ShowQuery(FILE * stream, REQUEST * req)
 
     return 0;
 }
+#endif
 
 /*
  * CGI Sample: Show list of threads.
