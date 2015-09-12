@@ -1,30 +1,19 @@
 body {
 background-color: #A3BAFF;
-#background-color: #AAAAAA;
-
 padding: 20px 20px 20px 20px;
-
 }
 
 form {
 padding: 10px 10px 10px 10px;
 background-color:#BAFFA3;
 border:2px solid #444444;
-
 }
 
 table.main {
 width: 1000px;
 padding: 10px 10px 10px 10px;
-#background-color: #AAAAFF;
-padding: 10px 10px 10px 10px;
-
-/* border:1px solid #AAAAAA; */
-
 border-top:1px solid #AAAAAA;
 border-bottom:1px solid #AAAAAA;
-
-
 }
 
 td.block1 {
@@ -40,12 +29,6 @@ padding: 10px 10px 10px 10px;
 
 text-transform:capitalize;
 border:2px solid #444444;
-/*
-border-top:4px solid #FAA21A;
-border-bottom:4px solid #FAA21A;
-border-left:2px solid #FAA21A;
-border-right:2px solid #FAA21A;
-*/
 }
 
 h1 {

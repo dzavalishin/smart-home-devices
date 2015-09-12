@@ -94,7 +94,7 @@ THREAD(long_init, __arg)
         init_tcp_com();
 #endif
 
-        while( 1 ) NutSleep(1000); // remove
+        //while( 1 ) NutSleep(1000); // remove
 
         NutThreadExit();
     }

@@ -10,7 +10,7 @@ JTAG_CONF= -B 1000 -j /dev/com6
 
 include ../Makedefs
 
-SRCS =  main.c $(PROJ).c $(WEBFILE) cgi.c oscgi.c delay.c spi.c runtime_cfg.c util.c httpd.c websetup.c adc.c dports.c modbus.c dht.c pwm.c web.c web_status.c
+SRCS =  main.c $(PROJ).c $(WEBFILE) web_cgi.c web_cgi_os.c delay.c spi.c runtime_cfg.c util.c httpd.c web_setup.c adc.c dports.c modbus.c dht.c pwm.c web.c web_status.c
 # i2c.c net_io.c alarm.c icp.c freq_send.c ds18x20.c temperature.c onewire.c ds2482.c dallas_ds2482.c  child-1wire.c 
 OBJS =  $(SRCS:.c=.o)
 
@@ -54,4 +54,4 @@ clean:
 	-rm -f $(SRCS:.c=.lst)
 	-rm -f $(SRCS:.c=.bak)
 	-rm -f $(WEBFILE)
-	-rm -f *.c~ *.h~
+	-rm -f *.c~ *.h~ *.d

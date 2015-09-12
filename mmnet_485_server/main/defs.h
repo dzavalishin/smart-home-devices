@@ -40,7 +40,7 @@
 
 // SNTP/Syslog kills us :(
 #define ENABLE_SNTP 1
-#define ENABLE_SYSLOG 1
+#define ENABLE_SYSLOG 0
 
 
 // Unused
@@ -67,8 +67,6 @@
 // For sntp time setup
 #define DEFAULT_TZ    -3
 
-// Broadcast syslogd
-//#define MYSYSLOGD  "255.255.255.255"
 #define DEFAULT_SYSLOGD  "192.168.1.130"
 //#define MYSYSLOGD  "syslog."
 

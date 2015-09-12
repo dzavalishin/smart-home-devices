@@ -81,6 +81,14 @@ ShowTableRow2(FILE * stream, char *c1, char *c2 )
 
 
 void
+ShowTableRow2i(FILE * stream, char *c1, int c2 )
+{
+    static prog_char tfmt[] = "<TR><TD>&nbsp;%s&nbsp;</TD><TD>&nbsp;%d&nbsp;</TD></TR>\r\n";
+    fprintf_P(stream, tfmt, c1, c2 );
+}
+
+
+void
 ShowTableRow3(FILE * stream, char *c1, char *c2, char *c3 )
 {
     static prog_char tfmt[] = "<TR><TD>&nbsp;%s&nbsp;</TD><TD>&nbsp;%s&nbsp;</TD><TD>&nbsp;%s&nbsp;</TD></TR>\r\n";

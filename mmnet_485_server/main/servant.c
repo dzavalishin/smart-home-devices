@@ -13,6 +13,7 @@
 #include <string.h>
 #include <io.h>
 
+#include <modbus.h>
 
 #include <sys/nutconfig.h>
 #include <sys/thread.h>
@@ -59,23 +60,31 @@ void each_second(HANDLE h, void *arg)
 
 THREAD(main_loop, arg)
 {
+    static uint16_t modbus_event_cnt_prev = 0;
+    char had_io = 0;
 
     for (;;)
     {
+        had_io = 0; // TODO http requests must do too
+        LED_OFF; // at least 10 msec of LED off
+        NutSleep(10);
         LED_ON;
 
         // Give other threads some chance to work
-        NutSleep(100);
+        NutSleep(90);
 
-        //LED_OFF; // at least 10 msec of LED ON
         //NutEventWait(&sendOutEvent, 100); // Once in 100 msec try sending anyway
 
+        // No IO?
+        if( modbus_event_cnt_prev != modbus_event_cnt )
+        {
+            modbus_event_cnt_prev = modbus_event_cnt;
+            had_io = 1;
+        }
 
-        LED_OFF;
+        if(!had_io )
+            LED_OFF;
 
-#if SERVANT_NDIG > 0
-        //check_digital_inputs();
-#endif
 
 
 #if SERVANT_DHT11
