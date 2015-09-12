@@ -75,18 +75,40 @@ int ShowForm(FILE * stream, REQUEST * req)
             if( 0 == strcmp( pname, "ip_syslog" ) )		    ee_cfg.ip_syslog	= inet_addr( pvalue );
             if( 0 == strcmp( pname, "ip_nntp" ) )		    ee_cfg.ip_nntp	= inet_addr( pvalue );
 
-            if( (0 == strcmp( pname, "eeprom" )) && (0 == strcmp( pvalue, "save" )) )
+            if( 0 == strcmp( pname, "eeprom" ))
             {
-                if( 0 == runtime_cfg_eeprom_write() )
+                if( 0 == strcmp( pvalue, "save" ) )
                 {
-                    modified = 0;
-                    HTML("<p>EEPROM write done</p>");
+                    if( 0 == runtime_cfg_eeprom_write() )
+                    {
+                        modified = 0;
+                        HTML("<p>EEPROM write done</p>");
+                    }
+                    else
+
+                        HTML("<p>EEPROM write FAILED!</p>");
+
                 }
-                else
+
+                if( 0 == strcmp( pvalue, "load" ) )
                 {
-                    HTML("<p>EEPROM write FAILED!</p>");
+                    if( 0 == runtime_cfg_eeprom_read() )
+                    {
+                        modified = 0;
+                        HTML("<p>EEPROM read done</p>");
+                    }
+                    else
+                        HTML("<p>EEPROM read FAILED!</p>");
+
+                }
+
+                if( 0 == strcmp( pvalue, "init" ) )
+                {
+                    init_runtime_cfg();         // Load defaults
+                    HTML("<p>Done setting factory defaults</p>");
                 }
             }
+
         }
     }
 
@@ -116,10 +138,13 @@ int ShowForm(FILE * stream, REQUEST * req)
 
     //fputs_P(html_body, stream);
 
+    HTML("<p></p>");
     if( modified )
-    {
-        HTML("<p><a href=\"/cgi-bin/form.cgi?eeprom=save\"><button>Save to EEPROM</button></a> </p>");
-    }
+        HTML("<a href=\"/cgi-bin/form.cgi?eeprom=save\"><button>Save to EEPROM</button></a> ");
+    HTML("<a href=\"/cgi-bin/form.cgi?eeprom=load\"><button>Load from EEPROM</button></a> ");
+    HTML("<a href=\"/cgi-bin/form.cgi?eeprom=init\"><button>Load factory defaults</button></a> ");
+    HTML("<p></p>");
+
     HTML("<p><a href=\"/\">Return to main</a></p>");
     HTML("</BODY></HTML></p>");
 

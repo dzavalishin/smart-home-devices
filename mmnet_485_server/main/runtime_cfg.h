@@ -46,7 +46,7 @@ extern struct eeprom_cfg        ee_cfg;
 
 void    init_runtime_cfg(void);
 
-void    runtime_cfg_eeprom_read(void);
+int     runtime_cfg_eeprom_read(void);
 int     runtime_cfg_eeprom_write(void);
 
 
