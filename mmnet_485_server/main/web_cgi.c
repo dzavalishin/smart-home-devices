@@ -438,7 +438,7 @@ int CgiNetIO( FILE * stream, REQUEST * req )
 static char * getNamedParameter( const char *name )
 {
     int nin;
-    static char out[16];
+    static char out[20];
 
 
     if( 0 == strncmp( name, "adc", 3 ) )
@@ -468,6 +468,11 @@ static char * getNamedParameter( const char *name )
         return out;
     }
 #endif
+
+    if( 0 == strcmp( name, "dht-h" ) ) return itoa( dht_humidity, out, 10 );
+    if( 0 == strcmp( name, "dht-t" ) ) return itoa( dht_temperature, out, 10 );
+
+
 
     return 0;
 }
