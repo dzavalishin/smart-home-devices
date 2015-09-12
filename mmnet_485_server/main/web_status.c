@@ -95,7 +95,7 @@ static int CgiStatusRow( FILE * stream, int row_no )
         break;
 
     case 4: ShowTableRow2( stream, "DST", (_daylight ? "Yes" : "No") );			break;
-    case 5: ShowTableRow2( stream, "Got SNTP", (sntp_available ? "Yes" : "No") );	break;
+    case 5: ShowTableRow2( stream, "Used SNTP", (sntp_available ? "Yes" : "No") );	break;
 
     //case 6: HTML("<th colspan=\"2\">FirmWare</th>"); break;
     case 6: subhdr( stream, "FirmWare" ); break;

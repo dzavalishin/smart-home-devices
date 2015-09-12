@@ -6,12 +6,13 @@
  *
 **/
 
-#include "util.h"
-#include "dports.h"
 #include "defs.h"
 #include "net_io.h"
-
+#include "util.h"
 #include "runtime_cfg.h"
+
+#include "io_dig.h"
+
 
 #include <inttypes.h>
 #include <avr/io.h>

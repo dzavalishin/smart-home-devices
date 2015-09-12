@@ -8,9 +8,10 @@
  *
 **/
 
-//#include "freq_defs.h"
+
 #include "defs.h"
-#include "pwm.h"
+
+#include "io_pwm.h"
 
 
 #include <inttypes.h>

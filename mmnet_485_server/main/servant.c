@@ -8,7 +8,7 @@
 
 #include "defs.h"
 #include "util.h"
-
+#include "runtime_cfg.h"
 
 #include <string.h>
 #include <io.h>
@@ -19,18 +19,11 @@
 #include <sys/thread.h>
 #include <sys/timer.h>
 
-#include "runtime_cfg.h"
-#include "adc.h"
-#include "dports.h"
-//#include "temperature.h"
-//#include "icp.h"
-//#include "freq.h"
-#include "util.h"
-//#include "dallas.h"
-//#include "ds2482.h"
-//#include "spi.h"
-//#include "child-1wire.h"
-#include "dht.h"
+
+#include "io_dht.h"
+#include "io_dig.h"
+#include "io_adc.h"
+#include "io_temp.h"
 
 
 //HANDLE sendOutEvent;
@@ -40,7 +33,7 @@
 //    NutEventPostAsync(&sendOutEvent);
 //}
 
-static volatile uint8_t temperatureMeterCnt = 0;
+//static volatile uint8_t temperatureMeterCnt = 0;
 static volatile uint8_t dht11meterCnt = 0;
 static uint8_t dht11_errorCnt = 0;
 
@@ -48,7 +41,7 @@ void each_second(HANDLE h, void *arg)
 {
     //temp_meter_sec_timer();
     //NutEventPostAsync(&temperatureMeterEvent);
-    temperatureMeterCnt++;
+//    temperatureMeterCnt++;
     dht11meterCnt++;
 }
 
@@ -112,27 +105,6 @@ THREAD(main_loop, arg)
 #endif // SERVANT_DHT11
 
 
-//        send_changed_adc_data();
-//        send_changed_dig_data();
-//        send_changed_freq_data();
-
-#if 0
-        //temp_meter_sec_timer();
-        //NutEventPostAsync(&temperatureMeterEvent);
-        if(temperatureMeterCnt)
-        {
-            temperatureMeterCnt--;
-            temp_meter_sec_timer();
-
-            // test
-            ch1w_read_temperature( 0 );
-
-        }
-#endif
-
-#if N_TEMPERATURE_IN > 0
-        send_changed_temperature_data();
-#endif
 
 
 

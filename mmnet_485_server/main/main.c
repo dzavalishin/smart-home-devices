@@ -47,14 +47,16 @@
 #include "modbus_srv.h"
 #include <modbus.h>
 
-#include "dports.h"
-#include "adc.h"
+
+#include "io_dig.h"
+#include "io_adc.h"
+#include "io_temp.h"
 
 // NB - contains var def and init
 #include "makedate.h"
 
 
-static int tryToFillMac(char *mac, char *oneWireId);
+static int tryToFillMac(unsigned char *mac, unsigned char *oneWireId);
 
 static void init_devices(void);
 
@@ -71,7 +73,6 @@ void each_second(HANDLE h, void *arg);
 
 
 
-//u_char mac[] = { MYMAC };
 
 
 
@@ -203,14 +204,17 @@ static void init_net(void)
 
 
     // TODO fixme
+#if SERVANT_1WMAC
+    tryToFillMac( ee_cfg.mac_addr, serialNumber ); // do not try to use 18b20 as MAC addr
 #if 0
-    if( !tryToFillMac( mac, serialNumber ) )
+    if( !tryToFillMac( ee_cfg.mac_addr, serialNumber ) )
     {
         int tno;
-        for( tno = 0; tno < N_TEMPERATURE_IN; tno++ )
-            if( tryToFillMac( mac, gTempSensorIDs[tno] ) )
+        for( tno = 0; tno < SERVANT_NTEMP; tno++ )
+            if( tryToFillMac( ee_cfg.mac_addr, gTempSensorIDs[tno] ) )
                 break;
     }
+#endif
 #endif
 
     // LAN configuration using EEPROM values or DHCP/ARP method.
@@ -313,9 +317,9 @@ static void init_syslog(void)
 #endif
 
 
-static int tryToFillMac(char *mac, char *oneWireId)
+static int tryToFillMac(unsigned char *mac, unsigned char *oneWireId)
 {
-#if 0
+#if SERVANT_1WMAC
     int i;
     char found = 0;
     for( i = 0; i < OW_ROMCODE_SIZE; i++ )
@@ -374,37 +378,6 @@ void init_devices(void)
     }
 #endif // USE_TWI
 
-#if 0
-    child_1wire_init();
-
-    {
-        printf("DS2482 i2c/1wire bridge init...");
-
-        onewire_2482_available = !ds2482Init((DS2482_I2C_ADDR+0x6)>>1);
-
-
-        printf(" %s\n", (!onewire_2482_available) ? "err" : "ok");
-
-        ds2482SendCmdArg(DS2482_CMD_WCFG,
-                         (0xF0 | DS2482_CFG_APU) & ~(DS2482_CFG_APU<<4)
-                        );
-
-
-        //ds2482SendCmdArg(DS2482_CMD_WCFG, 0xF0 ); // Most default mode
-
-        printf("DS2482 cfg: 0x%02X\n", ds2482ReadConfig() );
-
-        uint8_t status;
-        ds2482BusyWait(&status);
-        printf("DS2482 status: 0x%02X\n", status );
-
-        printf("1wire: %s devices\n", dallasReset() == DALLAS_PRESENCE ? "have" : "no" );
-    }
-    //dallasFindDevices(dallas_roms, DALLAS_MAX_DEVICES);
-    //dallasFindDevices(dallas_roms, 4);
-
-    init_udp_net_io();
-#endif
 
 
     //stop errant interrupts until set up
@@ -427,7 +400,7 @@ void init_devices(void)
     icp_init();
 #endif
 
-#if N_TEMPERATURE_IN > 0
+#if SERVANT_NTEMP > 0
     init_temperature();
 #endif
 

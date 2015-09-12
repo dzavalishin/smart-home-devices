@@ -6,6 +6,8 @@
  *
 **/
 
+#include "defs.h"
+
 #include <sys/event.h>
 #include <sys/timer.h>
 #include <sys/heap.h>
@@ -16,10 +18,10 @@
 
 #include "modbus_srv.h"
 #include "modbus_reg.h"
-#include "modbus.h"
+#include <modbus.h>
 
-#include "defs.h"
-#include "adc.h"
+#include "io_adc.h"
+#include "io_dig.h"
 
 static const int modbus_debug = 0;
 

@@ -12,9 +12,10 @@
 #include "runtime_cfg.h"
 
 #include "cgi.h"
-#include "dports.h"
-#include "adc.h"
-#include "dht.h"
+
+#include "io_dig.h"
+#include "io_adc.h"
+#include "io_dht.h"
 //#include "freq.h"
 //#include "temperature.h"
 
@@ -109,8 +110,8 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
     row_no -= SERVANT_NDIG;
 #endif
 
-#if N_TEMPERATURE_IN > 0
-    if( row_no  < N_TEMPERATURE_IN )
+#if SERVANT_NTEMP > 0
+    if( row_no  < SERVANT_NTEMP )
     {
         static prog_char tfmt[] = "<TR><TD> Temp </TD><TD> %u </TD><TD> 0x%04X </TD></TR>\r\n";
         fprintf_P(stream, tfmt,  row_no, oldTemperature[row_no] );
@@ -118,7 +119,7 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
         return 1;
     }
 
-    row_no -= N_TEMPERATURE_IN;
+    row_no -= SERVANT_NTEMP;
 #endif
 
 #if SERVANT_DHT11
@@ -317,65 +318,6 @@ int CgiNetIO( FILE * stream, REQUEST * req )
 
     char tmp[100] = "";
 
-#if 0
-
-    if (req->req_query)
-    {
-        char *qp1;
-        u_char i;
-
-        strncpy( tmp, req->req_query, 99 );
-
-        /* Extract 2 parameters. */
-        for (i = 0; i < 2; i++)
-        {
-            char *c;
-            char *p;
-
-            if(i == 0)                c = strtok_r(req->req_query, "=", &qp1);
-            else                      c = strtok_r(0, "=", &qp1);
-
-            p = strtok_r(0, "&", &qp1);
-
-            if( (c != 0) && (p != 0 ) )
-            {
-                if( 0 == strcmp( c, "name" ) )		name = p;
-                if( 0 == strcmp( c, "item" ) )		name = p;
-                if( 0 == strcmp( c, "val" ) )		value = p;
-                if( 0 == strcmp( c, "value" ) )		value = p;
-            }
-        }
-
-
-        //        for (i = 0; i < 3; i++) {
-        //            fprintf_P(stream, PSTR("%s: %s<BR>\r\n"), c[i], p[i]);
-        //        }
-
-    }
-
-    NutHttpProcessQueryString( req );
-
-    if(req->req_qptrs)
-    {
-        char **pp;
-
-        for( pp = req->req_qptrs; *pp; pp++ )
-        {
-            char *qp1;
-
-            char *c = strtok_r(*pp, "=", &qp1);
-            char *p = strtok_r(0, "=", &qp1);
-
-            if( (c != 0) && (p != 0 ) )
-            {
-                if( 0 == strcmp( c, "name" ) )		name = p;
-                if( 0 == strcmp( c, "item" ) )		name = p;
-                if( 0 == strcmp( c, "val" ) )		value = p;
-                if( 0 == strcmp( c, "value" ) )		value = p;
-            }
-        }
-    }
-#else
     if (req->req_query)
     {
         char *pname;
@@ -383,28 +325,25 @@ int CgiNetIO( FILE * stream, REQUEST * req )
         int i;
         int count;
 
-        strncpy( tmp, req->req_query, 99 );
+        strncpy( tmp, req->req_query, sizeof(tmp)-1 );
 
         count = NutHttpGetParameterCount(req);
         /* Extract count parameters. */
-        for (i = 0; i < count; i++) {
+        for (i = 0; i < count; i++)
+        {
             pname = NutHttpGetParameterName(req, i);
             pvalue = NutHttpGetParameterValue(req, i);
 
             /* Send the parameters back to the client. */
-
 //            fprintf_P(stream, PSTR("%s: %s<BR>\r\n"), pname, pvalue);
 
             if( 0 == strcmp( pname, "name" ) )		name = pvalue;
             if( 0 == strcmp( pname, "item" ) )		name = pvalue;
             if( 0 == strcmp( pname, "val" ) )		value = pvalue;
             if( 0 == strcmp( pname, "value" ) )		value = pvalue;
-
-
         }
     }
 
-#endif
 
     if( name == 0 )
     {
@@ -468,6 +407,21 @@ static char * getNamedParameter( const char *name )
         return out;
     }
 #endif
+
+#if SERVANT_NTEMP > 0
+    if( 0 == strncmp( name, "temp", 4 ) )
+    {
+        nin = atoi( name + 4 );
+        if( nin >= SERVANT_NTEMP ) nin = -1;
+
+        if( nin < 0 ) return 0;
+
+        // todo float point?
+        sprintf( out, "%d", oldTemperature[i] );
+        return out;
+    }
+#endif // SERVANT_NTEMP
+
 
     if( 0 == strcmp( name, "dht-h" ) ) return itoa( dht_humidity, out, 10 );
     if( 0 == strcmp( name, "dht-t" ) ) return itoa( dht_temperature, out, 10 );

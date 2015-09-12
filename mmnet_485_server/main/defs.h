@@ -10,11 +10,11 @@
 // Configuration (on/off/number) of ins/outs
 // ------------------------------------------------------------------------
 
-#define	SERVANT_NPWM	0	// количество аналоговых выходов -- PWM
+#define	SERVANT_NPWM	0	// Analogue outputs (PWM) count
 #define	SERVANT_NADC	8	// количество аналоговых входов
 
-#define	SERVANT_NDIG	7	// количество цифровых портов (входы)  - в байтах
-#define	SERVANT_NDIGOUT	0	// количество цифровых портов (выходы) - в байтах
+#define	SERVANT_NDIG	7	// количество цифровых портов (входы)  - bytes
+#define	SERVANT_NDIGOUT	0	// количество цифровых портов (выходы) - bytes
 
 #define	SERVANT_DHT11   1       // Have or not DHT11/22
 
@@ -24,7 +24,10 @@
 
 #define SERVANT_NFREQ 	0
 
-#define N_TEMPERATURE_IN 0
+//#define N_TEMPERATURE_IN 0
+#define SERVANT_NTEMP 	0
+
+#define SERVANT_1WMAC   0       // Attempt to get MAC address from 1-wire 2401 chip
 
 // RS232 on dev board
 #define SERVANT_TCP_COM0        0
@@ -42,11 +45,10 @@
 #define ENABLE_SNTP 1
 #define ENABLE_SYSLOG 0
 
+#define ENABLE_1WIRE ((SERVANT_NTEMP)||(SERVANT_1WMAC))
 
 // Unused
 #define ENABLE_SPI 0
-// 1-wire child processor
-#define ENABLE_CH1W 0
 #define USE_TWI 0
 
 

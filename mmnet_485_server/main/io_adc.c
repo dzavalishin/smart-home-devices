@@ -6,10 +6,10 @@
  *
 **/
 
-#include "adc.h"
 #include "defs.h"
 #include "util.h"
-//#include "packet_types.h"
+
+#include "io_adc.h"
 
 #include "net_io.h"
 

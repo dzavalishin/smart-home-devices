@@ -22,7 +22,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-#include "dht.h"
+#include "io_dht.h"
 
 #if SERVANT_DHT11
 
