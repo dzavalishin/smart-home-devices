@@ -38,6 +38,8 @@ typedef int (*table_print_func_t)( FILE * stream, int row_no ) ;
 
 // Generate page with table-structured data printout
 int ShowTableCgi(FILE * stream, REQUEST * req, prog_char *header, table_print_func_t print_next );
+void ShowTableRow2(FILE * stream, char *c1, char *c2 );
+void ShowTableRow3(FILE * stream, char *c1, char *c2, char *c3 );
 
 
 

@@ -41,27 +41,15 @@ void  httpSendString( FILE * stream, REQUEST * req, char *data )
 int
 ShowTableCgi(FILE * stream, REQUEST * req, prog_char *header, table_print_func_t print_next )
 {
-
     web_header_200(stream, req);
 
-
-
-    //static prog_char h1[] = "<HTML><HEAD><TITLE>";
-    //fputs_P(h1, stream);
     HTML("<HTML><HEAD><TITLE>");
     fputs(header, stream);
-    //static prog_char h2[] = "</TITLE>\r\n<link href=\"/screen.css\" rel=\"stylesheet\" type=\"text/css\">\r\n</HEAD><BODY><H1>";
-    //fputs_P(h2, stream);
     HTML("</TITLE>\r\n<link href=\"/screen.css\" rel=\"stylesheet\" type=\"text/css\">\r\n</HEAD><BODY><H1>");
     fputs(header, stream);
-    //static prog_char h3[] = "</H1>\r\n";
-    //fputs_P(h3, stream);
     HTML("</H1>\r\n");
 
 
-    //static prog_char thead[] =        "<TABLE BORDER>\r\n";
-    //fputs_P(thead, stream);
-    //HTML("<TABLE BORDER>\r\n");
     HTML("<TABLE>\r\n");
 
     print_next( stream, -1 ); // Show table header
@@ -75,10 +63,9 @@ ShowTableCgi(FILE * stream, REQUEST * req, prog_char *header, table_print_func_t
         NutThreadYield();
     }
 
-
-    //fputs_P(foot, stream);
-    //static prog_char foot[] = "</TABLE></BODY></HTML>";
-    HTML("</TABLE></BODY></HTML>");
+    HTML("</TABLE>");
+    HTML("<hr><br><a href=\"/\">Main page</a>");
+    HTML("</BODY></HTML>");
 
     fflush(stream);
 
@@ -86,10 +73,21 @@ ShowTableCgi(FILE * stream, REQUEST * req, prog_char *header, table_print_func_t
 }
 
 void
+ShowTableRow2(FILE * stream, char *c1, char *c2 )
+{
+    static prog_char tfmt[] = "<TR><TD>&nbsp;%s&nbsp;</TD><TD>&nbsp;%s&nbsp;</TD></TR>\r\n";
+    fprintf_P(stream, tfmt, c1, c2 );
+}
+
+
+void
 ShowTableRow3(FILE * stream, char *c1, char *c2, char *c3 )
 {
     static prog_char tfmt[] = "<TR><TD>&nbsp;%s&nbsp;</TD><TD>&nbsp;%s&nbsp;</TD><TD>&nbsp;%s&nbsp;</TD></TR>\r\n";
     fprintf_P(stream, tfmt, c1, c2, c3 );
 }
+
+
+
 
 
