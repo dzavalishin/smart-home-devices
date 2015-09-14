@@ -8,6 +8,7 @@
 // Is not zero if we can use 2482 to access 1wire devices.
 //extern uint8_t		onewire_2482_available;
 
+extern uint8_t		onewire_available;
 extern uint8_t		sntp_available;
 
 // For defaults see runtime_cfg.c

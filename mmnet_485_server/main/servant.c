@@ -24,6 +24,7 @@
 #include "io_dig.h"
 #include "io_adc.h"
 #include "io_temp.h"
+#include "io_bmp180.h"
 
 
 //HANDLE sendOutEvent;
@@ -33,15 +34,15 @@
 //    NutEventPostAsync(&sendOutEvent);
 //}
 
-//static volatile uint8_t temperatureMeterCnt = 0;
+static volatile uint8_t temperatureMeterCnt = 0;
 static volatile uint8_t dht11meterCnt = 0;
 static uint8_t dht11_errorCnt = 0;
 
 void each_second(HANDLE h, void *arg)
 {
-    //temp_meter_sec_timer();
+
     //NutEventPostAsync(&temperatureMeterEvent);
-//    temperatureMeterCnt++;
+    temperatureMeterCnt++;
     dht11meterCnt++;
 }
 
@@ -104,10 +105,17 @@ THREAD(main_loop, arg)
         }
 #endif // SERVANT_DHT11
 
+#if SERVANT_BMP180
+        bmp180_getdata(); // todo check success?
+#endif // SERVANT_BMP180
 
-
-
-
+#if SERVANT_NTEMP
+        if( temperatureMeterCnt > 0 )
+        {
+            temp_meter_measure();
+            temperatureMeterCnt = 0; // Can lead to less than sec delay to next call. Ignore?
+        }
+#endif
 
 
     }

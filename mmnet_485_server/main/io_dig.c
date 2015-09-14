@@ -74,9 +74,11 @@ void dio_init(void)
     //add_exclusion_mask( UART1_EXCL_EXCLPOS, UART1_EXCL_MASK );
     //add_exclusion_mask( UART2_EXCL_EXCLPOS, UART2_EXCL_MASK );
 
-#if HALF_DUPLEX
+#if ENABLE_HALF_DUPLEX_0
+    add_exclusion_pin( HALF_DUPLEX0_EXCLPOS, HALF_DUPLEX0_PIN );
+#endif
+#if ENABLE_HALF_DUPLEX_1
     add_exclusion_pin( HALF_DUPLEX1_EXCLPOS, HALF_DUPLEX1_PIN );
-    add_exclusion_pin( HALF_DUPLEX2_EXCLPOS, HALF_DUPLEX2_PIN );
 #endif
 
     add_exclusion_pin( LED_EXCLPOS, LED );
@@ -113,9 +115,16 @@ void dio_init(void)
 
     // Now set dde for pins we use in a dedicated way
 
-#if HALF_DUPLEX
+
+#if ENABLE_HALF_DUPLEX_0
+    HALF_DUPLEX0_DDR |= _BV(HALF_DUPLEX0_PIN);
+#endif
+#if ENABLE_HALF_DUPLEX_1
     HALF_DUPLEX1_DDR |= _BV(HALF_DUPLEX1_PIN);
-    HALF_DUPLEX2_DDR |= _BV(HALF_DUPLEX2_PIN);
+#endif
+
+#if ENABLE_SPI
+    DDRB |= PB_SS_PIN|(_BV(PB0))|(_BV(PB1))|(_BV(PB2));
 #endif
 
     led_ddr_init(); // again - first time was in main
@@ -124,7 +133,23 @@ void dio_init(void)
 
 
 
+void set_half_duplex0( char val )
+{
+#if ENABLE_HALF_DUPLEX_0
+    if( val )     HALF_DUPLEX0_PORT |= _BV(HALF_DUPLEX0_PIN);
+    else          HALF_DUPLEX0_PORT &= ~_BV(HALF_DUPLEX0_PIN);
+    HALF_DUPLEX0_DDR |= _BV(HALF_DUPLEX0_PIN);
+#endif
+}
 
+void set_half_duplex1( char val )
+{
+#if ENABLE_HALF_DUPLEX_1
+    if( val )     HALF_DUPLEX1_PORT |= _BV(HALF_DUPLEX1_PIN);
+    else          HALF_DUPLEX1_PORT &= ~_BV(HALF_DUPLEX1_PIN);
+    HALF_DUPLEX1_DDR |= _BV(HALF_DUPLEX1_PIN);
+#endif
+}
 
 
 

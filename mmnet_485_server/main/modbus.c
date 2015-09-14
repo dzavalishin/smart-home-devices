@@ -22,6 +22,7 @@
 
 #include "io_adc.h"
 #include "io_dig.h"
+#include "io_temp.h"
 
 static const int modbus_debug = 0;
 
@@ -134,6 +135,14 @@ void modbus_start_tx( void ) {  }
 uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
 {
     if(modbus_debug) printf("Modbus reg %u read\n", nReg );
+
+#if SERVANT_1WMAC
+    if( INRANGE( nReg, MB_REG_ROMID, MB_COUNT_ROMID ) )
+    {
+        *val = *((uint16_t*)serialNumber+nReg-MB_REG_ROMID);
+        return 1;
+    }
+#endif
 
 #if SERVANT_NADC > 0
     if( INRANGE( nReg, MB_REG_AI, MB_COUNT_AI ) )

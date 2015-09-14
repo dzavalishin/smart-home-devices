@@ -18,16 +18,16 @@
 
 #define	SERVANT_DHT11   1       // Have or not DHT11/22
 
+#define	SERVANT_BMP180  1       // Have or not BMP180 pressure/temp meter
+
 // FREQ/PWM duty inputs
 // pos 0 is freq for first channel, 1 is duty cycle for first channel
 // pos 2 is freq for second channel, 3 is duty cycle for it
 
 #define SERVANT_NFREQ 	0
 
-//#define N_TEMPERATURE_IN 0
-#define SERVANT_NTEMP 	0
-
-#define SERVANT_1WMAC   0       // Attempt to get MAC address from 1-wire 2401 chip
+#define SERVANT_NTEMP   8       // 1-Wire temperature sensors
+#define SERVANT_1WMAC   1       // Attempt to get MAC address from 1-wire 2401 chip
 
 // RS232 on dev board
 #define SERVANT_TCP_COM0        0
@@ -47,11 +47,15 @@
 
 #define ENABLE_1WIRE ((SERVANT_NTEMP)||(SERVANT_1WMAC))
 
+#define ENABLE_TWI SERVANT_BMP180
+
 // Unused
 #define ENABLE_SPI 0
-#define USE_TWI 0
+#define PB_SS_PIN (_BV(PB0))
 
 
+#define ENABLE_HALF_DUPLEX_0    1
+#define ENABLE_HALF_DUPLEX_1    1
 
 
 // ------------------------------------------------------------------------
@@ -93,8 +97,17 @@
 
 #endif
 
+#define HALF_DUPLEX0_EXCLPOS 1 // Port B
+#define HALF_DUPLEX0_DDR DDRB
+#define HALF_DUPLEX0_PORT PORTB
+#define HALF_DUPLEX0_PIN PINB6
 
-// OneWire
+#define HALF_DUPLEX1_EXCLPOS 1 // Port B
+#define HALF_DUPLEX1_DDR DDRB
+#define HALF_DUPLEX1_PORT PORTB
+#define HALF_DUPLEX1_PIN PINB7
+
+// OneWire - TODO port is hardcoded! def below is unused
 #define OW_EXCLPOS  6 // Port G
 #define OW_PIN  PG4 // TSC1
 #define OW_IN   PING
@@ -118,7 +131,7 @@
 #define DATAFLASH_SCK_PIN 		PB1
 #define DATAFLASH_MOSI_PIN 		PB2
 #define DATAFLASH_MISO_PIN 		PB3
-#define DATAFLASH_CS_PIN 		PB5
+#define DATAFLASH_CS_PIN 		PB0
 
 
 // ------------------------------------------------------------------------
@@ -145,7 +158,7 @@
 
 extern char *makeDate; // filled in by makefile
 
-#define HALF_DUPLEX 0
+//#define HALF_DUPLEX 0
 
 
 
@@ -168,26 +181,6 @@ extern char *makeDate; // filled in by makefile
 
 
 
-// ------------------------------------------------------------------------
-// Alarms - unused, delete
-// ------------------------------------------------------------------------
-
-
-
-#define ALARM_OUTPUTS_USED 0
-
-#if ALARM_OUTPUTS_USED
-// TODO - WRONG!
-#define	SERVANT_ALARM_PIN	0	//PB0
-#define	SERVANT_WARN_PIN	1	//PB1
-
-#define SERVANT_ALARM_PORT      PORTB
-#define SERVANT_WARN_PORT       PORTB
-
-#define SERVANT_ALARM_EXCLPOS   1
-#define SERVANT_WARN_EXCLPOS    1
-
-#endif
 
 
 

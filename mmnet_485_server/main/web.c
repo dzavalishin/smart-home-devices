@@ -87,6 +87,13 @@ ShowTableRow2i(FILE * stream, char *c1, int c2 )
     fprintf_P(stream, tfmt, c1, c2 );
 }
 
+void
+ShowTableRow2b(FILE * stream, char *c1, int c2 )
+{
+    ShowTableRow2( stream, c1, c2 ? "Yes" : "No" );
+}
+
+
 
 void
 ShowTableRow3(FILE * stream, char *c1, char *c2, char *c3 )

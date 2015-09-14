@@ -17,7 +17,8 @@
 #include "io_adc.h"
 #include "io_dht.h"
 //#include "freq.h"
-//#include "temperature.h"
+#include "io_temp.h"
+#include "io_bmp180.h"
 
 #include <sys/confnet.h>
 #include <arpa/inet.h>
@@ -125,7 +126,7 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
 #if SERVANT_DHT11
     if( row_no == 0 )
     {
-        static prog_char tfmt[] = "<TR><TD> DHT11 Temp/Humid </TD><TD> %u </TD><TD> %u </TD></TR>\r\n";
+        static prog_char tfmt[] = "<TR><TD> DHT11 Temp/Humid </TD><TD> %u &deg;C</TD><TD> %u %%</TD></TR>\r\n";
         fprintf_P(stream, tfmt, dht_temperature, dht_humidity );
 
         return 1;
@@ -134,6 +135,19 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
     row_no--;
 #endif // SERVANT_DHT11
 
+#if SERVANT_BMP180
+    if( row_no == 0 )
+    {
+        //static prog_char tfmt[] = "<TR><TD> BMP180 Temp/Pressure &nbsp;</TD><TD> %ld (%d) </TD><TD> %ld (%ld) </TD></TR>\r\n";
+        //fprintf_P(stream, tfmt, bmp180_temperature, bmp180_temperature_raw, bmp180_pressure, bmp180_pressure_raw );
+        static prog_char tfmt[] = "<TR><TD> BMP180 Temp/Pressure &nbsp;</TD><TD> %ld &deg;C *10</TD><TD> %ld Pa</TD></TR>\r\n";
+        fprintf_P(stream, tfmt, bmp180_temperature, bmp180_pressure );
+
+        return 1;
+    }
+
+    row_no--;
+#endif // SERVANT_DHT11
 
     return 0;
 }
@@ -377,7 +391,7 @@ int CgiNetIO( FILE * stream, REQUEST * req )
 static char * getNamedParameter( const char *name )
 {
     int nin;
-    static char out[20];
+    static char out[30];
 
 
     if( 0 == strncmp( name, "adc", 3 ) )
@@ -417,15 +431,20 @@ static char * getNamedParameter( const char *name )
         if( nin < 0 ) return 0;
 
         // todo float point?
-        sprintf( out, "%d", oldTemperature[i] );
+        sprintf( out, "%d", oldTemperature[nin] );
         return out;
     }
 #endif // SERVANT_NTEMP
 
-
+#if SERVANT_DHT11
     if( 0 == strcmp( name, "dht-h" ) ) return itoa( dht_humidity, out, 10 );
     if( 0 == strcmp( name, "dht-t" ) ) return itoa( dht_temperature, out, 10 );
+#endif // SERVANT_DHT11
 
+#if SERVANT_BMP180
+    if( 0 == strcmp( name, "bmp-p" ) ) return ltoa( bmp180_pressure, out, 10 );
+    if( 0 == strcmp( name, "bmp-t" ) ) return ltoa( bmp180_temperature, out, 10 );
+#endif // SERVANT_BMP180
 
 
     return 0;

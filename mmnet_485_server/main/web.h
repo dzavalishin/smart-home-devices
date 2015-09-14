@@ -40,6 +40,7 @@ int ShowTableCgi(FILE * stream, REQUEST * req, prog_char *header, table_print_fu
 
 void ShowTableRow2(FILE * stream, char *c1, char *c2 );
 void ShowTableRow2i(FILE * stream, char *c1, int c2 );
+void ShowTableRow2b(FILE * stream, char *c1, int c2 ); // Bool - yes/No
 
 void ShowTableRow3(FILE * stream, char *c1, char *c2, char *c3 );
 

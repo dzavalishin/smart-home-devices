@@ -16,6 +16,7 @@
 #include <dev/nicrtl.h>
 #include <dev/debug.h>
 #include <dev/urom.h>
+#include <dev/twif.h>
 
 #include <sys/nutconfig.h>
 #include <sys/version.h>
@@ -51,6 +52,7 @@
 #include "io_dig.h"
 #include "io_adc.h"
 #include "io_temp.h"
+#include "io_bmp180.h"
 
 // NB - contains var def and init
 #include "makedate.h"
@@ -64,8 +66,10 @@ static void init_net(void);
 static void init_cgi(void);
 static void init_httpd(void);
 static void init_sntp(void);
-static void init_syslog(void);
 
+#if ENABLE_SYSLOG
+static void init_syslog(void);
+#endif
 
 // in servant.c
 THREAD(main_loop, arg); 
@@ -95,7 +99,24 @@ THREAD(long_init, __arg)
         init_tcp_com();
 #endif
 
-        //while( 1 ) NutSleep(1000); // remove
+#if SERVANT_NTEMP > 0
+        init_temperature();
+#endif
+
+#if ENABLE_SPI
+        char a = 0xEF, b = 0x01;
+        while( 1 )
+        {
+            a += 1;
+            b += 2;
+
+            spi_send( a, b );
+
+            test_spi();
+
+            NutSleep(1000); // remove
+        }
+#endif
 
         NutThreadExit();
     }
@@ -125,6 +146,9 @@ int main(void)
 
     led_ddr_init(); // Before using LED!
     LED_ON;
+
+    set_half_duplex0(0);
+    set_half_duplex1(1);
 
     // Initialize the uart device.
 #if 1
@@ -359,12 +383,11 @@ static int tryToFillMac(unsigned char *mac, unsigned char *oneWireId)
 
 
 
-
 // Initialize all peripherals
 
 void init_devices(void)
 {
-#if USE_TWI
+#if ENABLE_TWI
     {
         unsigned long busspeed = 10000;	// 10kHz
         //unsigned long busspeed = 25;	// 50 Hz
@@ -376,7 +399,7 @@ void init_devices(void)
         TwIOCtl(TWI_GETSPEED, &busspeed);
         printf(" done, speed is %ld\n", busspeed);
     }
-#endif // USE_TWI
+#endif // ENABLE_TWI
 
 
 
@@ -400,10 +423,6 @@ void init_devices(void)
     icp_init();
 #endif
 
-#if SERVANT_NTEMP > 0
-    init_temperature();
-#endif
-
     sei(); //re-enable interrupts
 
 #if 0
@@ -414,12 +433,30 @@ void init_devices(void)
     temp_meter_sec_timer();
 #endif
 
+    set_half_duplex0(0);
+    set_half_duplex1(0);
 
 #if ENABLE_SPI
     spi_init();
-    printf("SPI = 0x%02X\n", spi_send( 0x80, 0 )); // read reg 0, whoami
+    //printf("SPI = 0x%02X\n", spi_send( 0x80, 0 )); // read reg 0, whoami
+
+    spi_send( 0x01, 0xFF );
+    spi_send( 0x07, 0xAA );
+
+    spi_send( 0x33, 0xFF );
+    spi_send( 0x77, 0xAA );
+
+    spi_send( 0xFF, 0x55 );
+    spi_send( 0xEE, 0x0A );
+
 #endif
 
+    set_half_duplex0(1);
+    set_half_duplex1(1);
+
+#if SERVANT_BMP180
+    bmp180_calibration();
+#endif // SERVANT_BMP180
 
     //all peripherals are now initialized
 

@@ -11,9 +11,9 @@ JTAG_CONF= -B 1000 -j /dev/com6
 include ../Makedefs
 
 SRCS =  main.c $(PROJ).c delay.c spi.c runtime_cfg.c util.c modbus.c 
-SRCS += io_adc.c io_dig.c io_dht.c io_pwm.c
+SRCS += io_adc.c io_dig.c io_dht.c io_pwm.c io_temp.c io_bmp180.c
 SRCS += $(WEBFILE) web_cgi.c web_cgi_os.c web_setup.c web.c web_status.c httpd.c 
-# i2c.c net_io.c icp.c freq_send.c ds18x20.c temperature.c onewire.c ds2482.c dallas_ds2482.c  child-1wire.c 
+# i2c.c net_io.c icp.c freq_send.c ds18x20.c onewire.c ds2482.c dallas_ds2482.c  child-1wire.c 
 OBJS =  $(SRCS:.c=.o)
 
 LIBS =  $(LIBDIR)/nutinit.o $(MODS) -lnutnet -lnutpro -lnutfs -lnutos -lnutdev -lnutnet -lnutcrt -lnutarch -lnutgorp ../../modbus-lib/libmodbus.a  ../../avr-util-lib/libdz-avr-util.a 
