@@ -31,7 +31,7 @@ unsigned volatile char current_ad_input = SERVANT_NADC-1;
 //static void postProcessAdc(unsigned char channel);
 
 // no left align ADLAR=0
-// internal reference, AREF with external capacitor
+// internal reference 2.56v, AREF with external capacitor
 #define ADMUX_REFS (_BV(REFS1)|_BV(REFS0))
 
 

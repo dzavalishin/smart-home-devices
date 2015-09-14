@@ -53,8 +53,11 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
 #if SERVANT_NADC > 0
     if( row_no  < SERVANT_NADC )
     {
-        static prog_char tfmt[] = "<TR><TD> ADC </TD><TD> %u </TD><TD> 0x%03X </TD></TR>\r\n";
-        fprintf_P(stream, tfmt, row_no, adc_value[row_no] );
+        double fav = adc_value[row_no] / 400.0;
+        char str[20];
+        dtostrf( fav, 5, 3, str );
+        static prog_char tfmt[] = "<TR><TD> ADC </TD><TD> %u </TD><TD> %s (0x%03X) </TD></TR>\r\n";
+        fprintf_P(stream, tfmt, row_no, str, adc_value[row_no] );
         return 1;
     }
 
@@ -79,22 +82,26 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
         unsigned char pv = dio_read_port( row_no );
         unsigned char ddrv = dio_get_port_ouput_mask( row_no );
 
-        static prog_char tfmt[] = "<TR><TD> Dig </TD><TD> %u </TD><TD> 0x%02X (";
-        static prog_char dfmt[] = "<TR><TD> &nbsp;ddr </TD><TD> %u </TD><TD> 0x%02X (";
+        static prog_char tfmt[] = "<TR><TD> Dig </TD><TD> %u %c </TD><TD> 0x%02X (";
+        //static prog_char dfmt[] = "<TR><TD> &nbsp;ddr </TD><TD> %u </TD><TD> 0x%02X (";
         static prog_char te[] = " ) </TD></TR>\r\n";
 
-        fprintf_P(stream, tfmt,  row_no, pv );	//dig_value[row_no] );
+        fprintf_P(stream, tfmt,  row_no, 'A'+row_no, pv );	//dig_value[row_no] );
 
-        char bit, c = pv;
+        char bit, c = pv, d  = ddrv;
         for( bit = 7; bit >=0; bit-- )
         {
-            fputs(" ", stream);
+            char isout = d & 0x80;
+            d <<= 1;
+
+            fputs(isout? " <b>": " ", stream);
             fputs( c & 0x80 ? "1" : "0", stream);
+            fputs(isout? "</b>": "", stream);
             c <<= 1;
         }
 
         fputs_P(te, stream);
-
+/*
         fprintf_P(stream, dfmt,  row_no, ddrv );
 
         c = ddrv;
@@ -106,7 +113,7 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
         }
 
         fputs_P(te, stream);
-
+*/
         return 1;
     }
 
@@ -124,7 +131,7 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
         if ( id == DS18S20_ID ) name = "18S";
         if ( id == DS18B20_ID ) name = "18B";
 
-        static prog_char tfmt[] = "<TR><TD> Temp </TD><TD> %u (%s) </TD><TD> %s (0x%04X) </TD></TR>\r\n";
+        static prog_char tfmt[] = "<TR><TD> Temp </TD><TD> %u (%s) </TD><TD> %s &deg;C(0x%04X) </TD></TR>\r\n";
         fprintf_P(stream, tfmt,  row_no, name, temptoa(currTemperature[row_no],buf) , currTemperature[row_no] );
 
         return 1;
@@ -136,27 +143,46 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
 #if SERVANT_DHT11
     if( row_no == 0 )
     {
-        static prog_char tfmt[] = "<TR><TD> DHT11 Temp/Humid </TD><TD> %u &deg;C</TD><TD> %u %%</TD></TR>\r\n";
-        fprintf_P(stream, tfmt, dht_temperature, dht_humidity );
+        static prog_char tfmt[] = "<TR><TD> DHT11 Temperature </TD><TD>&nbsp;</TD><TD>%u &deg;C</TD></TR>\r\n";
+        fprintf_P(stream, tfmt, dht_temperature );
+
+        return 1;
+    }
+    if( row_no == 1 )
+    {
+        static prog_char tfmt[] = "<TR><TD> DHT11 Humidity </TD><TD>&nbsp;</TD><TD> %u %%</TD></TR>\r\n";
+        fprintf_P(stream, tfmt, dht_humidity );
 
         return 1;
     }
 
-    row_no--;
+    row_no -= 2;
 #endif // SERVANT_DHT11
 
 #if SERVANT_BMP180
     if( row_no == 0 )
     {
+        double fav = bmp180_temperature / 10.0;
+        char str[20];
+        dtostrf( fav, 4, 1, str );
         //static prog_char tfmt[] = "<TR><TD> BMP180 Temp/Pressure &nbsp;</TD><TD> %ld (%d) </TD><TD> %ld (%ld) </TD></TR>\r\n";
         //fprintf_P(stream, tfmt, bmp180_temperature, bmp180_temperature_raw, bmp180_pressure, bmp180_pressure_raw );
-        static prog_char tfmt[] = "<TR><TD> BMP180 Temp/Pressure &nbsp;</TD><TD> %ld &deg;C *10</TD><TD> %ld Pa</TD></TR>\r\n";
-        fprintf_P(stream, tfmt, bmp180_temperature, bmp180_pressure );
+        static prog_char tfmt[] = "<TR><TD> BMP180 Temperature &nbsp;</TD><TD>&nbsp;</TD><TD>%s &deg;C</TD></TR>\r\n";
+        fprintf_P(stream, tfmt, str );
+
+        return 1;
+    }
+    if( row_no == 1 )
+    {
+        //static prog_char tfmt[] = "<TR><TD> BMP180 Temp/Pressure &nbsp;</TD><TD> %ld (%d) </TD><TD> %ld (%ld) </TD></TR>\r\n";
+        //fprintf_P(stream, tfmt, bmp180_temperature, bmp180_temperature_raw, bmp180_pressure, bmp180_pressure_raw );
+        static prog_char tfmt[] = "<TR><TD> BMP180 Pressure &nbsp;</TD><TD>&nbsp;</TD><TD> %ld Pa</TD></TR>\r\n";
+        fprintf_P(stream, tfmt, bmp180_pressure );
 
         return 1;
     }
 
-    row_no--;
+    row_no -= 2;
 #endif // SERVANT_DHT11
 
     return 0;
