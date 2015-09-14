@@ -16,9 +16,11 @@
 #include "io_dig.h"
 #include "io_adc.h"
 #include "io_dht.h"
-//#include "freq.h"
 #include "io_temp.h"
 #include "io_bmp180.h"
+
+#include "ds18x20.h"
+
 
 #include <sys/confnet.h>
 #include <arpa/inet.h>
@@ -114,8 +116,16 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
 #if SERVANT_NTEMP > 0
     if( row_no  < SERVANT_NTEMP )
     {
-        static prog_char tfmt[] = "<TR><TD> Temp </TD><TD> %u </TD><TD> 0x%04X </TD></TR>\r\n";
-        fprintf_P(stream, tfmt,  row_no, currTemperature[row_no] );
+        char buf[30];
+
+        uint8_t id = gTempSensorIDs[row_no][0];
+        char *name = "?";
+
+        if ( id == DS18S20_ID ) name = "18S";
+        if ( id == DS18B20_ID ) name = "18B";
+
+        static prog_char tfmt[] = "<TR><TD> Temp </TD><TD> %u (%s) </TD><TD> %s (0x%04X) </TD></TR>\r\n";
+        fprintf_P(stream, tfmt,  row_no, name, temptoa(currTemperature[row_no],buf) , currTemperature[row_no] );
 
         return 1;
     }

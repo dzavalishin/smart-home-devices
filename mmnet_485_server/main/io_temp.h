@@ -19,11 +19,15 @@ void init_temperature(void);
 void temp_meter_measure(void); // Must be called once a 750 ms (actually once a sec)
 
 extern uint8_t serialNumber [OW_ROMCODE_SIZE]; 
-//extern uint8_t gTempSensorIDs[SERVANT_NTEMP][OW_ROMCODE_SIZE]; // Used by MAC generation
-//extern uint16_t oldTemperature[SERVANT_NTEMP];
-extern uint16_t currTemperature[SERVANT_NTEMP];
 
+#if SERVANT_NTEMP > 0
+extern uint8_t nTempSensors;
+
+extern uint8_t  gTempSensorIDs[SERVANT_NTEMP][OW_ROMCODE_SIZE];
+extern uint16_t currTemperature[SERVANT_NTEMP];
+#endif
 
 
 uint8_t search_sensors(uint8_t currBus);
 
+const char *temptoa( uint16_t temperature, char *buf ); // NB! Uses buf to print to!

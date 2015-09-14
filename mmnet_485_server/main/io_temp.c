@@ -34,7 +34,9 @@ uint8_t serialNumber [OW_ROMCODE_SIZE];
 uint8_t nTempSensors = 0;
 
 uint8_t gTempSensorIDs[SERVANT_NTEMP][OW_ROMCODE_SIZE];
+#ifndef OW_ONE_BUS
 uint8_t gTempSensorBus[SERVANT_NTEMP]; // Which bus this sensor lives on
+#endif
 uint8_t gTempSensorLogicalNumber[SERVANT_NTEMP]; // Report sensor with this logical number
 
 uint16_t currTemperature[SERVANT_NTEMP];
@@ -118,18 +120,15 @@ uint8_t search_sensors(uint8_t currBus)
         if(id[0] == DS2401_ID)
         {
             ow_copy_rom( serialNumber, id );
-//            for( i=0; i < OW_ROMCODE_SIZE; i++ )
-//                serialNumber[i]=id[i];
         }
         else
 #endif
         {
 #if SERVANT_NTEMP > 0
             ow_copy_rom( gTempSensorIDs[nTempSensors], id );
-//            for( i=0; i < OW_ROMCODE_SIZE; i++)
-//                gTempSensorIDs[nTempSensors][i]=id[i];
-
+#ifndef OW_ONE_BUS
             gTempSensorBus[nTempSensors] = currBus;
+#endif
 #endif
             nTempSensors++;
         }
@@ -270,6 +269,24 @@ void count_1w_bus_error( uint8_t bus )
 
 
 
+const char *temptoa( uint16_t t, char *out )
+{
+    // t has 4 fraction bits
+
+    char *frac = "0";
+
+    switch( (t >> 2) & 3 )
+    {
+    case 0: frac = "00"; break;
+    case 1: frac = "25"; break;
+    case 2: frac = "50"; break;
+    case 3: frac = "75"; break;
+    }
+
+    sprintf( out, "%d.%s", t >> 4, frac );
+
+    return out;
+}
 
 
 
