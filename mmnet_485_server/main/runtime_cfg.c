@@ -18,6 +18,7 @@
 //uint8_t		onewire_2482_available = 0;
 uint8_t		onewire_available = 0;
 uint8_t		sntp_available = 0;
+uint8_t		error_flags; // bit per error type
 
 struct eeprom_cfg        ee_cfg =
 {

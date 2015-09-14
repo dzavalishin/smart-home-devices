@@ -28,6 +28,7 @@
 
 #define SERVANT_NTEMP   8       // 1-Wire temperature sensors
 #define SERVANT_1WMAC   1       // Attempt to get MAC address from 1-wire 2401 chip
+#define OW_ONE_BUS      1
 
 // RS232 on dev board
 #define SERVANT_TCP_COM0        0
@@ -56,6 +57,17 @@
 
 #define ENABLE_HALF_DUPLEX_0    1
 #define ENABLE_HALF_DUPLEX_1    1
+
+
+//#ifdef OW_ONE_BUS
+//#define OW_PIN  PB0
+//#endif
+
+#ifdef OW_ONE_BUS
+#	define N_1W_BUS 1
+#else
+#	define N_1W_BUS 8
+#endif
 
 
 // ------------------------------------------------------------------------

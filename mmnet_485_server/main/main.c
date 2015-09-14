@@ -54,6 +54,8 @@
 #include "io_temp.h"
 #include "io_bmp180.h"
 
+#include "onewire.h"
+
 // NB - contains var def and init
 #include "makedate.h"
 

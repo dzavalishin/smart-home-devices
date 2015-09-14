@@ -11,6 +11,20 @@
 extern uint8_t		onewire_available;
 extern uint8_t		sntp_available;
 
+// ------------------------------------------------------------------
+// Error flags
+// ------------------------------------------------------------------
+
+#define REPORT_ERROR(_flag) (error_flags |= (_flag))
+
+#define ERR_FLAG_1WIRE_SCAN_FAULT  (1 << 0)
+#define ERR_FLAG_1WIRE_START_FAULT (1 << 1)
+#define ERR_FLAG_1WIRE_READ_FAULT  (1 << 2)
+
+extern uint8_t         error_flags; // bit per error type
+
+
+
 // For defaults see runtime_cfg.c
 
 struct eeprom_cfg

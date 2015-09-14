@@ -115,7 +115,7 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
     if( row_no  < SERVANT_NTEMP )
     {
         static prog_char tfmt[] = "<TR><TD> Temp </TD><TD> %u </TD><TD> 0x%04X </TD></TR>\r\n";
-        fprintf_P(stream, tfmt,  row_no, oldTemperature[row_no] );
+        fprintf_P(stream, tfmt,  row_no, currTemperature[row_no] );
 
         return 1;
     }
@@ -431,7 +431,7 @@ static char * getNamedParameter( const char *name )
         if( nin < 0 ) return 0;
 
         // todo float point?
-        sprintf( out, "%d", oldTemperature[nin] );
+        sprintf( out, "%d", currTemperature[nin] );
         return out;
     }
 #endif // SERVANT_NTEMP
