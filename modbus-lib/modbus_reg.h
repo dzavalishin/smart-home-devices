@@ -1,3 +1,16 @@
+/**
+ *
+ * DZ Modbus IO Library.
+ *
+ * Basic register map for DZ devices.
+ *
+**/
+
+// ------------------------------------------------------------------------
+// Macros to check register number to be in range
+// ------------------------------------------------------------------------
+
+
 #define INRANGE( _n, _start, _cnt ) ( ((_n) >= (_start)) && ( (_n) < ((_start)+(_cnt)) ) )
 
 #define BEGIN_RANGE( _id, _n, _start, _cnt ) \
@@ -6,12 +19,9 @@
 
 #define END_RANGE() return 1; }
 
-
-# if 0
-
-#include "defs.h"
-#include "eeprom.h"
-
+// ------------------------------------------------------------------------
+// Register numbers: device ID
+// ------------------------------------------------------------------------
 
 /**
  *
@@ -28,6 +38,63 @@
 #define MB_REG_ROMID    4
 #define MB_COUNT_ROMID  4
 
+
+
+
+
+// - 16-31 - assorted IO
+//   16: all digital inputs
+//   17: all digital outputs
+#define MB_REG_IO	16
+
+
+
+
+
+
+// + 64-79 - 16 x AI (8 provided: 4 real AI, 2 internal, but visible, 2 variable resistors)
+#define MB_REG_AI	64
+#define MB_COUNT_AI     16
+
+// - 80-95 - 16 x AO (none provided)
+#define MB_REG_AO	80
+
+
+
+
+
+
+
+
+
+
+#define MB_REG_HWCONF	512
+
+#define MB_REG_HWCONF_DI (MB_REG_HWCONF+0) // + DI count (2 counters as DI? +8 AI as DI?)
+#define MB_REG_HWCONF_DO (MB_REG_HWCONF+1) // + Do count
+#define MB_REG_HWCONF_AI (MB_REG_HWCONF+2) // +
+#define MB_REG_HWCONF_AO (MB_REG_HWCONF+3) // +
+#define MB_REG_HWCONF_CN (MB_REG_HWCONF+4) // + counters
+#define MB_REG_HWCONF_TS (MB_REG_HWCONF+5) // + temperature sensors (max)
+#define MB_REG_HWCONF_TA (MB_REG_HWCONF+6) // + temperature sensors (actual)
+
+
+// + mapped (by id) temperature
+#define MB_REG_TEMP     	1024
+//#define MB_COUNT_TEMP		N_TEMPERATURE_IN
+
+
+// + direct, unmapped (by sequential sensor number) temperature - debug only
+#define MB_REG_TEMP_DIRECT	2048
+//#define MB_COUNT_TEMP_DIRECT	N_TEMPERATURE_IN
+
+
+# if 0
+
+#include "defs.h"
+#include "eeprom.h"
+
+
 /**
  *
  * 8-15 - flags
@@ -42,10 +109,6 @@
 #define MB_REG_FLAGS	8
 #define MB_REG_FLAGS_ERROR (MB_REG_FLAGS+2) // +
 
-// - 16-31 - assorted IO
-//   16: all digital inputs
-//   17: all digital outputs
-#define MB_REG_IO	16
 
 // - stat/event/debug counters
 #define MB_REG_COUNTERS	32
@@ -59,12 +122,6 @@
 #define MB_REG_COUNTERS_1WBUS   (MB_REG_COUNTERS+16) // + 1wire bus io errors per bus
 #define MB_COUNT_COUNTERS_1WBUS 8
 
-// + 64-79 - 16 x AI (8 provided: 4 real AI, 2 internal, but visible, 2 variable resistors)
-#define MB_REG_AI	64
-#define MB_COUNT_AI     16
-
-// - 80-95 - 16 x AO (none provided)
-#define MB_REG_AO	80
 
 // -
 //96-127 - up to 8 counters, in groups
@@ -87,25 +144,6 @@
 #define MB_REG_SETUP_CNT_TIME		(MB_REG_SETUP+30)// - counter activity sense interval, 0.1 sec steps (value*10 = seconds)
 
 
-#define MB_REG_HWCONF	512
-
-#define MB_REG_HWCONF_DI (MB_REG_HWCONF+0) // + DI count (2 counters as DI? +8 AI as DI?)
-#define MB_REG_HWCONF_DO (MB_REG_HWCONF+1) // + Do count
-#define MB_REG_HWCONF_AI (MB_REG_HWCONF+2) // +
-#define MB_REG_HWCONF_AO (MB_REG_HWCONF+3) // +
-#define MB_REG_HWCONF_CN (MB_REG_HWCONF+4) // + counters
-#define MB_REG_HWCONF_TS (MB_REG_HWCONF+5) // + temperature sensors (max)
-#define MB_REG_HWCONF_TA (MB_REG_HWCONF+6) // + temperature sensors (actual)
-
-
-// + mapped (by id) temperature
-#define MB_REG_TEMP     	1024
-#define MB_COUNT_TEMP		N_TEMPERATURE_IN
-
-
-// + direct, unmapped (by sequential sensor number) temperature - debug only
-#define MB_REG_TEMP_DIRECT	2048
-#define MB_COUNT_TEMP_DIRECT	N_TEMPERATURE_IN
 
 /** -
  *
