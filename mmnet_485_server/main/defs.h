@@ -164,9 +164,13 @@
 // PWM bits start at this bit, so now it's PD4..7
 #define SERVANT_PWM_BIT         4
 
+#define MODBUS_DEVICE_ID "DZMM00"
+extern char modbus_device_id[];
+
 #define DEVICE_NAME "DZ-MMNET-MODBUS"
 //#define DEVICE_REV "$Revision: 0 $"
 //#define DEVICE_DATE "$Date: $"
+
 
 extern char *makeDate; // filled in by makefile
 

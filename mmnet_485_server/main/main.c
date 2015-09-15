@@ -101,10 +101,6 @@ THREAD(long_init, __arg)
         init_tcp_com();
 #endif
 
-#if SERVANT_NTEMP > 0
-        init_temperature();
-#endif
-
 #if ENABLE_SPI
         char a = 0xEF, b = 0x01;
         while( 1 )
@@ -366,13 +362,13 @@ static int tryToFillMac(unsigned char *mac, unsigned char *oneWireId)
     }
     mac[0] = 0x2;
 
-    printf("Made MAC from 1wire id: ");
+    //printf("Made MAC from 1wire id: ");
     for( i = 0; i < 6; i++ )
     {
         if(i != 0 ) putchar('-');
-        printf("%02X", 0xFFu & mac[i]);
+//        printf("%02X", 0xFFu & mac[i]);
     }
-    putchar('\n');
+//    putchar('\n');
     return 0;
 #else
     return -1;
@@ -426,6 +422,12 @@ void init_devices(void)
 #endif
 
     sei(); //re-enable interrupts
+
+
+#if SERVANT_NTEMP > 0
+    init_temperature();
+#endif
+
 
 #if 0
     DEBUG_PUTS("sending temperature from init... ");

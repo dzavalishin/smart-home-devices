@@ -97,14 +97,15 @@ static int CgiStatusRow( FILE * stream, int row_no )
         }
         break;
 
-    case 4: ShowTableRow2b( stream, "DST", _daylight  );			break;
-    case 5: ShowTableRow2b( stream, "Used SNTP", sntp_available );		break;
+    //case 4: ShowTableRow2b( stream, "DST", _daylight  );			break;
+    case 4: ShowTableRow2b( stream, "Used SNTP", sntp_available );		break;
 
     //case 6: HTML("<th colspan=\"2\">FirmWare</th>"); break;
-    case 6: subhdr( stream, "FirmWare" ); break;
+    case 5: subhdr( stream, "FirmWare" ); break;
 
-    case 7: ShowTableRow2( stream, "Build", makeDate );                		break;
-    case 8: ShowTableRow2( stream, "Name", DEVICE_NAME );                	break;
+    case 6: ShowTableRow2( stream, "Build", makeDate );                		break;
+    case 7: ShowTableRow2( stream, "Name", DEVICE_NAME );                	break;
+    case 8: ShowTableRow2( stream, "ModBus Id", modbus_device_id );		break;
 
     //case 9: HTML("<th colspan=\"2\">ModBus</th>"); break;
     case 9: subhdr( stream, "ModBus" ); break;
@@ -117,7 +118,8 @@ static int CgiStatusRow( FILE * stream, int row_no )
     case 14: subhdr( stream, "1-Wire" ); break;
 
     case 15: ShowTableRow2b( stream, "Devices detected", onewire_available );	break;
-    case 16:
+    case 16: ShowTableRow2i( stream, "Temp sensors count", nTempSensors );	break;
+    case 17:
 #if SERVANT_1WMAC
         {
             HTML("<TR><TD>&nbsp;2401 Id </TD><TD>&nbsp;");

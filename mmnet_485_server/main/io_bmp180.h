@@ -23,6 +23,7 @@ int bmp180_getdata( void );
 
 extern int32_t bmp180_temperature;
 extern int32_t bmp180_pressure;
+extern uint16_t bmp180_pressure_mmHg;
 
 // Unconverted data from sensor
 //extern int16_t bmp180_temperature_raw;

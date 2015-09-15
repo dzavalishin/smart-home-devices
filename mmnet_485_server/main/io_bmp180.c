@@ -253,22 +253,23 @@ int bmp180ReadPressure( int32_t *pressure )
 
 int32_t bmp180_temperature;
 int32_t bmp180_pressure;
+uint16_t bmp180_pressure_mmHg;
 
 //int16_t bmp180_temperature_raw;
 //int32_t bmp180_pressure_raw;
 
 int bmp180_getdata( void )
 {
-//#if 0
-    //int rc1 =
     //bmp180ReadPressure( &bmp180_pressure_raw );
-    //int rc2 =
     //bmp180ReadTemp( &bmp180_temperature_raw );
 
-    //return rc1 | rc2;
-//#else
-    return bmp180Convert( &bmp180_temperature, &bmp180_pressure );
-//#endif
+    int rc = bmp180Convert( &bmp180_temperature, &bmp180_pressure );
+
+    // Pa is too big to pass in modbus 16 bit register, convert to mm of Hg *10
+    double d = bmp180_pressure / 13.3322;
+    bmp180_pressure_mmHg = (uint16_t) d;
+
+    return rc;
 }
 
 #endif // SERVANT_BMP180

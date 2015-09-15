@@ -21,6 +21,7 @@
 
 #include "ds18x20.h"
 
+#include <modbus.h> // err codes
 
 #include <sys/confnet.h>
 #include <arpa/inet.h>
@@ -359,6 +360,7 @@ int CgiOutputs( FILE * stream, REQUEST * req )
 
 
 static char * getNamedParameter( const char *name );
+static int setNamedParameter( const char *name, const char *value );
 
 
 int CgiNetIO( FILE * stream, REQUEST * req )
@@ -406,18 +408,35 @@ int CgiNetIO( FILE * stream, REQUEST * req )
         return 0;
     }
 
-    char *data = getNamedParameter( name );
-    if( data == 0 )
+    if( value )
     {
-        //        goto errmsg;
-        web_header_200(stream, req);
-        static prog_char h1[] = "<HTML><body>no data for %s</body></HTML>";
-        fprintf_P(stream, h1, name );
-        return 0;
+        // Write
+        int rc = setNamedParameter( name, value );
+
+        if( rc )
+        {
+            web_header_200(stream, req);
+            static prog_char h1[] = "<HTML><body>set %s rc=%d</body></HTML>";
+            fprintf_P(stream, h1, name, rc );
+            return 0;
+        }
+
+        httpSendString( stream, req, "Ok" );
     }
+    else
+    {
+        char *data = getNamedParameter( name );
+        if( data == 0 )
+        {
+            //        goto errmsg;
+            web_header_200(stream, req);
+            static prog_char h1[] = "<HTML><body>no data for %s</body></HTML>";
+            fprintf_P(stream, h1, name );
+            return 0;
+        }
 
-    httpSendString( stream, req, data );
-
+        httpSendString( stream, req, data );
+    }
     return 0;
 }
 
@@ -430,6 +449,7 @@ static char * getNamedParameter( const char *name )
     static char out[30];
 
 
+#if SERVANT_NADC > 0
     if( 0 == strncmp( name, "adc", 3 ) )
     {
         nin = atoi( name + 3 );
@@ -440,6 +460,7 @@ static char * getNamedParameter( const char *name )
         sprintf( out, "%d", adc_value[nin] );
         return out;
     }
+#endif
 
 #if SERVANT_NDIG > 0
     if( 0 == strncmp( name, "dig", 3 ) )
@@ -484,6 +505,53 @@ static char * getNamedParameter( const char *name )
 
 
     return 0;
+}
+
+
+
+static int setNamedParameter( const char *name, const char *value )
+{
+    int nout = atoi( name + 3 );
+#if SERVANT_NPWM > 0
+    if( 0 == strncmp( name, "pwm", 3 ) )
+    {
+        if( nout >= SERVANT_NPWM ) nout = -1;
+
+        if( nout < 0 ) return MODBUS_EXCEPTION_ILLEGAL_DATA_ADDFRESS;
+
+        set_an( (unsigned char)nout, (unsigned char) atoi(value) );
+
+        return 0;
+    }
+#endif
+
+#if SERVANT_NDIG > 0
+    {
+        unsigned char port = nout / 8;
+        unsigned char bit = nout % 8;
+
+        if( 0 == strncmp( name, "dig", 3 ) )
+        {
+            if( nout >= SERVANT_NDIG*8 ) nout = -1;
+            if( nout < 0 ) return MODBUS_EXCEPTION_ILLEGAL_DATA_ADDFRESS;
+
+            dio_write_port_bit( port, bit, atoi(value) ? 0xFF : 0 );
+            return 0;
+        }
+
+        if( 0 == strncmp( name, "ddr", 3 ) )
+        {
+            if( nout >= SERVANT_NDIG*8 ) nout = -1;
+            if( nout < 0 ) return MODBUS_EXCEPTION_ILLEGAL_DATA_ADDFRESS;
+
+            dio_set_port_ouput_mask_bit( port, bit, atoi(value) ? 0xFF : 0 );
+            return 0;
+        }
+
+    }
+#endif
+
+    return MODBUS_EXCEPTION_ILLEGAL_DATA_ADDFRESS;
 }
 
 

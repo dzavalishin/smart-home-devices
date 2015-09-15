@@ -1,0 +1,4 @@
+- web config DDR defaults
+- clearly mark error/unread values (0xFFFF?)
+- id map for 1wire temp sensors
+- timeout if no IO, set default values - per port?
