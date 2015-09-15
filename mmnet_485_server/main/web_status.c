@@ -12,6 +12,9 @@
 #include "defs.h"
 #include "runtime_cfg.h"
 
+#include <sys/heap.h>
+
+
 #include "web.h"
 
 #include <time.h>
@@ -131,6 +134,10 @@ static int CgiStatusRow( FILE * stream, int row_no )
         }
 #endif
         break;
+
+    case 18: subhdr( stream, "OS" ); break;
+    case 19: ShowTableRow2i( stream, "Free mem, K", NutHeapAvailable()/1024 );	break;
+        
 
     default:
         return 0;

@@ -20,6 +20,25 @@
 static void form_element( FILE * stream, char *title, char *field_name, char *curr_value );
 
 
+static char * itox( int i )
+{
+    static char x[4];
+    sprintf( x, "%02X", i );
+    return x;
+}
+
+static int htoi( const char *v )
+{
+    int i = -1;
+    sscanf( v, "%x", &i );
+    return i;
+}
+
+#define DEC_X( __name_, __dest_ ) do { if( 0 == strcmp( pname, (__name_) ) ) ee_cfg.__dest_ = htoi( pvalue ); } while(0)
+
+static void (*boot_me)(void) = 0;
+
+
 int ShowForm(FILE * stream, REQUEST * req)
 {
 
@@ -51,6 +70,19 @@ int ShowForm(FILE * stream, REQUEST * req)
 
             /* Send the parameters back to the client. */
             //fprintf_P(stream, PSTR("%s: %s<BR>\r\n"), pname, pvalue);
+
+            DEC_X( "ddrb", ddr_b );
+            DEC_X( "ddrd", ddr_d );
+            DEC_X( "ddre", ddr_e );
+            DEC_X( "ddrf", ddr_f );
+            DEC_X( "ddrg", ddr_g );
+
+
+            DEC_X( "initb", start_b );
+            DEC_X( "initd", start_d );
+            DEC_X( "inite", start_e );
+            DEC_X( "initf", start_f );
+            DEC_X( "initg", start_g );
 
             if( 0 == strcmp( pname, "ip_addr" ) )		    ee_cfg.ip_addr	= inet_addr( pvalue );
             if( 0 == strcmp( pname, "ip_mask" ) )		    ee_cfg.ip_mask	= inet_addr( pvalue );
@@ -96,6 +128,15 @@ int ShowForm(FILE * stream, REQUEST * req)
                 }
             }
 
+            if( 0 == strcmp( pname, "os" ))
+            {
+                if( 0 == strcmp( pvalue, "boot" ) )
+                {
+                    cli();
+                    boot_me();
+                }
+            }
+
         }
     }
 
@@ -116,6 +157,17 @@ int ShowForm(FILE * stream, REQUEST * req)
     form_element( stream, "Syslog server", "ip_syslog", inet_ntoa(ee_cfg.ip_syslog) );
     form_element( stream, "NNTP server", "ip_nntp", inet_ntoa(ee_cfg.ip_nntp) );
 
+    form_element( stream, "DDR B", "ddrb", itox(ee_cfg.ddr_b) );
+    form_element( stream, "DDR D", "ddrd", itox(ee_cfg.ddr_d) );
+    form_element( stream, "DDR E", "ddre", itox(ee_cfg.ddr_e) );
+    form_element( stream, "DDR F", "ddrf", itox(ee_cfg.ddr_f) );
+    form_element( stream, "DDR G", "ddrg", itox(ee_cfg.ddr_g) );
+
+    form_element( stream, "Init B", "initb", itox(ee_cfg.start_b) );
+    form_element( stream, "Init D", "initd", itox(ee_cfg.start_d) );
+    form_element( stream, "Init E", "inite", itox(ee_cfg.start_e) );
+    form_element( stream, "Init F", "initf", itox(ee_cfg.start_f) );
+    form_element( stream, "Init G", "initg", itox(ee_cfg.start_g) );
 
 
     HTML("</table><BR>");
@@ -129,6 +181,7 @@ int ShowForm(FILE * stream, REQUEST * req)
         HTML("<a href=\"/cgi-bin/form.cgi?eeprom=save\"><button>Save to EEPROM</button></a> ");
     HTML("<a href=\"/cgi-bin/form.cgi?eeprom=load\"><button>Load from EEPROM</button></a> ");
     HTML("<a href=\"/cgi-bin/form.cgi?eeprom=init\"><button>Load factory defaults</button></a> ");
+    HTML("<a href=\"/cgi-bin/form.cgi?os=reboot\"><button>Reboot</button></a> ");
     HTML("<p></p>");
 
     HTML("<p><a href=\"/\">Return to main</a></p>");

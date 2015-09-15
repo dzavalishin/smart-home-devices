@@ -12,6 +12,7 @@
 #include "util.h"
 #include "net_io.h"
 #include "runtime_cfg.h"
+#include "servant.h"
 
 #include <dev/nicrtl.h>
 #include <dev/debug.h>
@@ -101,6 +102,10 @@ THREAD(long_init, __arg)
         init_tcp_com();
 #endif
 
+#if SERVANT_LUA
+        lua_init();
+#endif
+
 #if ENABLE_SPI
         char a = 0xEF, b = 0x01;
         while( 1 )
@@ -171,6 +176,8 @@ int main(void)
 
     // We need it here because we use 1-wire 2401 serial as MAC address
     init_devices();
+    led_ddr_init(); // Before using LED!
+    LED_ON;
 
     init_net();
 
@@ -212,7 +219,7 @@ int main(void)
 
 static void init_net(void)
 {
-    char tries = 5;
+//    char tries = 250; // make sure we are really have DHCP address
 
 
     // Register Ethernet controller
@@ -248,7 +255,9 @@ static void init_net(void)
     // No. Prevents DHCP.
     //confnet.cdn_cip_addr = ee_cfg.ip_addr; // OS will use it as default if no DHCP - do we need NutNetIfConfig?
 
-    while( tries-- > 0 )
+    // We do not work if no DHCP
+    //while( tries-- > 0 )
+    while( 1 )
     {
         if( 0 == NutDhcpIfConfig("eth0", ee_cfg.mac_addr, 60000) )
             goto dhcp_ok;
@@ -256,8 +265,9 @@ static void init_net(void)
         puts("EEPROM/DHCP/ARP config failed");
 
         LED_OFF;
-        NutSleep(320);
-        flash_led_once();
+        NutSleep(3020);
+        LED_ON;
+        //flash_led_once();
     }
 
     // Use static ip address

@@ -9,9 +9,9 @@ char hexdigit( unsigned char d );
 
 void delay_sec(void);
 void delay_halfsec(void);
-void delay_qsec(void); // 1/4 sec
-void delay_esec(void); // 1/8 sec
-void delay_thsec(void);
+void delay_qsec(void);   // 1/4 sec
+void delay_esec(void);   // 1/8 sec
+void delay_thsec(void);  // 1/16 sec
 
 
 void led_ddr_init(void);

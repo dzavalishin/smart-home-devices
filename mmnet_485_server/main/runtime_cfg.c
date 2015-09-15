@@ -26,21 +26,18 @@ struct eeprom_cfg        ee_cfg =
 
     .mac_addr = { DEFAULT_MAC },
 
-
-  /*
-    .ddr_b
-    ddr_d;
-  ddr_e;      
-  ddr_f;      
-  ddr_g;      
+    .ddr_b = 0,
+    .ddr_d = 0,
+    .ddr_e = 0x0F, // low 4 bits are default outputs
+    .ddr_f = 0, 
+    .ddr_g = 0,
               
 
-  start_b;    
-  start_d;    
-  start_e;    
-  start_f;    
-  start_g;    
-  */
+    .start_b = 0,
+    .start_d = 0,
+    .start_e = 0,
+    .start_f = 0,
+    .start_g = 0,
 
 };
 
@@ -58,6 +55,8 @@ init_runtime_cfg()
 
     ee_cfg.ip_nntp	= 0; // Will use default route instead
     ee_cfg.ip_syslog = inet_addr( DEFAULT_SYSLOGD );
+
+    //ee_cfg.ddr_e = 0x0F; // low 4 bits are default outputs
 
     unsigned char def_mac[] = { DEFAULT_MAC };
     memcpy( ee_cfg.mac_addr, def_mac, sizeof(ee_cfg.mac_addr) );

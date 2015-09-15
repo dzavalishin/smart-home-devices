@@ -35,7 +35,8 @@
 // USB serial on dev board
 #define SERVANT_TCP_COM1        0
 
-
+// Does not fit to code flash mem :(
+#define SERVANT_LUA     0       // Have Lua scripting
 
 
 // ------------------------------------------------------------------------
