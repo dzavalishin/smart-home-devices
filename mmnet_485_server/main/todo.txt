@@ -1,4 +1,6 @@
 
+- multichannel PWM does it wrong, 4 channels of 255 give different
+timings
 
 - flash FS
 

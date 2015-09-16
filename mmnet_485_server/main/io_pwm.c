@@ -67,23 +67,23 @@ void timer1_init(void)
     TCCR1A = 0x00;
     // TCCR1B = 0x01; //start Timer later
 
-    pwm_count=0;
-    pwm_mask_byte=0b00000000;
+    pwm_count = 0;
+    pwm_mask_byte = 0b00000000;
 }
 
 void timer1_start(void)
 {
     TIMSK |= _BV(TOIE1);
-    TCCR1B = 0x01; //start Timer1
+    TCCR1B = 0x01; // start Timer1
 }
 
 
-// реализация нескольких PWM-ов на 1 таймере
+// multiple PWMs using 1 timer
 
 ISR(TIMER1_OVF_vect)
 {
     unsigned char j, mask;
-    cli();   // запертить прерывания
+    cli();
 
     // TIMER1 has overflowed
 
@@ -95,63 +95,67 @@ ISR(TIMER1_OVF_vect)
         {
             pwm_count = 0;	// начало цикла PWM
             mask = pwm_mask_byte & OUTS_MASK; // не включать неактивные PWM-ы
-            SERVANT_PWM_PORT |= mask;	// включить все выходы, 0-3; изменить, если изменятся выводы аналоговых выходов
+            SERVANT_PWM_PORT |= mask;	// включить все выходы, 0-3
         }
 
-        j=pwm_order[pwm_count-1];
+        j = pwm_order[pwm_count-1];
 
         // выключить каждый PWM последовательно по возрастанию значения
-        if (pwm_count!=0)
+        if( pwm_count != 0 )
         {
-            if ((pwm_mask_byte & _BV(j+SERVANT_PWM_BIT))!=0)
+            if( (pwm_mask_byte & _BV(j+SERVANT_PWM_BIT)) != 0 )
             {
                 SERVANT_PWM_PORT &= ~_BV(j+SERVANT_PWM_BIT);
             }
         }
 
-        TCNT1H=pwm_time[pwm_count]>>8;
-        TCNT1L=pwm_time[pwm_count];
+        TCNT1H = pwm_time[pwm_count]>>8;
+        TCNT1L = pwm_time[pwm_count];
     }
-    else {
+    else
+    {
         // PWM-ы не включать, ждать 100 мкс.
-        TCNT1H = 0xF0; //setup
+        TCNT1H = 0xF0;
         TCNT1L = 0x60;
     }
-    sei();   // разрешить прерывания
+    sei();
 }
 
 
 void set_an(unsigned char port_num, unsigned char data)
 {
-    unsigned char i, j, min, s;
+    unsigned char i, j, min; //, s;
 
-    pwm[port_num]=data;
+    // Check port number
+    if( port_num > SERVANT_NPWM ) return;
+
+    pwm[ port_num ] = data;
 
     // сортировка значений PWM-ов, запоминаем порядок
-    for (i=0; i<SERVANT_NPWM; i++)
+    for( i = 0; i < SERVANT_NPWM; i++)
     {
-        pwm_sort[i]=pwm[i];
-        pwm_order[i]=i;
+        pwm_sort[i] = pwm[i];
+        pwm_order[i] = i;
     }
 
-    for (i=0; i<SERVANT_NPWM; i++)
+    for( i = 0; i < SERVANT_NPWM; i++ )
     {
-        min=i;
-        for (j=i+1; j<SERVANT_NPWM; j++)
+        min = i;
+        for( j = i+1; j < SERVANT_NPWM; j++ )
         {
-            if (pwm_sort[j]<pwm_sort[min])
+            if( pwm_sort[j] < pwm_sort[min] )
             {
-                min=j;
+                min = j;
             }
         }
-        s=pwm_sort[i];
-        pwm_sort[i]=pwm_sort[min];
-        pwm_sort[min]=s;
+        uint8_t s = pwm_sort[i];
+        pwm_sort[i] = pwm_sort[min];
+        pwm_sort[min] = s;
 
-        if (min!=i)
+        if(min != i)
         {
-            pwm_order[min]=pwm_order[i]; // запоминаем порядок
-            pwm_order[i]=min;
+            pwm_order[min] = pwm_order[i]; // запоминаем порядок
+            pwm_order[i] = min;
         }
     }
 
@@ -159,21 +163,27 @@ void set_an(unsigned char port_num, unsigned char data)
 
     // на периоде модуляции последовательно запускаем таймер
     // между вылючениями каждого выхода PWM
-    pwm_time[0]=~(pwm_sort[0]*10);
-    for (i=1; i<SERVANT_NPWM; i++)
+    pwm_time[0] = ~(pwm_sort[0] * 10);
+    for( i = 1; i < SERVANT_NPWM; i++ )
     {
-        pwm_time[i]=~((pwm_sort[i]-pwm_sort[i-1])*SERVANT_PWM_SPEED);
+        pwm_time[i] = ~((pwm_sort[i]-pwm_sort[i-1])*SERVANT_PWM_SPEED);
         // период модуляции разделяем на 256*(PWM_SPEED=10) машинных циклов
     }
-    // после выкдючения всех PWM подождать до окончания периода
-    pwm_time[SERVANT_NPWM]=~((0xff-pwm_sort[SERVANT_NPWM-1])*SERVANT_PWM_SPEED); // от последнего импульса до конца цикла
 
+    // после выкдючения всех PWM подождать до окончания периода
+    pwm_time[SERVANT_NPWM] = ~((0xff-pwm_sort[SERVANT_NPWM-1])*SERVANT_PWM_SPEED); // от последнего импульса до конца цикла
+
+    /*
     pwm_mask_byte = 0;
     for( i = 0; i < SERVANT_NPWM; i++ )
     {
         if( pwm[i] )
             pwm_mask_byte |= _BV(i+SERVANT_PWM_BIT);
     }
+    */
+
+    // Enable corresponding PWM channel
+    pwm_mask_byte |= _BV(port_num+SERVANT_PWM_BIT);
 
 }
 
