@@ -181,7 +181,7 @@ int ShowForm(FILE * stream, REQUEST * req)
         HTML("<a href=\"/cgi-bin/form.cgi?eeprom=save\"><button>Save to EEPROM</button></a> ");
     HTML("<a href=\"/cgi-bin/form.cgi?eeprom=load\"><button>Load from EEPROM</button></a> ");
     HTML("<a href=\"/cgi-bin/form.cgi?eeprom=init\"><button>Load factory defaults</button></a> ");
-    HTML("<a href=\"/cgi-bin/form.cgi?os=reboot\"><button>Reboot</button></a> ");
+    HTML("<a href=\"/cgi-bin/form.cgi?os=boot\"><button>Reboot</button></a> ");
     HTML("<p></p>");
 
     HTML("<p><a href=\"/\">Return to main</a></p>");

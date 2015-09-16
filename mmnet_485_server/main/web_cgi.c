@@ -15,6 +15,7 @@
 
 #include "io_dig.h"
 #include "io_adc.h"
+#include "io_pwm.h"
 #include "io_dht.h"
 #include "io_temp.h"
 #include "io_bmp180.h"
@@ -80,6 +81,8 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
 #if SERVANT_NDIG > 0
     if( row_no  < SERVANT_NDIG )
     {
+        if( (row_no == 0) || (row_no == 2) ) return 1; // Skip ports A and C - used as address/data bus in MMNET
+
         unsigned char pv = dio_read_port( row_no );
         unsigned char ddrv = dio_get_port_ouput_mask( row_no );
 
@@ -102,19 +105,6 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
         }
 
         fputs_P(te, stream);
-/*
-        fprintf_P(stream, dfmt,  row_no, ddrv );
-
-        c = ddrv;
-        for( bit = 7; bit >=0; bit-- )
-        {
-            fputs(" ", stream);
-            fputs( c & 0x80 ? "1" : "0", stream);
-            c <<= 1;
-        }
-
-        fputs_P(te, stream);
-*/
         return 1;
     }
 
@@ -307,8 +297,8 @@ static int CgiOutputsRow( FILE * stream, int row_no )
 
     if( row_no  < SERVANT_NPWM )
     {
-        static prog_char tfmt[] = "<TR><TD> (PWM) unimpl </TD><TD> %u </TD><TD> 0x%03X </TD></TR>\r\n";
-        fprintf_P(stream, tfmt, row_no, /*adc_value[row_no]*/ 0 );
+        static prog_char tfmt[] = "<TR><TD> PWM </TD><TD> %u </TD><TD> 0x%03X </TD></TR>\r\n";
+        fprintf_P(stream, tfmt, row_no, pwm[row_no] );
         return 1;
     }
 

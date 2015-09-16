@@ -10,7 +10,7 @@
 // Configuration (on/off/number) of ins/outs
 // ------------------------------------------------------------------------
 
-#define	SERVANT_NPWM	0	// Analogue outputs (PWM) count
+#define	SERVANT_NPWM	4	// Analogue outputs (PWM) count
 #define	SERVANT_NADC	8	// количество аналоговых входов
 
 #define	SERVANT_NDIG	7	// количество цифровых портов (входы)  - bytes

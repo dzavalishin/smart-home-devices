@@ -21,6 +21,7 @@
 #include <modbus.h>
 
 #include "io_adc.h"
+#include "io_pwm.h"
 #include "io_dig.h"
 #include "io_temp.h"
 #include "io_dht.h"
@@ -230,15 +231,12 @@ int modbus_write_register( uint16_t nReg, uint16_t value )
     WRITE_ONE( MB_REG_IO+3, dio_write_port( 5, value ) );
 
 #if SERVANT_NPWM > 0
-
-    
-
     if( INRANGE( nReg, MB_REG_AO, MB_COUNT_AO ) )
     {
         unsigned int id = nReg-MB_REG_AO;
 
         if( id >= SERVANT_NPWM ) goto err;
-        set_an( ((unsigned char)id, (unsigned char) value);
+        set_an( (unsigned char)id, (unsigned char) value);
         return 0;
     }
 #endif

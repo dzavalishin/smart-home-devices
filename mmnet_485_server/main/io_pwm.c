@@ -8,6 +8,11 @@
  *
 **/
 
+// можно использовать встроенные PWM, но их мало
+// и они занимают таймеры
+// для большего числа аналоговых выводов
+// PWM можно реализовать на одном таймере
+
 
 #include "defs.h"
 
@@ -30,7 +35,7 @@
 #error SERVANT_PWM_BIT must be 0..7
 #endif
 
-#if ((SERVANT_PWM_BIT) + (SERVANT_NPWM)) > 7
+#if ((SERVANT_PWM_BIT) + (SERVANT_NPWM)) > 8
 #error SERVANT_NPWM + SERVANT_PWM_BIT must be 0..7
 #endif
 
@@ -41,7 +46,7 @@ unsigned char pwm_count;
 unsigned char pwm[SERVANT_NPWM];
 unsigned char pwm_sort[SERVANT_NPWM], pwm_order[SERVANT_NPWM];
 unsigned char pwm_mask_byte;
-unsigned int pwm_time[SERVANT_NPWM];
+unsigned int pwm_time[SERVANT_NPWM+1];
 
 
 //TIMER1 initialize - prescale:1 !!! для максимальной скорости PWM-ов
@@ -86,13 +91,15 @@ ISR(TIMER1_OVF_vect)
     {
         pwm_count++; // для всех PWM
 
-        if (pwm_count==SERVANT_NPWM+1) {
-            pwm_count=0;	// начало цикла PWM
-            mask=pwm_mask_byte & OUTS_MASK; // не включать неактивные PWM-ы
+        if( pwm_count >= SERVANT_NPWM+1 )
+        {
+            pwm_count = 0;	// начало цикла PWM
+            mask = pwm_mask_byte & OUTS_MASK; // не включать неактивные PWM-ы
             SERVANT_PWM_PORT |= mask;	// включить все выходы, 0-3; изменить, если изменятся выводы аналоговых выходов
         }
 
         j=pwm_order[pwm_count-1];
+
         // выключить каждый PWM последовательно по возрастанию значения
         if (pwm_count!=0)
         {
@@ -114,25 +121,26 @@ ISR(TIMER1_OVF_vect)
 }
 
 
-void set_an(unsigned char port_num, unsigned char data) {
-    // можно использовать встроенные PWM, но их мало
-    // и они занимают таймеры
-    // для большего числа аналоговых выводов
-    // PWM можно реализовать на одном таймере
+void set_an(unsigned char port_num, unsigned char data)
+{
     unsigned char i, j, min, s;
 
     pwm[port_num]=data;
 
     // сортировка значений PWM-ов, запоминаем порядок
-    for (i=0; i<SERVANT_NPWM; i++) {
+    for (i=0; i<SERVANT_NPWM; i++)
+    {
         pwm_sort[i]=pwm[i];
         pwm_order[i]=i;
     }
 
-    for (i=0; i<SERVANT_NPWM; i++) {
+    for (i=0; i<SERVANT_NPWM; i++)
+    {
         min=i;
-        for (j=i+1; j<SERVANT_NPWM; j++) {
-            if (pwm_sort[j]<pwm_sort[min]) {
+        for (j=i+1; j<SERVANT_NPWM; j++)
+        {
+            if (pwm_sort[j]<pwm_sort[min])
+            {
                 min=j;
             }
         }
@@ -140,7 +148,8 @@ void set_an(unsigned char port_num, unsigned char data) {
         pwm_sort[i]=pwm_sort[min];
         pwm_sort[min]=s;
 
-        if (min!=i) {
+        if (min!=i)
+        {
             pwm_order[min]=pwm_order[i]; // запоминаем порядок
             pwm_order[i]=min;
         }
@@ -151,12 +160,21 @@ void set_an(unsigned char port_num, unsigned char data) {
     // на периоде модуляции последовательно запускаем таймер
     // между вылючениями каждого выхода PWM
     pwm_time[0]=~(pwm_sort[0]*10);
-    for (i=1; i<SERVANT_NPWM; i++) {
+    for (i=1; i<SERVANT_NPWM; i++)
+    {
         pwm_time[i]=~((pwm_sort[i]-pwm_sort[i-1])*SERVANT_PWM_SPEED);
         // период модуляции разделяем на 256*(PWM_SPEED=10) машинных циклов
     }
     // после выкдючения всех PWM подождать до окончания периода
     pwm_time[SERVANT_NPWM]=~((0xff-pwm_sort[SERVANT_NPWM-1])*SERVANT_PWM_SPEED); // от последнего импульса до конца цикла
+
+    pwm_mask_byte = 0;
+    for( i = 0; i < SERVANT_NPWM; i++ )
+    {
+        if( pwm[i] )
+            pwm_mask_byte |= _BV(i+SERVANT_PWM_BIT);
+    }
+
 }
 
 

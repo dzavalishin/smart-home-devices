@@ -52,6 +52,7 @@
 
 #include "io_dig.h"
 #include "io_adc.h"
+#include "io_pwm.h"
 #include "io_temp.h"
 #include "io_bmp180.h"
 
