@@ -1,0 +1,45 @@
+Basic pin map for MMNET101
+
+Port B
+
+	0 - output, SS for ?
+
+	1-3 - SPI SCK/MOSI/MISO
+
+	4 - DHT11 
+
+	5 - data flash SS
+
+	6,7 - uart tx enable / LED
+
+Port D
+
+	0,1 - I2C SCL/SDA
+        
+        2,3 - UART1
+        
+        4-7 - DI/DO
+
+Port E
+
+	0-1 - UART0
+
+	0-3 usually DO (move PWM here?)
+
+	4 - ?
+
+	5 - Ethernet interrupt
+
+	6,7 - di? uart tx enable?
+
+Port F
+
+	0-7 Ain/Di/Do
+
+Port G
+
+	3 - Activity LED
+        
+        4 - 1Wire (single, 2401 serial/MAC)
+
+

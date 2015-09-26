@@ -9,6 +9,13 @@ background-color:#BAFFA3;
 border:2px solid #444444;
 }
 
+form.setup {
+padding: 10px 10px 10px 10px;
+background-color:#BAFFA3;
+border:2px solid #444444;
+}
+
+
 table.main {
 width: 1000px;
 padding: 10px 10px 10px 10px;

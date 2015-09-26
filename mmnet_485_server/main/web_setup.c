@@ -140,9 +140,11 @@ int ShowForm(FILE * stream, REQUEST * req)
         }
     }
 
-    HTML("<form>\r\n");
+    // HTML("<form method=post>\r\n"); doesnt work
+    HTML("<table cellspacing=40><tr valign=top><td>\r\n");
     HTML("<table>\r\n");
 
+    HTML("<form class=\"setup\">\r\n");
 
     sprintf( buf, "%d", (signed char)ee_cfg.timezone );
     form_element( stream, "TimeZone", "tz", buf );
@@ -170,9 +172,56 @@ int ShowForm(FILE * stream, REQUEST * req)
     form_element( stream, "Init G", "initg", itox(ee_cfg.start_g) );
 
 
-    HTML("</table><BR>");
+    HTML("</table>");
     HTML("<input type = \"submit\" value=\"Send\" size=\"8\">\r\n");
-    HTML("</form><\r\n");
+    HTML("</form>\r\n");
+
+    HTML("</td><td>\r\n");
+    HTML("<table>\r\n");
+
+    HTML("<form>\r\n");
+    {
+        char *name = "rom____";
+        char val[32];
+        char text[64];
+
+        uint8_t i;
+        for( i = 0; i < MAX_OW_MAP; i++ )
+        {
+            uint8_t *id = ee_cfg.ow_map[i].id;
+            int perm_index = ee_cfg.ow_map[i].index;
+            int cur_index = ow_id_map[perm_index];
+
+            if( (perm_index < 0) || (perm_index >= MAX_OW_MAP ) )
+            {
+                perm_index = cur_index = -1;
+            }
+
+            sprintf( name+4, "%02d", i );
+
+            sprintf( text, "1w &deg; %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x perm @%d (now @%d)",
+                     id[0], id[1], id[2], id[3],
+                     id[4], id[5], id[6], id[7],
+                     perm_index, cur_index
+                   );
+
+
+            sprintf( val, "%d", perm_index );
+
+            form_element( stream, text, name, val );
+
+
+        }
+    }
+
+    HTML("</table>");
+    HTML("<input type = \"submit\" value=\"Send\" size=\"8\">\r\n");
+    HTML("</form>\r\n");
+
+    HTML("</td></tr></table>\r\n");
+
+    HTML("<BR>");
+
 
 
 
@@ -196,7 +245,7 @@ int ShowForm(FILE * stream, REQUEST * req)
 static void form_element( FILE * stream, char *title, char *field_name, char *curr_value )
 {
     static prog_char fmt[] =
-        "<tr> <TD height=\"32\" width=\"160\">&nbsp;%s:&nbsp;</TD> <TD height=\"32\" width=\"140\"><input type=\"text\" name=\"%s\" size=\"16\" value=\"%s\"></TD> </tr>";
+        "<tr> <TD height=\"22\" width=\"460\">&nbsp;%s:&nbsp;</TD> <TD height=\"22\" width=\"140\"><input type=\"text\" name=\"%s\" size=\"16\" value=\"%s\"></TD> </tr>";
 
     fprintf_P( stream, fmt, title, field_name, curr_value );
 }

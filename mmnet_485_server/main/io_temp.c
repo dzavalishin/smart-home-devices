@@ -126,6 +126,7 @@ uint8_t search_sensors(uint8_t currBus)
         {
 #if SERVANT_NTEMP > 0
             ow_copy_rom( gTempSensorIDs[nTempSensors], id );
+            ow_map_add_found(id, nTempSensors); // make map of permanent index to runtime array pos
 #ifndef OW_ONE_BUS
             gTempSensorBus[nTempSensors] = currBus;
 #endif

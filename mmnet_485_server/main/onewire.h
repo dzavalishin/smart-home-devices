@@ -2,8 +2,11 @@
 #define _1wire_h_
 
 #include <inttypes.h>
-//#include "freq_defs.h"
 #include "defs.h"
+
+
+// rom-code size including CRC
+#define OW_ROMCODE_SIZE 8
 
 /*******************************************/
 /* Hardware connection                     */
@@ -15,6 +18,8 @@
    a bus. Runtime bus-select increases code size by around 300 
    bytes so use OW_ONE_BUS if possible */
 //#define OW_ONE_BUS
+
+
 
 #ifdef OW_ONE_BUS
 
@@ -43,8 +48,6 @@
 #define OW_LAST_DEVICE	0x00		// last device found
 //			0x01 ... 0x40: continue searching
 
-// rom-code size including CRC
-#define OW_ROMCODE_SIZE 8
 
 extern uint8_t ow_reset(void);
 
@@ -68,6 +71,7 @@ extern void ow_set_bus(volatile uint8_t* in,
 #endif
 
 void ow_copy_rom( void *dest, const void *src );
+int ow_cmp_rom( void *a, const void *b );
 
 
 #endif

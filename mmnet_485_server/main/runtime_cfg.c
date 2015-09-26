@@ -109,3 +109,53 @@ runtime_cfg_eeprom_write(void)
 
 
 
+
+// -----------------------------------------------------------------------
+// One wire map
+// -----------------------------------------------------------------------
+
+char ow_id_map[MAX_OW_MAP];
+
+
+static int find_entry_by_id(uint8_t id[OW_ROMCODE_SIZE])
+{
+    uint8_t i;
+    for( i = 0; i < MAX_OW_MAP; i++ )
+    {
+        int diff = ow_cmp_rom( id, ee_cfg.ow_map[i].id );
+        if( diff == 0 ) return i;
+
+    }
+
+    return -1;
+}
+
+void ow_map_add_found(uint8_t id[OW_ROMCODE_SIZE], int index )
+{
+    uint8_t empty[OW_ROMCODE_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
+    int pos = find_entry_by_id( id );
+
+    if( pos >= 0 )
+    {
+        // Found
+        int permanent_pos = ee_cfg.ow_map[pos].index;
+
+        if( (permanent_pos < 0) || (permanent_pos >= MAX_OW_MAP ) ) goto new;
+
+        ow_id_map[permanent_pos] = index;
+        return;
+    }
+
+new:
+    pos = find_entry_by_id( empty );
+
+    if( pos >= 0 )
+    {
+        // Found empty space
+        ee_cfg.ow_map[pos].index = -1;
+        ee_cfg.ow_map[pos].spare = 0;
+        ow_copy_rom( ee_cfg.ow_map[pos].id, id );
+    }
+}
+

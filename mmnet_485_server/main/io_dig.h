@@ -14,6 +14,10 @@ void    	dio_set_port_ouput_mask_bit( unsigned char port, unsigned char nBit, un
 unsigned char   dio_get_port_ouput_mask_bit( unsigned char port, unsigned char nBit ); // 1 = output
 
 
+void set_half_duplex0( char val );
+void set_half_duplex1( char val );
+
+
 /*
 void port_init(void);
 

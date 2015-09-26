@@ -137,6 +137,7 @@ static int CgiStatusRow( FILE * stream, int row_no )
 
     case 18: subhdr( stream, "OS" ); break;
     case 19: ShowTableRow2i( stream, "Free mem, K", NutHeapAvailable()/1024 );	break;
+    case 20: ShowTableRow2i( stream, "Size of EEPROM cfg", sizeof(struct eeprom_cfg) );	break;
         
 
     default:

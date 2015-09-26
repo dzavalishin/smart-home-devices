@@ -256,3 +256,18 @@ void ow_copy_rom( void *dest, const void *src )
 }
 
 
+int ow_cmp_rom( void *a, const void *b )
+{
+    uint8_t i;
+
+    for( i = 0; i < OW_ROMCODE_SIZE; i++ )
+    {
+        if( ((char *)a)[i] == ((const char *)b)[i] )
+            continue;
+        return ((char *)a)[i] - ((const char *)b)[i];
+    }
+
+    return 0;
+}
+
+

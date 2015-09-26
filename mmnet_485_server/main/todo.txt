@@ -1,3 +1,6 @@
+- runtime configure IO/periferials
+
+- direct (no conversion) TCP/RS485 tunnel
 
 - multichannel PWM does it wrong, 4 channels of 255 give different
 timings
