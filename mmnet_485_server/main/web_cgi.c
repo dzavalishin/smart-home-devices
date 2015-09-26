@@ -470,9 +470,10 @@ static char * getNamedParameter( const char *name )
 #endif
 
 #if SERVANT_NTEMP > 0
-    if( 0 == strncmp( name, "temp", 4 ) )
+    // unmapped temperature - undefined order of sensors
+    if( 0 == strncmp( name, "utemp", 4 ) )
     {
-        nin = atoi( name + 4 );
+        nin = atoi( name + 5 );
         if( nin >= SERVANT_NTEMP ) nin = -1;
 
         if( nin < 0 ) return 0;
@@ -481,6 +482,23 @@ static char * getNamedParameter( const char *name )
         sprintf( out, "%d", currTemperature[nin] );
         return out;
     }
+
+    // mapped - order set in web interface
+    if( 0 == strncmp( name, "temp", 4 ) )
+    {
+        nin = atoi( name + 4 );
+        if( nin >= MAX_OW_MAP ) nin = -1;
+        if( nin < 0 ) return 0;
+
+        uint8_t p = ow_id_map[nin];
+        if( p >= SERVANT_NTEMP ) return 0;
+
+        // todo float point?
+        sprintf( out, "%d", currTemperature[p] );
+        return out;
+    }
+
+
 #endif // SERVANT_NTEMP
 
 #if SERVANT_DHT11

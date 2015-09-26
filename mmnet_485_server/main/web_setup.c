@@ -94,6 +94,30 @@ int ShowForm(FILE * stream, REQUEST * req)
             if( 0 == strcmp( pname, "ip_syslog" ) )		    ee_cfg.ip_syslog	= inet_addr( pvalue );
             if( 0 == strcmp( pname, "ip_nntp" ) )		    ee_cfg.ip_nntp	= inet_addr( pvalue );
 
+            // 1w rom permanent id
+            {
+                char *name = "rom____";
+                uint8_t i;
+                for( i = 0; i < MAX_OW_MAP; i++ )
+                {
+                    struct ow_map_entry *e = ee_cfg.ow_map+i;
+
+                    sprintf( name+4, "%02d", i );
+
+                    // Have update?
+                    if( 0 == strcmp( pname, name ) )
+                    {
+                        uint8_t v = (uint8_t)atoi( pvalue );
+                        if( v >= MAX_OW_MAP ) v = -1;
+                        e->index = v;
+                    }
+
+
+
+                }
+            }
+
+
             if( 0 == strcmp( pname, "eeprom" ))
             {
                 if( 0 == strcmp( pvalue, "save" ) )
@@ -188,6 +212,19 @@ int ShowForm(FILE * stream, REQUEST * req)
         uint8_t i;
         for( i = 0; i < MAX_OW_MAP; i++ )
         {
+            struct ow_map_entry *e = ee_cfg.ow_map+i;
+
+            sprintf( name+4, "%02d", i );
+/*
+            // Have update?
+            if( 0 == strcmp( pname, name ) )
+            {
+                uint8_t v = (uint8_t)atoi( pvalue );
+                if( v >= MAX_OW_MAP ) v = -1;
+                e->index = v;
+            }
+*/
+
             uint8_t *id = ee_cfg.ow_map[i].id;
             int perm_index = ee_cfg.ow_map[i].index;
             int cur_index = ow_id_map[perm_index];
@@ -197,7 +234,6 @@ int ShowForm(FILE * stream, REQUEST * req)
                 perm_index = cur_index = -1;
             }
 
-            sprintf( name+4, "%02d", i );
 
             sprintf( text, "1w &deg; %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x perm @%d (now @%d)",
                      id[0], id[1], id[2], id[3],

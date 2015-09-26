@@ -114,7 +114,7 @@ runtime_cfg_eeprom_write(void)
 // One wire map
 // -----------------------------------------------------------------------
 
-char ow_id_map[MAX_OW_MAP];
+unsigned char ow_id_map[MAX_OW_MAP];
 
 
 static int find_entry_by_id(uint8_t id[OW_ROMCODE_SIZE])
@@ -130,6 +130,7 @@ static int find_entry_by_id(uint8_t id[OW_ROMCODE_SIZE])
     return -1;
 }
 
+// io code calls us when sensor is found, we update ow_id_map[]
 void ow_map_add_found(uint8_t id[OW_ROMCODE_SIZE], int index )
 {
     uint8_t empty[OW_ROMCODE_SIZE] = { 0, 0, 0, 0, 0, 0, 0, 0 };

@@ -7,6 +7,7 @@
 **/
 
 #include "defs.h"
+#include "runtime_cfg.h"
 
 #include <sys/event.h>
 #include <sys/timer.h>
@@ -202,6 +203,7 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
 #endif
 
 #if SERVANT_NTEMP > 0
+    // unmapped - returns temp in unknown order
     if( INRANGE( nReg, MB_REG_TEMP_DIRECT, SERVANT_NTEMP ) )
     {
         unsigned int id = nReg-MB_REG_TEMP_DIRECT;
@@ -209,6 +211,22 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
         *val = currTemperature[id];
         return 1;
     }
+
+    // mapped - returns temp in order set in web setup
+    if( INRANGE( nReg, MB_REG_TEMP, MAX_OW_MAP ) )
+    {
+        unsigned int id = nReg-MB_REG_TEMP;
+        if( id >= MAX_OW_MAP ) return 0;
+
+        uint8_t p = ow_id_map[id];
+
+        if( p >= SERVANT_NTEMP ) return 0;
+
+        *val = currTemperature[p];
+
+        return 1;
+    }
+
 #endif
 
     if(modbus_debug) printf("Modbus read - unknown register %u\n", nReg );

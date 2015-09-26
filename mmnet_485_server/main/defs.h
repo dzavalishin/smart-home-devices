@@ -178,8 +178,8 @@ extern char *makeDate; // filled in by makefile
 //#define HALF_DUPLEX 0
 
 
-
-#define EEPROM_CFG_BASE 0
+// On 0 we conflict with OS?
+#define EEPROM_CFG_BASE 1024
 
 
 

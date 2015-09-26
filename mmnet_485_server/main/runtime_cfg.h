@@ -88,7 +88,7 @@ struct eeprom_cfg
 
 
 extern struct eeprom_cfg        ee_cfg;
-extern char ow_id_map[MAX_OW_MAP];
+extern unsigned char ow_id_map[MAX_OW_MAP];
 
 
 
