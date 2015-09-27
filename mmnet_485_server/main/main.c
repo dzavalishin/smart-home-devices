@@ -99,8 +99,8 @@ THREAD(long_init, __arg)
         init_syslog();
 #endif
 
-#if SERVANT_TCP_COM0 || SERVANT_TCP_COM1
-        init_tcp_com();
+#if SERVANT_TUN0 || SERVANT_TUN1
+        init_tunnels();
 #endif
 
 #if SERVANT_LUA
@@ -151,16 +151,20 @@ int main(void)
     led_ddr_init(); // Before using LED!
     LED_ON;
 
-    set_half_duplex0(0);
-    set_half_duplex1(1);
+    //set_half_duplex0(0);
+    //set_half_duplex1(1);
 
     // Initialize the uart device.
 #if 1
+#if !SERVANT_TUN1
     NutRegisterDevice(&devDebug1, 0, 0); // USB
     freopen("uart1", "w", stdout);
+#endif
 #else
+#if !SERVANT_TUN0
     NutRegisterDevice(&devDebug0, 0, 0); // RS232
     freopen("uart0", "w", stdout);
+#endif
 #endif
 
     _ioctl(_fileno(stdout), UART_SETSPEED, &baud);

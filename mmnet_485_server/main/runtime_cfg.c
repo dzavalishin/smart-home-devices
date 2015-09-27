@@ -61,6 +61,8 @@ init_runtime_cfg()
     unsigned char def_mac[] = { DEFAULT_MAC };
     memcpy( ee_cfg.mac_addr, def_mac, sizeof(ee_cfg.mac_addr) );
 
+    // TODO temp?
+    ee_cfg.io_enable = -1; // all ones, enable all by default?
 }
 
 #define EESZ (sizeof(struct eeprom_cfg))

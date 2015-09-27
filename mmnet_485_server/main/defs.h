@@ -31,9 +31,9 @@
 #define OW_ONE_BUS      1
 
 // RS232 on dev board
-#define SERVANT_TCP_COM0        0
+#define SERVANT_TUN0        1
 // USB serial on dev board
-#define SERVANT_TCP_COM1        0
+#define SERVANT_TUN1        1
 
 // Does not fit to code flash mem :(
 #define SERVANT_LUA     0       // Have Lua scripting
@@ -56,8 +56,8 @@
 #define PB_SS_PIN (_BV(PB0))
 
 
-#define ENABLE_HALF_DUPLEX_0    1
-#define ENABLE_HALF_DUPLEX_1    1
+#define ENABLE_HALF_DUPLEX_0    SERVANT_TUN0
+#define ENABLE_HALF_DUPLEX_1    SERVANT_TUN1
 
 
 //#ifdef OW_ONE_BUS

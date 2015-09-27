@@ -1,4 +1,9 @@
+
+- modbus sock r/w timeouts!
+
 - runtime configure IO/periferials
+
+- syslog does not work!
 
 - direct (no conversion) TCP/RS485 tunnel
 
@@ -9,9 +14,8 @@ timings
 
 - bootloader?
 
-- clearly mark error/unread values (0xFFFF?) 
+- clearly mark error/unread values (0x7FFF?) 
 
-- id map for 1wire temp sensors 
 
 - timeout if no IO, set default values per port?
 
@@ -19,6 +23,7 @@ timings
 
 -- lua - not enough code flash
 
++ id map for 1wire temp sensors 
 + reboot
 + web config DDR defaults
 

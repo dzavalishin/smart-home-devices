@@ -57,6 +57,8 @@ THREAD(ModbusService, arg)
         NutTcpAccept(modbus_sock, 502);
         if(modbus_debug) printf("Modbus [%u] Connected, %u bytes free\n", id, NutHeapAvailable());
 
+        // TODO sock r/w timeouts!
+
     again:
         // Wait until at least 4 kByte of free RAM is available. This will keep the client connected in low memory situations.
         while (NutHeapAvailable() < 4096)

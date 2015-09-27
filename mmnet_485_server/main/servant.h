@@ -12,4 +12,6 @@
 
 void lua_init(void);
 
+void init_tunnels(void);
+
 
