@@ -30,10 +30,13 @@
 #define SERVANT_1WMAC   1       // Attempt to get MAC address from 1-wire 2401 chip
 #define OW_ONE_BUS      1
 
+// TCP to serial tunnels, incomplete, do not work
+
 // RS232 on dev board
-#define SERVANT_TUN0        1
+#define SERVANT_TUN0        0
 // USB serial on dev board
-#define SERVANT_TUN1        1
+#define SERVANT_TUN1        0
+
 
 // Does not fit to code flash mem :(
 #define SERVANT_LUA     0       // Have Lua scripting
