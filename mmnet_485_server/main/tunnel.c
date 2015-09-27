@@ -22,6 +22,11 @@
 
 #include <arpa/inet.h>
 
+
+#include <dev/irqreg.h>
+
+
+
 #define BUFSZ 512
 #define STK 1024
 
@@ -49,8 +54,21 @@ struct tunnel_io
     MUTEX       serialMutex;
     TCPSOCKET   *sock;
 
+    HANDLE      txEmpty;
+    HANDLE      sendDone;
+    HANDLE      recvDone;
+    HANDLE      rxGotSome;
+
+    char inSend; // We're sending, so ignore all we recv
+
     char *rxbuf;
     char *txbuf;
+
+    int rx_idx;
+    int tx_idx;
+
+    int rx_len;
+    int tx_len;
 };
 
 struct tunnel_io tun0 =
@@ -87,8 +105,27 @@ THREAD(tunnel_ctl, __arg);
 THREAD(tunnel_recv, __arg);
 THREAD(tunnel_xmit, __arg);
 
+static void TunUartAvrEnable(uint16_t base);
+
+
+static void TunTxEmpty(void *arg);
+static void TunTxComplete(void *arg);
+static void TunRxComplete(void *arg);
+
+static void TunSendChar(volatile struct tunnel_io *t);
+static int TunRxEmpty(volatile struct tunnel_io *t);
+
+static void wait_empty( volatile struct tunnel_io *t );
+static void TunUartUDRIE(uint16_t base, char on_off);
 
 static void init_one_tunnel( struct tunnel_io *t );
+
+
+
+
+
+
+
 
 void init_tunnels(void)
 {
@@ -111,6 +148,29 @@ static void init_one_tunnel( struct tunnel_io *t )
 {
     t->runCount = 0;
     t->sock = 0;
+
+    // Register interrupt handler.
+    if(t->nTunnel)
+    {
+#ifdef UDR1
+        if (NutRegisterIrqHandler(&sig_UART1_DATA, TunTxEmpty, t))
+            return;
+
+        if (NutRegisterIrqHandler(&sig_UART1_RECV, TunRxComplete, t))
+            return;
+
+        if (NutRegisterIrqHandler(&sig_UART1_TRANS, TunTxComplete, t))
+#endif
+            return;
+    } else {
+        if (NutRegisterIrqHandler(&sig_UART0_DATA, TunTxEmpty, t))
+            return;
+        if (NutRegisterIrqHandler(&sig_UART0_RECV, TunRxComplete, t))
+            return;
+        if (NutRegisterIrqHandler(&sig_UART0_TRANS, TunTxComplete, t))
+            return;
+    }
+
 
     t->rxbuf = malloc(BUFSZ);
     if( 0 == t->rxbuf )
@@ -141,6 +201,8 @@ THREAD(tunnel_ctl, __arg)
     HANDLE rt, tt;
 
     t->set_half_duplex(0);
+
+    TunUartAvrEnable(t->nTunnel);
 
     for(;;)
     {
@@ -232,11 +294,21 @@ THREAD(tunnel_recv, __arg)
         // Get from TCP
         int nread = NutTcpDeviceRead( t->sock, t->rxbuf, sizeof(buf) );
 
+        t->tx_len = nread & 0x7FFF; // positive
+        t->tx_idx = 0;
+
         // Now send to 485 port
         NutMutexLock( &(t->serialMutex) );
         t->set_half_duplex(1);
+        t->inSend = 1; // Ignore all incoming data
 
+        TunSendChar(t); // Send initial byte
+
+        NutEventWait( &(t->sendDone), 500 ); // Wait for xmit, no more than 0.5 sec
+
+        wait_empty( t );
         t->set_half_duplex(0);
+        t->inSend = 0;
         NutMutexUnlock( &(t->serialMutex) );
     }
 
@@ -253,22 +325,38 @@ THREAD(tunnel_xmit, __arg)
     volatile struct tunnel_io *t = __arg;
 
     //char buf[BUFSZ];
-    int tx_len = 0;
+    //int tx_len = 0;
 
     t->runCount++;
 
     while(!t->stop)
     {
+        while( NutEventWait( &(t->rxGotSome), 500 ) && !TunRxEmpty(t) ) // Wait forever for some data to come
+        {
+            // Timeout - check if we have to die
+            if(t->stop) goto die;
+        }
+
         // Recv data from 485 port
         NutMutexLock( &(t->serialMutex) );
-        t->set_half_duplex(0);
+        //t->set_half_duplex(0); // Make sure we recv - actually pointless
 
+        int rx_idx1, rx_idx2;
+        do {
+            rx_idx1 = t->rx_idx;
+            NutEventWait( &(t->recvDone), 2 ); // Wait for end of data
+            rx_idx2 = t->rx_idx;
+        } while( rx_idx1 != rx_idx2 ); // Got some? Re-wait!
+
+        NutEventBroadcast(&(t->rxGotSome)); // Clear signaled state after getting all recvd data
         NutMutexUnlock( &(t->serialMutex) );
 
         // Now send to TCP
-        NutTcpSend( t->sock, t->txbuf, tx_len );
+        NutTcpSend( t->sock, t->rxbuf, t->rx_idx );
+        t->rx_idx = 0;
     }
 
+die:
     t->runCount--;
 
     NutThreadExit();
@@ -277,10 +365,144 @@ THREAD(tunnel_xmit, __arg)
 
 
 
+static void TunSendChar(volatile struct tunnel_io *t)
+{
+    // TODO while tx buf empty
+
+    if( t->tx_idx >= t->tx_len )
+        return;
+
+    // Extract char befor touching UDR, prevent races
+    char c = t->txbuf[t->tx_idx++];
+
+#ifdef UDR1
+    if(t->nTunnel)
+        UDR1 = c;
+    else
+#endif
+        UDR = c;
+}
+
+// Interrupt
+static void TunTxComplete(void *arg)
+{
+    volatile struct tunnel_io *t = arg;
+
+    if( t->tx_idx >= t->tx_len )
+    {
+        NutEventPostFromIrq(&(t->sendDone));
+        return;
+    }
+
+    TunSendChar(t);
+}
+
+
+// Interrupt
+static void TunRxComplete(void *arg)
+{
+    volatile struct tunnel_io *t = arg;
+
+    if( !t->inSend )
+        NutEventPostFromIrq( &(t->rxGotSome) ); // Start recv process
+
+    if( t->rx_idx >= BUFSZ )
+    {
+        //NutEventPostFromIrq(&(t->sendDone)); // did it byte ago
+        return;
+    }
+
+    char c;
+
+#ifdef UDR1
+    if(t->nTunnel)
+        c = UDR1;
+    else
+#endif
+        c = UDR;
+
+    if( t->inSend )
+        return; // Drop it
+
+    t->rxbuf[t->rx_idx++] = c;
+
+    if( t->rx_idx >= t->rx_len )
+    {
+        NutEventPostFromIrq(&(t->recvDone));
+        return;
+    }
+
+}
+
+// Interrupt
+static void TunTxEmpty(void *arg)
+{
+    volatile struct tunnel_io *t = arg;
+    TunUartUDRIE(t->nTunnel, 0);
+    NutEventPostFromIrq(&(t->txEmpty));
+}
+
+static void wait_empty( volatile struct tunnel_io *t )
+{
+    TunUartUDRIE(t->nTunnel, 1);
+    NutEventWait( &(t->txEmpty), 10 ); // No more than 10 msec to send it all
+}
 
 
 
 
+/*
+ * Carefully enable UART functions.
+ */
+static void TunUartAvrEnable(uint16_t base)
+{
+    //NutEnterCritical();
+#ifdef UCSR1B
+    if (base)
+        UCSR1B = BV(RXCIE) | BV(TXCIE) | BV(RXEN) | BV(TXEN);
+    else
+#endif
+        UCR = BV(RXCIE) | BV(TXCIE) | BV(RXEN) | BV(TXEN);
+    //NutExitCritical();
+}
+
+
+static void TunUartUDRIE(uint16_t base, char on_off)
+{
+    if( on_off )
+    {
+#ifdef UCSR1B
+        if (base)
+            UCSR1B |= BV(UDRIE);
+        else
+#endif
+            UCR |= BV(UDRIE);
+    }
+    else
+    {
+#ifdef UCSR1B
+        if (base)
+            UCSR1B &= ~BV(UDRIE);
+        else
+#endif
+            UCR &= ~BV(UDRIE);
+    }
+}
+
+
+static int TunRxEmpty(volatile struct tunnel_io *t)
+{
+    uint8_t us;
+
+#ifdef UDR1
+    if (t->nTunnel)
+        us = inb(UCSR1A);
+    else
+#endif
+        us = inb(USR);
+
+    return us & RXC;
+}
 
 
 
