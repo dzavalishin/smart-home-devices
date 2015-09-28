@@ -39,6 +39,8 @@ struct eeprom_cfg        ee_cfg =
     .start_f = 0,
     .start_g = 0,
 
+    .dbg_baud = DEFAULT_BAUD,
+    .tun_baud = {DEFAULT_BAUD, DEFAULT_BAUD},
 };
 
 

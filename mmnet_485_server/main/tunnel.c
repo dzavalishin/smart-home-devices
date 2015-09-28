@@ -13,6 +13,8 @@
 // hafduplex control func
 #include "io_dig.h"
 
+#include <stdio.h>
+
 #include <sys/thread.h>
 #include <sys/timer.h>
 #include <sys/mutex.h>
@@ -28,13 +30,18 @@
 
 
 #define BUFSZ 512
-#define STK 1024
+// TODO seems to be ok to have 1/2 of this - 256 b of stack
+#define STK 512
 
 
 #if SERVANT_TUN0 || SERVANT_TUN1
 
 // TODO debug
-#define DEBUG0(a)
+//#define DEBUG0(a)
+
+#define DEBUG0(a) printf( "tun%d: %s\n", t->nTunnel, (a) )
+#define DEBUG1i( s, i ) printf( "tun%d: %s %d\n", t->nTunnel, (s), (i) )
+
 
 
 struct tunnel_io
@@ -77,7 +84,7 @@ struct tunnel_io tun0 =
 
     .tName = "tun0",
     .rxtname = "Tun0Rx",
-    .rxtname = "Tun0Tx",
+    .txtname = "Tun0Tx",
 
     .tcpPort = 503,
     .set_half_duplex = set_half_duplex0,
@@ -90,7 +97,7 @@ struct tunnel_io tun1 =
 
     .tName = "tun1",
     .rxtname = "Tun1Rx",
-    .rxtname = "Tun1Tx",
+    .txtname = "Tun1Tx",
 
     .tcpPort = 504,
     .set_half_duplex = set_half_duplex1,
@@ -103,7 +110,7 @@ THREAD(tunnel_recv, __arg);
 THREAD(tunnel_xmit, __arg);
 
 static void TunUartAvrEnable(uint16_t base);
-
+static void TunAvrUsartSetSpeed(char port, uint32_t rate);
 
 static void TunTxEmpty(void *arg);
 static void TunTxComplete(void *arg);
@@ -127,15 +134,19 @@ static void init_one_tunnel( struct tunnel_io *t );
 
 void init_tunnels(void)
 {
-    if( RT_IO_ENABLED(IO_TUN0) )
+
+#if SERVANT_TUN0
+//    if( RT_IO_ENABLED(IO_TUN0) )
     {
         init_one_tunnel( &tun0 );
     }
-
-    if( RT_IO_ENABLED(IO_TUN1) )
+#endif
+#if SERVANT_TUN1
+//    if( RT_IO_ENABLED(IO_TUN1) )
     {
         init_one_tunnel( &tun1 );
     }
+#endif
 }
 
 
@@ -182,7 +193,7 @@ static void init_one_tunnel( struct tunnel_io *t )
 
     NutMutexInit( &(t->serialMutex) );
 
-    NutThreadCreate( t->tName, tunnel_ctl, t, 512);
+    NutThreadCreate( t->tName, tunnel_ctl, t, STK );
 }
 
 
@@ -190,11 +201,13 @@ static void init_one_tunnel( struct tunnel_io *t )
 THREAD(tunnel_ctl, __arg)
 {
     volatile struct tunnel_io *t = __arg;
-
     HANDLE rt, tt;
+
+    DEBUG0("In ctl thread");
 
     t->set_half_duplex(0);
 
+    TunAvrUsartSetSpeed(t->nTunnel, ee_cfg.tun_baud[t->nTunnel]);
     TunUartAvrEnable(t->nTunnel);
 
     for(;;)
@@ -203,18 +216,19 @@ THREAD(tunnel_ctl, __arg)
 
         if((t->sock = NutTcpCreateSocket()) == 0)
         {
-            DEBUG0("Creating socket failed\n");
+            DEBUG0("Creating socket failed");
             NutSleep(5000);
             goto err;
         }
 
+        DEBUG0("Accepting");
 
-        if( NutTcpAccept(t->sock, 502) )
+        if( NutTcpAccept(t->sock, t->tcpPort) )
         {
-            DEBUG0("Accept failed\n");
+            DEBUG0("Accept failed");
             goto err;
         }
-        DEBUG0("Accepted\n");
+        DEBUG0("Accepted");
         //(modbus_debug) printf("Modbus [%u] Connected, %u bytes free\n", id, NutHeapAvailable());
 
         // Timeout, or we will wait forever!
@@ -242,12 +256,13 @@ THREAD(tunnel_ctl, __arg)
         goto stop;
 
     err:
-        DEBUG0("died\n");
+        DEBUG0("died with err");
         // TODO mark err
         NutSleep(1000); // Do not repeat too often
 
         // Fall through to...
     stop:
+        DEBUG0("Stopping");
         // Stop all and deinit
         t->stop = 1;
 
@@ -262,6 +277,7 @@ THREAD(tunnel_ctl, __arg)
         }
 
         // Repeat forever
+        t->stop = 0;
     }
 }
 
@@ -276,6 +292,7 @@ THREAD(tunnel_recv, __arg)
     //uint32_t tmo5min = 60*1000*5; // 5 min
 
     t->runCount++;
+    DEBUG0("Start rx thread");
 
     // Timeout, or we will wait forever!
     //NutTcpSetSockOpt( t->sock, SO_RCVTIMEO, &tmo, sizeof(tmo) );
@@ -297,6 +314,9 @@ THREAD(tunnel_recv, __arg)
         t->tx_len = nread & 0x7FFF; // positive
         t->tx_idx = 0;
 
+        DEBUG1i("rx",t->tx_len);
+
+
         // Now send to 485 port
         NutMutexLock( &(t->serialMutex) );
         t->set_half_duplex(1);
@@ -313,6 +333,7 @@ THREAD(tunnel_recv, __arg)
     }
 
     t->runCount--;
+    DEBUG0("End rx thread");
 
     NutThreadExit();
     for(;;) ; // make compiler happy
@@ -328,6 +349,7 @@ THREAD(tunnel_xmit, __arg)
     //int tx_len = 0;
 
     t->runCount++;
+    DEBUG0("Start tx thread");
 
     while(!t->stop)
     {
@@ -351,6 +373,8 @@ THREAD(tunnel_xmit, __arg)
         NutEventBroadcast(&(t->rxGotSome)); // Clear signaled state after getting all recvd data
         NutMutexUnlock( &(t->serialMutex) );
 
+        DEBUG1i("tx", t->rx_idx);
+
         // Flush prev TCP send, make sure there is free place in buffer and our actual
         // data will be sent in separate datagram
         NutTcpDeviceWrite( t->sock, t->rxbuf, 0 );
@@ -362,6 +386,7 @@ THREAD(tunnel_xmit, __arg)
 
 die:
     t->runCount--;
+    DEBUG0("End tx thread");
 
     NutThreadExit();
     for(;;) ; // make compiler happy
@@ -371,7 +396,7 @@ die:
 // Put as many bytes as possible to send buffer
 static void TunSendChar(volatile struct tunnel_io *t)
 {
-    di(); // Prevent tx clear inerrupts as we put bytes
+    cli(); // Prevent tx clear inerrupts as we put bytes
     while(TunTxClear(t))
     {
         if( t->tx_idx >= t->tx_len )
@@ -387,7 +412,7 @@ static void TunSendChar(volatile struct tunnel_io *t)
 #endif
             UDR = c;
     }
-    ei(); // Ok to interrupt now
+    sei(); // Ok to interrupt now
 }
 
 // Interrupt
@@ -463,14 +488,18 @@ static void wait_empty( volatile struct tunnel_io *t )
  */
 static void TunUartAvrEnable(uint16_t base)
 {
-    //NutEnterCritical();
-#ifdef UCSR1B
     if (base)
+    {
+        UCSR1C = 0x6; // no parity, one stop, 8 bit
+        UCSR1A = 0x00;
         UCSR1B = BV(RXCIE) | BV(TXCIE) | BV(RXEN) | BV(TXEN);
+    }
     else
-#endif
-        UCR = BV(RXCIE) | BV(TXCIE) | BV(RXEN) | BV(TXEN);
-    //NutExitCritical();
+    {
+        UCSR0C = 0x6; // no parity, one stop, 8 bit
+        UCSR0A = 0x00;
+        UCSR0B = BV(RXCIE) | BV(TXCIE) | BV(RXEN) | BV(TXEN);
+    }
 }
 
 
@@ -478,20 +507,16 @@ static void TunUartUDRIE(uint16_t base, char on_off)
 {
     if( on_off )
     {
-#ifdef UCSR1B
         if (base)
             UCSR1B |= BV(UDRIE);
         else
-#endif
             UCR |= BV(UDRIE);
     }
     else
     {
-#ifdef UCSR1B
         if (base)
             UCSR1B &= ~BV(UDRIE);
         else
-#endif
             UCR &= ~BV(UDRIE);
     }
 }
@@ -524,6 +549,53 @@ static int TunTxClear(volatile struct tunnel_io *t)
         us = inb(USR);
 
     return us & TXC;
+}
+
+
+// From NutOS code
+static void TunAvrUsartSetSpeed(char port, uint32_t rate)
+{
+    uint16_t sv;
+
+    // Modified Robert Hildebrand's refined calculation.
+#ifdef __AVR_ENHANCED__
+    if( port )
+    {
+        if (bit_is_clear(UCSR1C, UMSEL)) {
+            if (bit_is_set(UCSR1A, U2X)) {
+                rate <<= 2;
+            } else {
+                rate <<= 3;
+            }
+        }
+    }
+    else
+    {
+        if (bit_is_clear(UCSR0C, UMSEL)) {
+            if (bit_is_set(UCSR0A, U2X)) {
+                rate <<= 2;
+            } else {
+                rate <<= 3;
+            }
+        }
+    }
+#else
+    rate <<= 3;
+#endif
+    sv = (uint16_t) ((NutGetCpuClock() / rate + 1UL) / 2UL) - 1;
+
+    if( port )
+    {
+        outb(UBRR1L, (uint8_t) sv);
+#ifdef __AVR_ENHANCED__
+        outb(UBRR1H, (uint8_t) (sv >> 8));
+#endif
+    } else {
+        outb(UBRR0L, (uint8_t) sv);
+#ifdef __AVR_ENHANCED__
+        outb(UBRR0H, (uint8_t) (sv >> 8));
+#endif
+    }
 }
 
 

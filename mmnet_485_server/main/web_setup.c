@@ -35,6 +35,7 @@ static int htoi( const char *v )
 }
 
 #define DEC_X( __name_, __dest_ ) do { if( 0 == strcmp( pname, (__name_) ) ) ee_cfg.__dest_ = htoi( pvalue ); } while(0)
+#define DEC_I( __name_, __dest_ ) do { if( 0 == strcmp( pname, (__name_) ) ) ee_cfg.__dest_ = atoi( pvalue ); } while(0)
 
 static void (*boot_me)(void) = 0;
 
@@ -83,6 +84,12 @@ int ShowForm(FILE * stream, REQUEST * req)
             DEC_X( "inite", start_e );
             DEC_X( "initf", start_f );
             DEC_X( "initg", start_g );
+
+            DEC_I( "dbg_baud", dbg_baud );
+            DEC_I( "tun0_baud", tun_baud[0] );
+            DEC_I( "tun1_baud", tun_baud[1] );
+
+
 
             if( 0 == strcmp( pname, "ip_addr" ) )		    ee_cfg.ip_addr	= inet_addr( pvalue );
             if( 0 == strcmp( pname, "ip_mask" ) )		    ee_cfg.ip_mask	= inet_addr( pvalue );
@@ -194,6 +201,20 @@ int ShowForm(FILE * stream, REQUEST * req)
     form_element( stream, "Init E", "inite", itox(ee_cfg.start_e) );
     form_element( stream, "Init F", "initf", itox(ee_cfg.start_f) );
     form_element( stream, "Init G", "initg", itox(ee_cfg.start_g) );
+
+    {
+        char buf[32];
+        sprintf(buf, "%ld", ee_cfg.dbg_baud );
+        form_element( stream, "Debuf port baud rate", "dbg_baud", buf );
+#if SERVANT_TUN0
+        sprintf(buf, "%ld", ee_cfg.tun_baud[0] );
+        form_element( stream, "Tunnel 0 baud rate", "tun0_baud", buf );
+#endif
+#if SERVANT_TUN1
+        sprintf(buf, "%ld", ee_cfg.tun_baud[1] );
+        form_element( stream, "Tunnel 1 baud rate", "tun1_baud", buf );
+#endif
+    }
 
 
     HTML("</table>");

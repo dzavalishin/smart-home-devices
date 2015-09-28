@@ -33,7 +33,7 @@
 // TCP to serial tunnels, incomplete, do not work
 
 // RS232 on dev board
-#define SERVANT_TUN0        0
+#define SERVANT_TUN0        1
 // USB serial on dev board
 #define SERVANT_TUN1        0
 
@@ -185,7 +185,7 @@ extern char *makeDate; // filled in by makefile
 #define EEPROM_CFG_BASE 1024
 
 
-
+#define DEFAULT_BAUD 38400
 
 
 

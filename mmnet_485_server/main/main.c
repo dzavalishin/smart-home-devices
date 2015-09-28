@@ -99,9 +99,9 @@ THREAD(long_init, __arg)
         init_syslog();
 #endif
 
-#if SERVANT_TUN0 || SERVANT_TUN1
+//#if SERVANT_TUN0 || SERVANT_TUN1
         init_tunnels();
-#endif
+//#endif
 
 #if SERVANT_LUA
         lua_init();

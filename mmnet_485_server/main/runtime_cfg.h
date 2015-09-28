@@ -67,6 +67,9 @@ struct eeprom_cfg
 
     unsigned int        io_enable;      // Enable/disable io units
 
+    uint32_t 		tun_baud[2];    // TCP/485 tunnel baud rate
+    uint32_t            dbg_baud;       // Debug com port baud rate
+
     struct ow_map_entry ow_map[MAX_OW_MAP];
 };
 
