@@ -314,6 +314,7 @@ THREAD(tunnel_recv, __arg)
             break;
         if( nread < 0 ) // Error
         {
+            DEBUG1i("rx tcp err", nread);
             break;
         }
 
@@ -324,18 +325,19 @@ THREAD(tunnel_recv, __arg)
 
 
         // Now send to 485 port
-        NutMutexLock( &(t->serialMutex) );
+        NutMutexLock( (MUTEX *)&(t->serialMutex) );
         t->set_half_duplex(1);
         t->inSend = 1; // Ignore all incoming data
 
         TunSendChar(t); // Send initial byte
 
         NutEventWait( &(t->sendDone), 500 ); // Wait for xmit, no more than 0.5 sec
+        DEBUG1i("rx done 485 sending", t->tx_idx);
 
         wait_empty( t );
         t->set_half_duplex(0);
         t->inSend = 0;
-        NutMutexUnlock( &(t->serialMutex) );
+        NutMutexUnlock( (MUTEX *)&(t->serialMutex) );
     }
 
     t->runCount--;
@@ -368,7 +370,7 @@ THREAD(tunnel_xmit, __arg)
         }
 
         // Recv data from 485 port
-        NutMutexLock( &(t->serialMutex) );
+        NutMutexLock( (MUTEX *)&(t->serialMutex) );
         //t->set_half_duplex(0); // Make sure we recv - actually pointless
 
         int rx_idx1, rx_idx2;
@@ -379,7 +381,7 @@ THREAD(tunnel_xmit, __arg)
         } while( rx_idx1 != rx_idx2 ); // Got some? Re-wait!
 
         NutEventBroadcast(&(t->rxGotSome)); // Clear signaled state after getting all recvd data
-        NutMutexUnlock( &(t->serialMutex) );
+        NutMutexUnlock( (MUTEX *)&(t->serialMutex) );
 
         DEBUG1i("tx", t->rx_idx);
 
@@ -504,7 +506,8 @@ static void TunUartAvrEnable(uint16_t base)
         add_exclusion_pin( UART1_EXCLPOS, UART0_TX_PIN );
         add_exclusion_pin( UART1_EXCLPOS, UART0_RX_PIN );
 
-        DDRD |= _BV(UART1_TX_PIN);
+        //DDRD |= _BV(UART1_TX_PIN);
+        DDRD &= ~_BV(UART1_TX_PIN);
         DDRD &= ~_BV(UART1_RX_PIN);
 
         UCSR1C = 0x6; // no parity, one stop, 8 bit
@@ -516,7 +519,8 @@ static void TunUartAvrEnable(uint16_t base)
         add_exclusion_pin( UART0_EXCLPOS, UART0_TX_PIN );
         add_exclusion_pin( UART0_EXCLPOS, UART0_RX_PIN );
 
-        DDRE |= _BV(UART0_TX_PIN);
+        //DDRE |= _BV(UART0_TX_PIN);
+        DDRE &= ~_BV(UART0_TX_PIN);
         DDRE &= ~_BV(UART0_RX_PIN);
 
         UCSR0C = 0x6; // no parity, one stop, 8 bit

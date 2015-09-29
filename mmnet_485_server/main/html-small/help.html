@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>TCP/IP Modbus Server: Help</title>
+	<link href="screen.css" rel="stylesheet" type="text/css">
+	<meta http-equiv="content-type" content="text/html; charset=Windows-1251">
+</head>
+<body>
+
+<div id="global">
+
+	<div id="empty">&nbsp;</div>
+
+	<div style="width: 95%; float: right; padding: 0;"><h1>TCP/IP Modbus Server: Help</h1></div>
+
+	<br style="clear: both;">
+			
+	<table    cellspacing="2" cellpadding="4" class="main">
+		<tr valign="top">
+                
+                	<td class="block1">
+				<h2>URLs</h2>
+				<ul>
+                                <li><b>/item.cgi?name=<u>adc0</u></b>			- read item value
+                                <li><b>/item.cgi?name=<u>dig0</u>&amp;value=<u>1</u></b>	- write item value
+                                </ul>
+			</td>
+		</tr><tr valign="top">      		
+                        <td><div style="width: 25px; height: 25px;"><!-- --></div></td>
+		</tr><tr valign="top">      		
+                        
+			<td class="block1">
+				<h2>Item names</h2>
+				<ul>
+				<li><b>adc</b>   - Analogue inputs
+                                <li><b>dig</b>   - Digital I/O, bits
+                                <li><b>temp</b>  - Temperature sensors (1-wire), ordered (see Config page)
+                                <li><b>utemp</b> - Temperature sensors (1-wire), unordered
+                                <li><b>pwm</b>   - Analogue outputs
+                                <li><b>dht-t</b> - DHT11/22 temperature
+                                <li><b>dht-h</b> - DHT11/22 humidity
+				</ul>
+			</td>
+		</tr><tr valign="top">      		
+			<td><div style="width: 25px; height: 25px;"><!-- --></div></td>
+		</tr><tr valign="top">      		                                        
+			<td class="block1">
+				<h2>Pins</h2>
+				<ul>
+					<li><b>PB0-3</b> - #ss/sck/mosi/miso
+					<li><b>PB5</b>   - #ss internal flash
+					<li><b>PB6-7</b> - Tx Enable usart 0,1 (half duplex 485)
+					<li><b>PD0-1</b> - SCL, SDA (2wire/i2c)/Di/Do
+					<li><b>PD2-3</b> - RxD1,TxD1/Di/Do
+					<li><b>PD4-7</b> - Di/Do or PD2-7 - 1Wire multiple bus
+					<li><b>PE0-1</b> - RxD0, TxD0/Do/Di
+					<li><b>PE2-3</b> - Do/Di
+					<li><b>PE4</b>   - Di/Do
+					<li><b>PE5</b>   - Ethernet interrupt
+					<li><b>PE6-7</b> - Di/Do
+					<li><b>PF0-7</b> - Ai/Di/Do
+					<li><b>PG3</b>   - LED
+					<li><b>PG4</b>   - 1Wire (2401, single bus 18B20, etc)
+				</ul>
+			</td>
+		</tr><tr valign="top">      		
+			<td><div style="width: 25px; height: 25px;"><!-- --></div></td>
+		</tr><tr valign="top">      		                      
+			<td class="block1">
+			<h2>Defaults</h2>
+				<ul>
+					<li><b>IP address</b> - 192.168.88.127
+					<li><b>MAC</b> - 02:06:98:00:00:00
+                                        <li><b>Serial speed</b> - 38400
+                                        <li><b>Debug serial</b> - UART1 (PD2-3)
+				</ul>
+			</td>
+		</tr>
+	</table>
+
+</div>
+
+
+<div id="empty">&nbsp;</div>
+
+
+<div id="footer">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr valign="top">
+			<td>&copy; 2015 <a href="http://www.dz.ru/">Digital Zone</a></td>
+		</tr>
+	</table>
+</div>
+
+
+</body>
+</html>
