@@ -136,13 +136,13 @@ void init_tunnels(void)
 {
 
 #if SERVANT_TUN0
-//    if( RT_IO_ENABLED(IO_TUN0) )
+    if( RT_IO_ENABLED(IO_TUN0) )
     {
         init_one_tunnel( &tun0 );
     }
 #endif
 #if SERVANT_TUN1
-//    if( RT_IO_ENABLED(IO_TUN1) )
+    if( RT_IO_ENABLED(IO_TUN1) )
     {
         init_one_tunnel( &tun1 );
     }

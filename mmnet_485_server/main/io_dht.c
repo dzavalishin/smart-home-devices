@@ -16,6 +16,8 @@
  */
 
 #include "defs.h"
+#include "runtime_cfg.h"
+#include "servant.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -40,6 +42,8 @@ int8_t dht_getdata(int8_t *temperature, int8_t *humidity) {
 #endif
     uint8_t bits[5];
     uint8_t i,j = 0;
+
+    if(!RT_IO_ENABLED(IO_DHT)) return -1;
 
     memset(bits, 0, sizeof(bits));
 

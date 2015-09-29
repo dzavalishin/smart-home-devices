@@ -15,6 +15,8 @@
 
 
 #include "defs.h"
+#include "runtime_cfg.h"
+#include "servant.h"
 
 #include "io_pwm.h"
 
@@ -55,6 +57,8 @@ unsigned int pwm_time[SERVANT_NPWM+1];
 // actual value: 1000,000uSec (0,0%)
 void timer1_init(void)
 {
+    if(!RT_IO_ENABLED(IO_PWM)) return;
+
     TCCR1B = 0x00; //stop
     TCNT1H = 0xF0; //setup
     TCNT1L = 0x60;
@@ -73,6 +77,8 @@ void timer1_init(void)
 
 void timer1_start(void)
 {
+    if(!RT_IO_ENABLED(IO_PWM)) return;
+
     TIMSK |= _BV(TOIE1);
     TCCR1B = 0x01; // start Timer1
 }
@@ -125,6 +131,8 @@ ISR(TIMER1_OVF_vect)
 void set_an(unsigned char port_num, unsigned char data)
 {
     unsigned char i, j, min; //, s;
+
+    if(!RT_IO_ENABLED(IO_PWM)) return;
 
     // Check port number
     if( port_num > SERVANT_NPWM ) return;

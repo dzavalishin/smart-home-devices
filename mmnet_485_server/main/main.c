@@ -10,7 +10,6 @@
 
 #include "defs.h"
 #include "util.h"
-#include "net_io.h"
 #include "runtime_cfg.h"
 #include "servant.h"
 
@@ -107,7 +106,7 @@ THREAD(long_init, __arg)
         lua_init();
 #endif
 
-#if ENABLE_SPI
+#if ENABLE_SPI && 0
         char a = 0xEF, b = 0x01;
         while( 1 )
         {

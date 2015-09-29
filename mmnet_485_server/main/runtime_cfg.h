@@ -77,7 +77,7 @@ struct eeprom_cfg
 #define IO_ADC           (1<<0)
 #define IO_PWM           (1<<1)
 #define IO_DHT           (1<<2)
-#define IO_BMP           (1<<3)
+#define IO_BMP           (1<<3)         // BMP180 pressure meter
 
 #define IO_TUN0          (1<<4)         // Serial/TCP tunnel channel 0
 #define IO_TUN1          (1<<5)         // Serial/TCP tunnel channel 1

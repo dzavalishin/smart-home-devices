@@ -7,7 +7,6 @@
 **/
 
 #include "defs.h"
-#include "net_io.h"
 #include "util.h"
 #include "runtime_cfg.h"
 
@@ -84,10 +83,12 @@ void dio_init(void)
 #endif
 
 #if ENABLE_HALF_DUPLEX_0
-    add_exclusion_pin( HALF_DUPLEX0_EXCLPOS, HALF_DUPLEX0_PIN );
+    if(RT_IO_ENABLED(IO_TUN0))
+        add_exclusion_pin( HALF_DUPLEX0_EXCLPOS, HALF_DUPLEX0_PIN );
 #endif
 #if ENABLE_HALF_DUPLEX_1
-    add_exclusion_pin( HALF_DUPLEX1_EXCLPOS, HALF_DUPLEX1_PIN );
+    if(RT_IO_ENABLED(IO_TUN1))
+        add_exclusion_pin( HALF_DUPLEX1_EXCLPOS, HALF_DUPLEX1_PIN );
 #endif
 
     add_exclusion_pin( LED_EXCLPOS, LED );
@@ -126,10 +127,12 @@ void dio_init(void)
 
 
 #if ENABLE_HALF_DUPLEX_0
-    HALF_DUPLEX0_DDR |= _BV(HALF_DUPLEX0_PIN);
+    if(RT_IO_ENABLED(IO_TUN0))
+        HALF_DUPLEX0_DDR |= _BV(HALF_DUPLEX0_PIN);
 #endif
 #if ENABLE_HALF_DUPLEX_1
-    HALF_DUPLEX1_DDR |= _BV(HALF_DUPLEX1_PIN);
+    if(RT_IO_ENABLED(IO_TUN0))
+        HALF_DUPLEX1_DDR |= _BV(HALF_DUPLEX1_PIN);
 #endif
 
 #if ENABLE_SPI

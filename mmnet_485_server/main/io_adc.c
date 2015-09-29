@@ -8,10 +8,9 @@
 
 #include "defs.h"
 #include "util.h"
+#include "runtime_cfg.h"
 
 #include "io_adc.h"
-
-#include "net_io.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -38,6 +37,8 @@ unsigned volatile char current_ad_input = SERVANT_NADC-1;
 // ADC initialize
 void adc_init(void)
 {
+    if( !RT_IO_ENABLED(IO_ADC) ) return;
+
     ADCSRA = 0x00; //disable adc
     ADMUX = ADMUX_REFS; //0b11100000;
 
@@ -48,6 +49,8 @@ void adc_init(void)
 
 void adc_start()
 {
+    if( !RT_IO_ENABLED(IO_ADC) ) return;
+
     cli();
     current_ad_input++;
 
@@ -77,11 +80,7 @@ ISR(ADC_vect)
 {
     ADCSRA &= ~_BV(ADIE); // no more ints
 
-//    adc_value[current_ad_input] = 0xFF & ADCL;
-//    adc_value[current_ad_input] |= 0x300 & (((int)ADCH) << 8);
-
     adc_value[current_ad_input] = (0xFFu & ADCL) | (0x300u & (((unsigned int)ADCH) << 8));
-
 
     sei();
     //postProcessAdc(current_ad_input);

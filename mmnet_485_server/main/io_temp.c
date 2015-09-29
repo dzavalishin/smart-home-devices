@@ -59,6 +59,11 @@ void init_temperature(void)
 {
     nTempSensors = 0;
 
+    if( !(RT_IO_ENABLED(IO_1W1)|RT_IO_ENABLED(IO_1W8)) )
+        return;
+
+    // TODO choose which buses to init
+
     uint8_t bus;
     for( bus = 0; bus < N_1W_BUS; bus++ )
     {
@@ -168,7 +173,9 @@ static uint8_t timerCallNumber = 0;
 
 void temp_meter_measure(void)
 {
-    //flash_led_once();
+    if( !(RT_IO_ENABLED(IO_1W1)|RT_IO_ENABLED(IO_1W8)) )
+        return;
+
 
     switch(timerCallNumber++)
     {

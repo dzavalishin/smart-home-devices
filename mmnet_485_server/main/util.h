@@ -23,6 +23,9 @@ void flash_led_long(void);
 //void turn_led_on(void);
 //void turn_led_off(void);
 
+void fail_led(void); // debug
+
+
 #define LED_HI (LED_PORT |= _BV(LED))
 #define LED_LOW (LED_PORT &= ~_BV(LED))
 

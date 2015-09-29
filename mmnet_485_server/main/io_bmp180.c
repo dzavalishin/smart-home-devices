@@ -8,6 +8,8 @@
 
 
 #include "defs.h"
+#include "runtime_cfg.h"
+#include "servant.h"
 
 #include "io_bmp180.h"
 
@@ -122,6 +124,8 @@ static uint16_t calib_uint16_t[3];
 
 int bmp180_calibration( void )
 {
+    if(!RT_IO_ENABLED(IO_BMP)) return -1;
+
     uint8_t rc = 0;
 
     READ_ONE_I( 0, 0xAA ); // ac1
@@ -224,6 +228,8 @@ static int bmp180Convert( int32_t* temperature, int32_t* pressure )
 
 int bmp180ReadTemp( int16_t *temperature )
 {
+    if(!RT_IO_ENABLED(IO_BMP)) return -1;
+
     uint8_t rc = bmp180_write_CR( 0x2E );
     if( rc ) return rc;
 
@@ -241,6 +247,8 @@ int bmp180ReadTemp( int16_t *temperature )
 
 int bmp180ReadPressure( int32_t *pressure )
 {
+    if(!RT_IO_ENABLED(IO_BMP)) return -1;
+
     uint8_t rc = bmp180_write_CR( 0x34 + (OSS<<6) );
     if( rc ) return rc;
 
@@ -260,6 +268,8 @@ uint16_t bmp180_pressure_mmHg;
 
 int bmp180_getdata( void )
 {
+    if(!RT_IO_ENABLED(IO_BMP)) return -1;
+
     //bmp180ReadPressure( &bmp180_pressure_raw );
     //bmp180ReadTemp( &bmp180_temperature_raw );
 

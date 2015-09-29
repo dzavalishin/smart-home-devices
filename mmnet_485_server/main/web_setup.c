@@ -233,7 +233,7 @@ int ShowForm(FILE * stream, REQUEST * req)
         uint8_t i;
         for( i = 0; i < MAX_OW_MAP; i++ )
         {
-            struct ow_map_entry *e = ee_cfg.ow_map+i;
+            //struct ow_map_entry *e = ee_cfg.ow_map+i;
 
             sprintf( name+4, "%02d", i );
 /*
