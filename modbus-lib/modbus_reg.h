@@ -58,6 +58,7 @@
 
 // - 80-95 - 16 x AO (none provided)
 #define MB_REG_AO	80
+#define MB_COUNT_AO     16
 
 
 
