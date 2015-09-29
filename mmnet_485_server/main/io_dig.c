@@ -31,14 +31,13 @@ static void set_ddr(unsigned char port_num, unsigned char data);
 
 
 
-#define add_exclusion_pin(p,b) add_exclusion_mask(p,_BV(b))
 
 // Contains reverse bitmask for each port.
 // bit == 1 means do not trigger data send on bit value changed
 static unsigned char exclude_port_bits[SERVANT_NDIG];
 
 // exclPos is 0 for port A and so on
-static void add_exclusion_mask( unsigned char exclPos, unsigned char bitmask )
+void add_exclusion_mask( unsigned char exclPos, unsigned char bitmask )
 {
     if( exclPos >= SERVANT_NDIG ) return;
     exclude_port_bits[exclPos] |= bitmask;
@@ -46,7 +45,7 @@ static void add_exclusion_mask( unsigned char exclPos, unsigned char bitmask )
 
 
 
-
+// TODO support dynamic io conf here
 void dio_init(void)
 {
     // Totally unavailable on MMNET101 ports
@@ -73,6 +72,16 @@ void dio_init(void)
     // todo fixme
     //add_exclusion_mask( UART1_EXCL_EXCLPOS, UART1_EXCL_MASK );
     //add_exclusion_mask( UART2_EXCL_EXCLPOS, UART2_EXCL_MASK );
+#if 0 // gone to tunel code
+#if SERVANT_TUN0
+    add_exclusion_pin( UART0_EXCLPOS, UART0_TX_PIN );
+    add_exclusion_pin( UART0_EXCLPOS, UART0_RX_PIN );
+#endif
+#if SERVANT_TUN1
+    add_exclusion_pin( UART1_EXCLPOS, UART0_TX_PIN );
+    add_exclusion_pin( UART1_EXCLPOS, UART0_RX_PIN );
+#endif
+#endif
 
 #if ENABLE_HALF_DUPLEX_0
     add_exclusion_pin( HALF_DUPLEX0_EXCLPOS, HALF_DUPLEX0_PIN );

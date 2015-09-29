@@ -140,7 +140,7 @@ THREAD(long_init, __arg)
 int main(void)
 {
 
-    u_long baud = 38400;
+    //u_long baud = DEFAULT_BAUD;
 
     NutThreadSetSleepMode(SLEEP_MODE_IDLE); // Let the CPU sleep in idle
 
@@ -167,7 +167,7 @@ int main(void)
 #endif
 #endif
 
-    _ioctl(_fileno(stdout), UART_SETSPEED, &baud);
+    _ioctl(_fileno(stdout), UART_SETSPEED, &ee_cfg.dbg_baud);
     NutSleep(50);
     printf("\n\nController %s, Nut/OS %s, build from %s\n", DEVICE_NAME, NutVersionString(), makeDate );
 

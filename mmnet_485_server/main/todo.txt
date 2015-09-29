@@ -2,6 +2,7 @@
 - modbus sock r/w timeouts!
 
 - runtime configure IO/periferials
+-- support dynamic io conf in ddr/exclpos code
 
 - syslog does not work!
 

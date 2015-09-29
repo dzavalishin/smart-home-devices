@@ -379,6 +379,8 @@ THREAD(tunnel_xmit, __arg)
         // data will be sent in separate datagram
         NutTcpDeviceWrite( t->sock, t->rxbuf, 0 );
 
+        // TODO error here we loose data received during tcp send
+
         // Now send to TCP
         NutTcpDeviceWrite( t->sock, t->rxbuf, t->rx_idx );
         t->rx_idx = 0;
@@ -490,12 +492,24 @@ static void TunUartAvrEnable(uint16_t base)
 {
     if (base)
     {
+        add_exclusion_pin( UART1_EXCLPOS, UART0_TX_PIN );
+        add_exclusion_pin( UART1_EXCLPOS, UART0_RX_PIN );
+
+        DDRD |= _BV(UART1_TX_PIN);
+        DDRD &= ~_BV(UART1_RX_PIN);
+
         UCSR1C = 0x6; // no parity, one stop, 8 bit
         UCSR1A = 0x00;
         UCSR1B = BV(RXCIE) | BV(TXCIE) | BV(RXEN) | BV(TXEN);
     }
     else
     {
+        add_exclusion_pin( UART0_EXCLPOS, UART0_TX_PIN );
+        add_exclusion_pin( UART0_EXCLPOS, UART0_RX_PIN );
+
+        DDRE |= _BV(UART0_TX_PIN);
+        DDRE &= ~_BV(UART0_RX_PIN);
+
         UCSR0C = 0x6; // no parity, one stop, 8 bit
         UCSR0A = 0x00;
         UCSR0B = BV(RXCIE) | BV(TXCIE) | BV(RXEN) | BV(TXEN);

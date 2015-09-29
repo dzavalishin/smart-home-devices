@@ -150,6 +150,15 @@
 #define DATAFLASH_CS_PIN 		PB0
 
 
+#define UART0_EXCLPOS      4 // Port E
+#define UART0_TX_PIN 		PE1
+#define UART0_RX_PIN 		PE0
+
+#define UART1_EXCLPOS      3 // Port D
+#define UART1_TX_PIN 		PD3
+#define UART1_RX_PIN 		PD2
+
+
 // ------------------------------------------------------------------------
 // Hardware definitions
 // ------------------------------------------------------------------------
