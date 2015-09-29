@@ -53,5 +53,7 @@ font:28px serif;
 }
 
 
-
+button.menu {
+width: 100px; float: center; padding: 0;
+}
 
