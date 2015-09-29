@@ -3,6 +3,11 @@ background-color: #A3BAFF;
 padding: 20px 20px 20px 20px;
 }
 
+body.header {
+background-color: #A3BAFF;
+padding: 2px 2px 2px 2px;
+}
+
 form {
 padding: 10px 10px 10px 10px;
 background-color:#BAFFA3;

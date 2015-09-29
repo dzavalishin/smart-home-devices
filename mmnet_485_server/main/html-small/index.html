@@ -5,99 +5,12 @@
 	<link href="screen.css" rel="stylesheet" type="text/css">
 	<meta http-equiv="content-type" content="text/html; charset=Windows-1251">
 </head>
-<body>
-
-<div id="global">
-	
-	<!-- img src="i/logo.gif" alt="" width="642" height="95" border="0" style="display: block; margin: 0; padding: 70px 0 20px 0;"-->
-	<!-- div style="padding: 0 0 0 302px; font-size: 17px;">RS485 server</div-->
-
-	<div id="empty">&nbsp;</div>
-
-	<div style="width: 95%; float: right; padding: 0;"><h1>TCP/IP Modbus Server</h1></div>
-
-	<br style="clear: both;">
-			
-	<table    cellspacing="2" cellpadding="4" class="main">
-		<tr valign="top">
-                
-                	<td class="block1">
-				<h2>System</h2>
-				<ul>
-					<li><a href="cgi-bin/threads.cgi">Thread list</a></li>
-					<li><a href="cgi-bin/timers.cgi">Timer list</a></li>
-				</ul>
-			</td>
-			
-                        <td><div style="width: 25px; height: 25px;"><!-- --></div></td>
-                        
-			<td class="block1">
-				<h2>Network</h2>
-				<ul>
-					<li><a href="cgi-bin/network.cgi">MAC/IP Address</a></li>
-                    <li><a href="cgi-bin/sockets.cgi">Socket list</a></li>
-				</ul>
-			</td>
-                        
-			<td><div style="width: 25px; height: 25px;"><!-- --></div></td>
-                                        
-			<td class="block1">
-				<h2>IO</h2>
-				<ul>
-					<li><a href="cgi-bin/inputs.cgi">Inputs</a>
-					<li><a href="cgi-bin/outputs.cgi">Outputs</a>
-				</ul>
-			</td>
-
-			<td><div style="width: 25px; height: 25px;"><!-- --></div></td>
-                        
-			<td class="block1">
-			<h2>Configuration</h2>
-				<ul>
-					<li><a href="cgi-bin/form.cgi">General setup</a>
-					<li><a href="cgi-bin/status.cgi">Status</a>
-				</ul>
-			</td>
-		</tr>
-	</table>
-
-</div>
-
-
-<div id="empty">&nbsp;</div>
-
-<hr>
-<a href=/help.html>Help</a>
-<!--
-<div id="empty">
-URLs:<br>
-<li>/item.cgi?name=<u>adc0</u>			- read item value
-<li>/item.cgi?name=<u>dig0</u>&amp;value=<u>1</u>	- write item value
-<br>
-<br>
-Item names: <br>
-<li>adc   - Analogue inputs
-<li>dig   - Digital I/O, bits
-<li>temp  - Temperature sensors (1-wire), ordered (see Config page)
-<li>utemp - Temperature sensors (1-wire), unordered
-<li>pwm   - Analogue outputs
-<li>dht-t - DHT11/22 temperature
-<li>dht-h - DHT11/22 humidity
-</div>
-
-<hr>
--->
-
-<div id="empty">&nbsp;</div>
-
-<div id="footer">
-	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr valign="top">
-			<td>&copy; 2014 <a href="http://www.dz.ru/">Digital Zone</a></td>
-		</tr>
-	</table>
-</div>
-
-
-</body>
+<frameset rows="40,*,40" cols="*" border=0>
+   <frame src="top.html" name="topFrame" scrolling="no" noresize>
+   <frameset cols="160,*">
+     <frame src="left.html" name="leftFrame" scrolling="no" noresize>
+     <frame src="main.html" name="mainFrame">
+   </frameset>
+   <frame src="bottom.html" name="bottomFrame" scrolling="no" noresize>
+ </frameset>
 </html>
