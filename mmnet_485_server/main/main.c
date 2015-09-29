@@ -470,8 +470,8 @@ void init_devices(void)
 
 #endif
 
-    set_half_duplex0(1);
-    set_half_duplex1(1);
+    //set_half_duplex0(1);
+    //set_half_duplex1(1);
 
 #if SERVANT_BMP180
     bmp180_calibration();

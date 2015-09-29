@@ -156,6 +156,8 @@ static void init_one_tunnel( struct tunnel_io *t )
     t->sock = 0;
     t->stop = 0;
 
+    DEBUG0("init");
+
     // Register interrupt handler.
     if(t->nTunnel)
     {
@@ -203,7 +205,7 @@ THREAD(tunnel_ctl, __arg)
     volatile struct tunnel_io *t = __arg;
     HANDLE rt, tt;
 
-    DEBUG0("In ctl thread");
+    DEBUG0("in ctl thread");
 
     t->set_half_duplex(0);
 
@@ -263,6 +265,7 @@ THREAD(tunnel_ctl, __arg)
         // Fall through to...
     stop:
         DEBUG0("Stopping");
+
         // Stop all and deinit
         t->stop = 1;
 
@@ -276,6 +279,7 @@ THREAD(tunnel_ctl, __arg)
             t->sock = 0;
         }
 
+        DEBUG0("stopped");
         // Repeat forever
         t->stop = 0;
     }
@@ -293,6 +297,8 @@ THREAD(tunnel_recv, __arg)
 
     t->runCount++;
     DEBUG0("Start rx thread");
+
+    DEBUG0("recv start");
 
     // Timeout, or we will wait forever!
     //NutTcpSetSockOpt( t->sock, SO_RCVTIMEO, &tmo, sizeof(tmo) );
@@ -335,6 +341,7 @@ THREAD(tunnel_recv, __arg)
     t->runCount--;
     DEBUG0("End rx thread");
 
+    DEBUG0("recv stop");
     NutThreadExit();
     for(;;) ; // make compiler happy
 }
@@ -350,6 +357,7 @@ THREAD(tunnel_xmit, __arg)
 
     t->runCount++;
     DEBUG0("Start tx thread");
+
 
     while(!t->stop)
     {
@@ -390,6 +398,7 @@ die:
     t->runCount--;
     DEBUG0("End tx thread");
 
+    DEBUG0("send stop");
     NutThreadExit();
     for(;;) ; // make compiler happy
 }
