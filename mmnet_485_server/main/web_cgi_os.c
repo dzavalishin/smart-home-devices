@@ -33,7 +33,7 @@ int ShowQuery(FILE * stream, REQUEST * req)
      * string literals to be placed in flash ROM. This saves us a lot of
      * precious RAM.
      */
-    static prog_char head[] = "<HTML><HEAD><TITLE>Parameters</TITLE></HEAD><BODY><H1>Parameters</H1>";
+    static prog_char head[] = "<HTML><HEAD><link href=\"/screen.css\" rel=\"stylesheet\" type=\"text/css\"><TITLE>Parameters</TITLE></HEAD><BODY><H1>Parameters</H1>";
     static prog_char foot[] = "</BODY></HTML>";
     static prog_char req_fmt[] = "Method: %s<BR>\r\nVersion: HTTP/%d.%d<BR>\r\nContent length: %ld<BR>\r\n";
     static prog_char url_fmt[] = "URL: %s<BR>\r\n";
@@ -96,7 +96,7 @@ int ShowQuery(FILE * stream, REQUEST * req)
  */
 int ShowThreads(FILE * stream, REQUEST * req)
 {
-    static prog_char head[] = "<HTML><HEAD><TITLE>Threads</TITLE></HEAD><BODY><H1>Threads</H1>\r\n"
+    static prog_char head[] = "<HTML><HEAD><link href=\"/screen.css\" rel=\"stylesheet\" type=\"text/css\"><TITLE>Threads</TITLE></HEAD><BODY><H1>Threads</H1>\r\n"
         "<TABLE BORDER><TR><TH>Handle</TH><TH>Name</TH><TH>Priority</TH><TH>Status</TH><TH>Event<BR>Queue</TH><TH>Timer</TH><TH>Stack-<BR>pointer</TH><TH>Free<BR>Stack</TH></TR>\r\n";
 #if defined(__AVR_ATmega128__) || defined(__AVR_ATmega103__)
     static prog_char tfmt[] =
@@ -135,7 +135,7 @@ int ShowThreads(FILE * stream, REQUEST * req)
  */
 int ShowTimers(FILE * stream, REQUEST * req)
 {
-    static prog_char head[] = "<HTML><HEAD><TITLE>Timers</TITLE></HEAD><BODY><H1>Timers</H1>\r\n";
+    static prog_char head[] = "<HTML><HEAD><link href=\"/screen.css\" rel=\"stylesheet\" type=\"text/css\"><TITLE>Timers</TITLE></HEAD><BODY><H1>Timers</H1>\r\n";
     static prog_char thead[] =
         "<TABLE BORDER><TR><TH>Handle</TH><TH>Countdown</TH><TH>Tick Reload</TH><TH>Callback<BR>Address</TH><TH>Callback<BR>Argument</TH></TR>\r\n";
 #if defined(__AVR_ATmega128__) || defined(__AVR_ATmega103__)
@@ -177,7 +177,7 @@ int ShowTimers(FILE * stream, REQUEST * req)
 int ShowSockets(FILE * stream, REQUEST * req)
 {
     /* String literals are kept in flash ROM. */
-    static prog_char head[] = "<HTML><HEAD><TITLE>Sockets</TITLE></HEAD>"
+    static prog_char head[] = "<HTML><HEAD><link href=\"/screen.css\" rel=\"stylesheet\" type=\"text/css\"><TITLE>Sockets</TITLE></HEAD>"
         "<BODY><H1>Sockets</H1>\r\n"
         "<TABLE BORDER><TR><TH>Handle</TH><TH>Type</TH><TH>Local</TH><TH>Remote</TH><TH>Status</TH></TR>\r\n";
 #if defined(__AVR_ATmega128__) || defined(__AVR_ATmega103__)
