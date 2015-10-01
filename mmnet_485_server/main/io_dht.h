@@ -37,11 +37,11 @@ References:
 #if DHT_FLOAT == 1
 extern int8_t dht_getdata(float *temperature, float *humidity);
 #elif DHT_FLOAT == 0
-extern int8_t dht_getdata(int8_t *temperature, int8_t *humidity);
+extern int8_t dht_getdata(int16_t *temperature, int16_t *humidity);
 #endif
 
-extern int8_t dht_temperature;
-extern int8_t dht_humidity;
+extern int16_t dht_temperature;
+extern int16_t dht_humidity;
 
 
 #endif

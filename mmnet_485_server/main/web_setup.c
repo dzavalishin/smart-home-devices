@@ -15,7 +15,7 @@
 #include "web.h"
 
 
-const unsigned char *enableBitNames = "\1ADC analogue inputs\2PWM analogue outputs\3DHT11 humidity sensor\4BMP180 pressure sensor\5TUN0 TCP-485 tunnel\6TUN1 TCP-485 tunnel\7B1W1 - single bus 1Wire\10B1W8 - multibus 1Wire";
+const unsigned char *enableBitNames = (unsigned char *)"\1ADC analogue inputs\2PWM analogue outputs\3DHT11 humidity sensor\4BMP180 pressure sensor\5TUN0 TCP-485 tunnel\6TUN1 TCP-485 tunnel\7B1W1 - single bus 1Wire\10B1W8 - multibus 1Wire";
 
 static void subheader( FILE * stream, char *title );
 static void form_element( FILE * stream, char *title, char *field_name, char *curr_value );
@@ -292,7 +292,7 @@ int ShowForm(FILE * stream, REQUEST * req)
             sprintf( text, "%02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X (@%d)",
                      id[0], id[1], id[2], id[3],
                      id[4], id[5], id[6], id[7],
-                     perm_index, cur_index
+                     cur_index
                    );
 
 

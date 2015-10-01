@@ -256,7 +256,7 @@ void ow_copy_rom( void *dest, const void *src )
 }
 
 
-int ow_cmp_rom( void *a, const void *b )
+int ow_cmp_rom( const void *a, const void *b )
 {
     uint8_t i;
 
@@ -270,4 +270,16 @@ int ow_cmp_rom( void *a, const void *b )
     return 0;
 }
 
+int ow_is_empty_rom( const void *b )
+{
+    uint8_t i;
+
+    for( i = 0; i < OW_ROMCODE_SIZE; i++ )
+    {
+        if( ((char *)b)[i] != 0 )
+            return 0;
+    }
+
+    return 1;
+}
 

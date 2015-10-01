@@ -71,7 +71,8 @@ extern void ow_set_bus(volatile uint8_t* in,
 #endif
 
 void ow_copy_rom( void *dest, const void *src );
-int ow_cmp_rom( void *a, const void *b );
+int ow_cmp_rom( const void *a, const void *b );
+int ow_is_empty_rom( const void *b );
 
 
 #endif

@@ -1,3 +1,5 @@
+- temp 1w meter - meter each 1-sec call from main loop
+
 +- direct (no conversion) TCP/RS485 tunnel
 
 - modbus sock r/w timeouts!

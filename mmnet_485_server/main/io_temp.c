@@ -53,11 +53,14 @@ uint8_t ow_bus_error_cnt[N_1W_BUS]; // 1wire error counter per bus
 #if ENABLE_1WIRE
 
 void count_1w_bus_error( uint8_t bus );
+static void clear_temperature_data(void);
 
 
 void init_temperature(void)
 {
     nTempSensors = 0;
+
+    clear_temperature_data();
 
     if( !(RT_IO_ENABLED(IO_1W1)|RT_IO_ENABLED(IO_1W8)) )
         return;
@@ -188,7 +191,6 @@ void temp_meter_measure(void)
         break;
 
     case 2:        	// 1 sec passed, read measurements.
-
         read_temperature_data();
 #if TEMP_FAST_RESTART
         timerCallNumber = 1;
@@ -243,6 +245,13 @@ void read_temperature_data(void)
     {
         uint16_t out;
 
+        if( ow_is_empty_rom( &gTempSensorIDs[i][0] ) )
+        {
+            currTemperature[i] = ERROR_VALUE_16;
+            continue;
+        }
+
+
 #ifndef OW_ONE_BUS
         ow_set_bus(&PINB,&PORTB,&DDRB,PB0+gTempSensorBus[i]);
 #endif
@@ -253,9 +262,12 @@ void read_temperature_data(void)
             //ow_error_cnt++;
             //ow_bus_error_cnt[i]++;
             count_1w_bus_error( i );
+
+            currTemperature[i] = ERROR_VALUE_16;
+
             continue;
         }
-        //led2_timed( 15 );
+
         currTemperature[i] = out;
     }
 }
@@ -297,7 +309,13 @@ const char *temptoa( uint16_t t, char *out )
 }
 
 
+static void clear_temperature_data(void)
+{
+    uint8_t i;
 
+    for ( i = 0; i < nTempSensors; i++ )
+        currTemperature[i] = ERROR_VALUE_16;
+}
 
 
 

@@ -92,8 +92,8 @@ THREAD(main_loop, arg)
                 if( dht11_errorCnt > 10 )
                 {
                     dht11_errorCnt = 1; // no roll-over 255
-                    dht_temperature = -1;
-                    dht_humidity = -1;
+                    dht_temperature = ERROR_VALUE_16;
+                    dht_humidity = ERROR_VALUE_16;
                 }
                 dht11meterCnt -= 1; // Error? Redo in 1 sec
             }
@@ -106,7 +106,12 @@ THREAD(main_loop, arg)
 #endif // SERVANT_DHT11
 
 #if SERVANT_BMP180
-        bmp180_getdata(); // todo check success?
+        if( bmp180_getdata() )
+        {
+            bmp180_temperature   = ERROR_VALUE_32;
+            bmp180_pressure      = ERROR_VALUE_32;
+            bmp180_pressure_mmHg = ERROR_VALUE_16;
+        }
 #endif // SERVANT_BMP180
 
 #if SERVANT_NTEMP

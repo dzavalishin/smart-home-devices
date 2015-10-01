@@ -6,6 +6,19 @@
  *
 **/
 
+
+// ------------------------------------------------------------------------
+// General definitions
+// ------------------------------------------------------------------------
+
+
+#define DEFAULT_BAUD 38400
+// Value we return if measurement fails - max negative val
+#define ERROR_VALUE_16 0x1000
+#define ERROR_VALUE_32 0x10000000
+
+
+
 // ------------------------------------------------------------------------
 // Configuration (on/off/number) of ins/outs
 // ------------------------------------------------------------------------
@@ -189,13 +202,8 @@ extern char *makeDate; // filled in by makefile
 
 //#define HALF_DUPLEX 0
 
-
 // On 0 we conflict with OS?
 #define EEPROM_CFG_BASE 1024
-
-
-#define DEFAULT_BAUD 38400
-
 
 
 

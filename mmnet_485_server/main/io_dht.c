@@ -28,8 +28,8 @@
 
 #if SERVANT_DHT11
 
-int8_t dht_temperature;
-int8_t dht_humidity;
+int16_t dht_temperature;
+int16_t dht_humidity;
 
 
 /*
@@ -38,7 +38,7 @@ int8_t dht_humidity;
 #if DHT_FLOAT == 1
 int8_t dht_getdata(float *temperature, float *humidity) {
 #elif DHT_FLOAT == 0
-int8_t dht_getdata(int8_t *temperature, int8_t *humidity) {
+int8_t dht_getdata(int16_t *temperature, int16_t *humidity) {
 #endif
     uint8_t bits[5];
     uint8_t i,j = 0;
