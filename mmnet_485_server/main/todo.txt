@@ -1,6 +1,5 @@
 ++- clearly mark error/unread values (0x7FFF?) 
 
-- temp 1w meter - meter each 1-sec call from main loop
 
 ++- direct (no conversion) TCP/RS485 tunnel
 
@@ -30,4 +29,5 @@ timings
 + id map for 1wire temp sensors 
 + reboot
 + web config DDR defaults
++ temp 1w meter - meter each 1-sec call from main loop
 
