@@ -67,6 +67,12 @@ struct tunnel_io
     HANDLE      recvDone;
     HANDLE      rxGotSome;
 
+    HANDLE      rxThreadStarted;
+    HANDLE      txThreadStarted;
+    //HANDLE      rxThreadStopped; // replace with one ThreadStopped event?
+    //HANDLE      txThreadStopped;
+    
+
     char inSend; // We're sending, so ignore all we recv
 
     char *rxbuf;
@@ -251,19 +257,34 @@ THREAD(tunnel_ctl, __arg)
         tt = NutThreadCreate( t->txtname, tunnel_xmit, (void *)t, STK);
         if( 0 == tt ) goto err;
 
-
+#if 0
+        // Races!
         while(t->runCount < 2)
             NutSleep(1000); // wait for threads to start
+
+        DEBUG0("Seen 2 threads");
+
+        while(t->runCount == 2)
+            NutSleep(1000); // wait while communications are going on - some thread will die if error
+#else
+        DEBUG0("Wait 4 start");
+        NutEventWait( &(t->rxThreadStarted), 1500 ); // Wait for start, no more than 1.5 sec
+        NutEventWait( &(t->txThreadStarted), 1500 ); // Wait for start, no more than 1.5 sec
+
+        DEBUG0("Seen 2 threads");
 
         while(t->runCount == 2)
             NutSleep(1000); // wait while communications are going on - some thread will die if error
 
+        //NutEventWait( &(t->rxThreadStopped), 0 ); // Wait for stop, forever
+        //NutEventWait( &(t->txThreadStopped), 0 ); // Wait for stop, forever
+#endif
         goto stop;
 
     err:
         DEBUG0("died with err");
-        // TODO mark err
-        NutSleep(1000); // Do not repeat too often
+
+        NutSleep(2000); // Do not repeat too often
 
         // Fall through to...
     stop:
@@ -299,6 +320,7 @@ THREAD(tunnel_xmit, __arg)
     //uint32_t tmo5min = 60*1000*5; // 5 min
 
     t->runCount++;
+    NutEventPost(&(t->txThreadStarted));
     DEBUG0("Start tx thread");
 
     // Timeout, or we will wait forever!
@@ -342,6 +364,7 @@ THREAD(tunnel_xmit, __arg)
     }
 
     t->runCount--;
+    //NutEventPost(&(t->txThreadStopped));
     DEBUG0("End tx thread");
     NutThreadExit();
     for(;;) ; // make compiler happy
@@ -358,6 +381,7 @@ THREAD(tunnel_recv, __arg)
 
     t->runCount++;
     DEBUG0("Start rx thread");
+    NutEventPost(&(t->rxThreadStarted));
 
 
     while(!t->stop)
@@ -397,6 +421,7 @@ THREAD(tunnel_recv, __arg)
 
 die:
     t->runCount--;
+    //NutEventPost(&(t->rxThreadStopped));
     DEBUG0("End rx thread");
     NutThreadExit();
     for(;;) ; // make compiler happy
