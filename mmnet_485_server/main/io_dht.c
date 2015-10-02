@@ -28,8 +28,8 @@
 
 #if SERVANT_DHT11
 
-int16_t dht_temperature;
-int16_t dht_humidity;
+int16_t dht_temperature	= ERROR_VALUE_16;
+int16_t dht_humidity	= ERROR_VALUE_16;
 
 
 /*

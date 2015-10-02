@@ -337,7 +337,7 @@ THREAD(tunnel_xmit, __arg)
             break;
         if( nread < 0 ) // Error
         {
-            DEBUG1i("tx tcp err", nread);
+            DEBUG1i("tx tcp err", NutTcpError(t->sock));
             break;
         }
 

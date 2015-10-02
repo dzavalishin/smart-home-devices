@@ -259,9 +259,9 @@ int bmp180ReadPressure( int32_t *pressure )
 }
 
 
-int32_t bmp180_temperature;
-int32_t bmp180_pressure;
-uint16_t bmp180_pressure_mmHg;
+int32_t bmp180_temperature	= ERROR_VALUE_32;
+int32_t bmp180_pressure		= ERROR_VALUE_32;
+uint16_t bmp180_pressure_mmHg	= ERROR_VALUE_16;
 
 //int16_t bmp180_temperature_raw;
 //int32_t bmp180_pressure_raw;

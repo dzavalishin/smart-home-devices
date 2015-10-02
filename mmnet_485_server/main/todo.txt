@@ -1,10 +1,12 @@
+++- clearly mark error/unread values (0x7FFF?) 
+
 - temp 1w meter - meter each 1-sec call from main loop
 
-+- direct (no conversion) TCP/RS485 tunnel
+++- direct (no conversion) TCP/RS485 tunnel
 
 - modbus sock r/w timeouts!
 
-- runtime configure IO/periferials
++- runtime configure IO/periferials 
 -- support dynamic io conf in ddr/exclpos code
 
 - syslog does not work!
@@ -17,7 +19,6 @@ timings
 
 - bootloader?
 
-- clearly mark error/unread values (0x7FFF?) 
 
 
 - timeout if no IO, set default values per port?

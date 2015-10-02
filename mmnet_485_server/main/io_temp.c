@@ -27,24 +27,24 @@
 
 
 #if SERVANT_1WMAC
-uint8_t serialNumber [OW_ROMCODE_SIZE];
+uint8_t 	serialNumber [OW_ROMCODE_SIZE];
 #endif
 
 #if SERVANT_NTEMP > 0
-uint8_t nTempSensors = 0;
+uint8_t 	nTempSensors = 0;
 
-uint8_t gTempSensorIDs[SERVANT_NTEMP][OW_ROMCODE_SIZE];
+uint8_t 	gTempSensorIDs[SERVANT_NTEMP][OW_ROMCODE_SIZE];
 #ifndef OW_ONE_BUS
-uint8_t gTempSensorBus[SERVANT_NTEMP]; // Which bus this sensor lives on
+uint8_t 	gTempSensorBus[SERVANT_NTEMP]; // Which bus this sensor lives on
 #endif
-uint8_t gTempSensorLogicalNumber[SERVANT_NTEMP]; // Report sensor with this logical number
+//uint8_t 	gTempSensorLogicalNumber[SERVANT_NTEMP]; // Report sensor with this logical number
 
-uint16_t currTemperature[SERVANT_NTEMP];
+uint16_t 	currTemperature[SERVANT_NTEMP];
 
-uint16_t ow_error_cnt; // 1wire error counter
+uint16_t 	ow_error_cnt; // 1wire error counter
 
 #ifndef OW_ONE_BUS
-uint8_t ow_bus_error_cnt[N_1W_BUS]; // 1wire error counter per bus
+uint8_t 	ow_bus_error_cnt[N_1W_BUS]; // 1wire error counter per bus
 #endif
 
 #endif
@@ -166,13 +166,27 @@ uint8_t search_sensors(uint8_t currBus)
 static void read_temperature_data(void);
 static void request_temperature_measurement(void);
 
-static uint8_t timerCallNumber = 0;
 
 
 // ---------------------------------------------------------------
 // Timer-driven temperature sensors scan loop
 // ---------------------------------------------------------------
 
+#if 1
+// Called from main loop once a second
+void temp_meter_measure(void)
+{
+    if( !(RT_IO_ENABLED(IO_1W1)|RT_IO_ENABLED(IO_1W8)) )
+        return;
+
+    // Read data from the previous cycle
+    read_temperature_data();
+    // Request next measurement;
+    request_temperature_measurement();
+}
+#else
+
+static uint8_t timerCallNumber = 0;
 
 void temp_meter_measure(void)
 {
@@ -201,6 +215,7 @@ void temp_meter_measure(void)
 #endif
     }
 }
+#endif
 
 
 
@@ -241,22 +256,24 @@ void read_temperature_data(void)
 {
     uint8_t i;
 
-    for ( i = 0; i < nTempSensors; i++ )
+    for( i = 0; i < nTempSensors; i++ )
     {
         uint16_t out;
 
+        /* can't happen
         if( ow_is_empty_rom( &gTempSensorIDs[i][0] ) )
         {
+            printf("emptry ROM");
             currTemperature[i] = ERROR_VALUE_16;
             continue;
         }
-
+        */
 
 #ifndef OW_ONE_BUS
         ow_set_bus(&PINB,&PORTB,&DDRB,PB0+gTempSensorBus[i]);
 #endif
 
-        if ( DS18X20_read_meas_word(&gTempSensorIDs[i][0], &out) != DS18X20_OK )
+        if( DS18X20_read_meas_word(&gTempSensorIDs[i][0], &out) != DS18X20_OK )
         {
             REPORT_ERROR(ERR_FLAG_1WIRE_READ_FAULT);
             //ow_error_cnt++;
@@ -313,7 +330,7 @@ static void clear_temperature_data(void)
 {
     uint8_t i;
 
-    for ( i = 0; i < nTempSensors; i++ )
+    for ( i = 0; i < SERVANT_NTEMP; i++ )
         currTemperature[i] = ERROR_VALUE_16;
 }
 
