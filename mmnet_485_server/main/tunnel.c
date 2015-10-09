@@ -14,6 +14,7 @@
 #include "io_dig.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #include <sys/thread.h>
 #include <sys/timer.h>
@@ -31,6 +32,9 @@
 
 
 #define BUFSZ 512
+// Bytes to end of buf to start send
+#define RX_THRESHOLD 10
+
 // TODO seems to be ok to have 1/2 of this - 256 b of stack
 #define STK 512
 
@@ -76,12 +80,13 @@ struct tunnel_io
     char inSend; // We're sending, so ignore all we recv
 
     char *rxbuf;
+    char *rxbuf1; // temp buf
     char *txbuf;
 
     unsigned int rx_idx;
     unsigned int tx_idx;
 
-    unsigned int rx_len;
+    //unsigned int rx_len;
     unsigned int tx_len;
 };
 
@@ -147,12 +152,16 @@ void init_tunnels(void)
 #if SERVANT_TUN0
     if( RT_IO_ENABLED(IO_TUN0) )
     {
+        add_exclusion_pin( UART0_EXCLPOS, UART0_TX_PIN );
+        add_exclusion_pin( UART0_EXCLPOS, UART0_RX_PIN );
         init_one_tunnel( &tun0 );
     }
 #endif
 #if SERVANT_TUN1
     if( RT_IO_ENABLED(IO_TUN1) )
     {
+        add_exclusion_pin( UART1_EXCLPOS, UART0_TX_PIN );
+        add_exclusion_pin( UART1_EXCLPOS, UART0_RX_PIN );
         init_one_tunnel( &tun1 );
     }
 #endif
@@ -187,24 +196,40 @@ static void init_one_tunnel( struct tunnel_io *t )
             return;
     }
 
+    t->rxbuf = t->rxbuf1 = t->txbuf = 0;
+
     t->rxbuf = malloc(BUFSZ);
     if( 0 == t->rxbuf )
     {
         DEBUG0("out of mem rx buf");
-        return;
+        goto nomem;
+    }
+
+    t->rxbuf1 = malloc(BUFSZ);
+    if( 0 == t->rxbuf1 )
+    {
+        DEBUG0("out of mem rx buf1");
+        goto nomem;
     }
 
     t->txbuf = malloc(BUFSZ);
     if( 0 == t->txbuf )
     {
-        free(t->rxbuf);
+
         DEBUG0("out of mem tx buf");
-        return;
+        goto nomem;
+
     }
 
     NutMutexInit( &(t->serialMutex) );
 
     NutThreadCreate( t->tName, tunnel_ctl, t, STK );
+    return;
+
+nomem:
+    if( t->rxbuf ) free( t->rxbuf );
+    if( t->rxbuf1) free( t->rxbuf1);
+    if( t->txbuf ) free( t->txbuf );
 }
 
 
@@ -323,6 +348,8 @@ THREAD(tunnel_xmit, __arg)
     NutEventPost(&(t->txThreadStarted));
     DEBUG0("Start tx thread");
 
+    NutThreadSetPriority( 35 ); // Hi prio, but lower than rx thread
+
     // Timeout, or we will wait forever!
     //NutTcpSetSockOpt( t->sock, SO_RCVTIMEO, &tmo, sizeof(tmo) );
 
@@ -331,7 +358,6 @@ THREAD(tunnel_xmit, __arg)
     while(!t->stop)
     {
         // Get from TCP
-        //int nread = NutTcpDeviceRead( t->sock, t->rxbuf, sizeof(buf) );
         int nread = NutTcpReceive( t->sock, t->txbuf, BUFSZ );
         if( nread == 0 ) // Timeout
             break;
@@ -377,46 +403,83 @@ THREAD(tunnel_recv, __arg)
     volatile struct tunnel_io *t = __arg;
 
     //char buf[BUFSZ];
-    //int tx_len = 0;
+    int tx_len = 0;
 
     t->runCount++;
     DEBUG0("Start rx thread");
     NutEventPost(&(t->rxThreadStarted));
 
+    NutThreadSetPriority( 32 ); // Hi prio
 
     while(!t->stop)
     {
+        DEBUG0("rx wait 4 data");
         while( NutEventWait( &(t->rxGotSome), 500 ) && !TunRxEmpty(t) ) // Wait forever for some data to come
         {
             // Timeout - check if we have to die
             if(t->stop) goto die;
         }
 
+        //DEBUG0("rx lock mutex");
         // Recv data from 485 port
         NutMutexLock( (MUTEX *)&(t->serialMutex) );
-        //t->set_half_duplex(0); // Make sure we recv - actually pointless
+        t->set_half_duplex(0); // Make sure we recv - actually pointless
 
-        int rx_idx1, rx_idx2;
+        DEBUG0("rx loop recv");
+
+        int rx_idx1, rx_idx2 = t->rx_idx;
+        NutSleep( 20 ); // Give 485 some time to recv data
+
         do {
-            rx_idx1 = t->rx_idx;
-            NutEventWait( &(t->recvDone), 2 ); // Wait for end of data
+            rx_idx1 = rx_idx2;
+            NutEventWait( &(t->recvDone), 40 ); // Wait for end of data
+            //NutSleep( 40 ); // Give 485 some time to recv data
             rx_idx2 = t->rx_idx;
-        } while( rx_idx1 != rx_idx2 ); // Got some? Re-wait!
 
+            // Near the end of buf, go send!
+            if( t->rx_idx >= (BUFSZ-RX_THRESHOLD) )
+                break;
+
+        } while( rx_idx1 != rx_idx2 ); // Got some since last wait? Re-wait!
+
+        //DEBUG0("rx loop recv ok");
         NutEventBroadcast(&(t->rxGotSome)); // Clear signaled state after getting all recvd data
         NutMutexUnlock( (MUTEX *)&(t->serialMutex) );
 
-        DEBUG1i("rx", t->rx_idx);
+        {
+            tx_len = t->rx_idx;
+            DEBUG1i("rx", tx_len);
+            cli();
+            memcpy( t->rxbuf1, t->rxbuf, tx_len );
+            t->rx_idx = 0;
+            sei();
+        }
 
         // Flush prev TCP send, make sure there is free place in buffer and our actual
         // data will be sent in separate datagram
-        NutTcpDeviceWrite( t->sock, t->rxbuf, 0 );
-
-        // TODO error here we loose data received during tcp send
-
+        //NutTcpDeviceWrite( t->sock, t->rxbuf1, 0 );
+        //DEBUG0("rx flushed");
+    again:
+        ;
         // Now send to TCP
-        NutTcpDeviceWrite( t->sock, t->rxbuf, t->rx_idx );
-        t->rx_idx = 0;
+        int sent = NutTcpDeviceWrite( t->sock, t->rxbuf1, tx_len );
+        DEBUG1i("rx sent", sent);
+
+        if( sent < 0 ) break; // error
+
+        if( sent < tx_len )
+        {
+            int done = tx_len - sent;
+
+            memmove( t->rxbuf1, t->rxbuf1+done, tx_len-done );
+            tx_len -= done;
+            goto again;
+        }
+
+        NutTcpDeviceWrite( t->sock, t->rxbuf1, 0 );
+        DEBUG0("rx flushed");
+
+        //t->rx_idx = 0;
     }
 
 die:
@@ -481,12 +544,6 @@ static void TunRxComplete(void *arg)
     if( !t->inSend )
         NutEventPostFromIrq( &(t->rxGotSome) ); // Start recv process
 
-    if( t->rx_idx >= BUFSZ )
-    {
-        //NutEventPostFromIrq(&(t->sendDone)); // did it byte ago
-        return;
-    }
-
     char c;
 
 #ifdef UDR1
@@ -496,15 +553,18 @@ static void TunRxComplete(void *arg)
 #endif
         c = UDR;
 
+    if( t->rx_idx >= BUFSZ )
+        return;
+
     if( t->inSend )
         return; // Drop it
 
     t->rxbuf[t->rx_idx++] = c;
 
-    if( t->rx_idx >= t->rx_len )
+    // 10 bytes left? Time to send data!
+    if( t->rx_idx >= (BUFSZ-RX_THRESHOLD) )
     {
         NutEventPostFromIrq(&(t->recvDone));
-        return;
     }
 
 }

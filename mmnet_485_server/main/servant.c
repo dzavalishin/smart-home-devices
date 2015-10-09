@@ -117,6 +117,7 @@ THREAD(main_loop, arg)
 #if SERVANT_NTEMP
         if( temperatureMeterCnt > 0 )
         {
+//            printf(".");
             temp_meter_measure();
             temperatureMeterCnt = 0; // Can lead to less than sec delay to next call. Ignore?
         }

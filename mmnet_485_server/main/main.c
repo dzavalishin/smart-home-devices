@@ -212,6 +212,8 @@ int main(void)
 
     NutThreadCreate("MainLoop", main_loop, 0, 640);
 
+    NutThreadExit();
+    //for(;;) ; // make compiler happy
     for (;;)
     {
         NutSleep(1000);

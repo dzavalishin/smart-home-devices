@@ -60,18 +60,22 @@ void dio_init(void)
     add_exclusion_pin( DATAFLASH_EXCLPOS, DATAFLASH_MISO_PIN );
     add_exclusion_pin( DATAFLASH_EXCLPOS, DATAFLASH_CS_PIN );
 
-#if ALARM_OUTPUTS_USED
-    add_exclusion_pin( SERVANT_WARN_EXCLPOS, SERVANT_WARN_PIN );
-    add_exclusion_pin( SERVANT_ALARM_EXCLPOS, SERVANT_ALARM_PIN );
+    add_exclusion_pin( OW_EXCLPOS, OW_PIN );
+
+#if ENABLE_TWI
+    add_exclusion_pin( TWI_EXCLPOS, TWI_SDA );
+    add_exclusion_pin( TWI_EXCLPOS, TWI_SCL );
 #endif
 
-    add_exclusion_pin( OW_EXCLPOS, OW_PIN );
-    add_exclusion_pin( DHT_EXCLPOS, DHT_PIN );
+#if SERVANT_DHT11
+    if(RT_IO_ENABLED(IO_DHT))
+        add_exclusion_pin( DHT_EXCLPOS, DHT_PIN );
+#endif
 
     // todo fixme
     //add_exclusion_mask( UART1_EXCL_EXCLPOS, UART1_EXCL_MASK );
     //add_exclusion_mask( UART2_EXCL_EXCLPOS, UART2_EXCL_MASK );
-#if 0 // gone to tunel code
+#if 0 // gone to tunnel code
 #if SERVANT_TUN0
     add_exclusion_pin( UART0_EXCLPOS, UART0_TX_PIN );
     add_exclusion_pin( UART0_EXCLPOS, UART0_RX_PIN );

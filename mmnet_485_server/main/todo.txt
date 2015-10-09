@@ -1,9 +1,9 @@
 ++- clearly mark error/unread values (0x7FFF?) 
 
+- fail led
 
 ++- direct (no conversion) TCP/RS485 tunnel
 
-- modbus sock r/w timeouts!
 
 +- runtime configure IO/periferials 
 -- support dynamic io conf in ddr/exclpos code
@@ -30,4 +30,5 @@ timings
 + reboot
 + web config DDR defaults
 + temp 1w meter - meter each 1-sec call from main loop
++ modbus sock r/w timeouts
 

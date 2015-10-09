@@ -171,6 +171,10 @@
 #define UART1_TX_PIN 		PD3
 #define UART1_RX_PIN 		PD2
 
+#define TWI_EXCLPOS  3 // Port D
+#define TWI_SDA PD1
+#define TWI_SCL PD0
+
 
 // ------------------------------------------------------------------------
 // Hardware definitions
