@@ -33,7 +33,7 @@
 
 #define BUFSZ 512
 // Bytes to end of buf to start send
-#define RX_THRESHOLD 10
+#define RX_THRESHOLD 256
 
 // TODO seems to be ok to have 1/2 of this - 256 b of stack
 #define STK 512
