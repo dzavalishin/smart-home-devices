@@ -13,5 +13,6 @@
 void lua_init(void);
 
 void init_tunnels(void);
+void get_tunnel_stats( uint8_t nTunnel, uint32_t *tx_total, uint32_t *rx_total, uint8_t *active );
 
 

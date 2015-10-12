@@ -88,6 +88,9 @@ struct tunnel_io
 
     //unsigned int rx_len;
     unsigned int tx_len;
+
+    uint32_t	tx_total_bytes;
+    uint32_t	rx_total_bytes;
 };
 
 struct tunnel_io tun0 =
@@ -370,6 +373,8 @@ THREAD(tunnel_xmit, __arg)
         t->tx_len = nread & 0x7FFF; // positive
         t->tx_idx = 0;
 
+	t->tx_total_bytes += nread;
+
         DEBUG1i("tx",t->tx_len);
 
 
@@ -448,6 +453,7 @@ THREAD(tunnel_recv, __arg)
 
         {
             tx_len = t->rx_idx;
+            t->rx_total_bytes += tx_len;
             DEBUG1i("rx", tx_len);
             cli();
             memcpy( t->rxbuf1, t->rxbuf, tx_len );
@@ -734,6 +740,35 @@ static void TunAvrUsartSetSpeed(char port, uint32_t rate)
 #endif
     }
 }
+
+
+void get_tunnel_stats( uint8_t nTunnel, uint32_t *tx_total, uint32_t *rx_total, uint8_t *active  )
+{
+    struct tunnel_io *t = 0;
+    switch( nTunnel )
+    {
+#if SERVANT_TUN0
+    case 0:        t = &tun0; break;
+#endif
+#if SERVANT_TUN1
+    case 1:        t = &tun1; break;
+#endif
+    }
+
+    if( t == 0 )
+    {
+        *rx_total = *tx_total = 0;
+        *active = 0;
+    }
+    else
+    {
+        *rx_total = t->rx_total_bytes;
+        *tx_total = t->tx_total_bytes;
+        *active = (t->runCount > 0) ? 1 : 0;
+    }
+}
+
+
 
 
 #endif // SERVANT_TUN0 || SERVANT_TUN1

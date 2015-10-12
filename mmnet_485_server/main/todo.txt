@@ -1,3 +1,5 @@
+- count bytes via tunnel, rx/tx
+
 ++- clearly mark error/unread values (0x7FFF?) 
 
 - fail led

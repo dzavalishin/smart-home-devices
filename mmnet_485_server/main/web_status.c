@@ -11,6 +11,7 @@
 
 #include "defs.h"
 #include "runtime_cfg.h"
+#include "servant.h"
 
 #include <sys/heap.h>
 
@@ -139,6 +140,27 @@ static int CgiStatusRow( FILE * stream, int row_no )
     case 19: ShowTableRow2i( stream, "Free mem, K", NutHeapAvailable()/1024 );	break;
     case 20: ShowTableRow2i( stream, "Size of EEPROM cfg", sizeof(struct eeprom_cfg) );	break;
         
+    case 21:
+        {
+            uint32_t tx_total, rx_total;
+            uint8_t active;
+#if SERVANT_TUN0 || SERVANT_TUN1
+            subhdr( stream, "Tunnels" );
+#if SERVANT_TUN0
+            get_tunnel_stats( 0, &tx_total, &rx_total, &active );
+            ShowTableRow2b( stream, "Tun0 active", active );
+            ShowTableRow2i( stream, "Tun0 RX, K", rx_total/1024 );
+            ShowTableRow2i( stream, "Tun0 TX, K", tx_total/1024 );
+#endif
+#if SERVANT_TUN1
+            get_tunnel_stats( 1, &tx_total, &rx_total, &active );
+            ShowTableRow2b( stream, "Tun1 active", active );
+            ShowTableRow2i( stream, "Tun1 RX, K", rx_total/1024 );
+            ShowTableRow2i( stream, "Tun1 TX, K", tx_total/1024 );
+#endif
+#endif
+            break;
+        }
 
     default:
         return 0;
