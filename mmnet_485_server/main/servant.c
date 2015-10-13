@@ -8,6 +8,7 @@
 
 #include "defs.h"
 #include "util.h"
+#include "servant.h"
 #include "runtime_cfg.h"
 
 #include <string.h>
@@ -27,7 +28,7 @@
 #include "io_bmp180.h"
 
 
-
+static uint8_t second_counter = 0; // general per second counter, used by fail led
 static uint8_t network_activity = 60; // Will wait 1 min before initial network io not showing failure
 
 //HANDLE sendOutEvent;
@@ -43,13 +44,24 @@ static uint8_t dht11_errorCnt = 0;
 
 void each_second(HANDLE h, void *arg)
 {
-
-    //NutEventPostAsync(&temperatureMeterEvent);
+    second_counter++;
     temperatureMeterCnt++;
     dht11meterCnt++;
 
     if( network_activity > 0 )
         network_activity--;
+
+    if( 0 == network_activity )
+    {
+        if( second_counter & 1 )
+            FAIL_LED_ON;
+        else
+            FAIL_LED_OFF;
+    }
+    else
+        FAIL_LED_OFF;
+
+
 }
 
 
@@ -67,8 +79,6 @@ THREAD(main_loop, arg)
     {
         had_io = 0; // TODO http requests must do too
 
-        if( 0 == network_activity )
-            FAIL_LED_ON;
 
         LED_OFF; // at least 10 msec of LED off
         NutSleep(10);
@@ -76,7 +86,6 @@ THREAD(main_loop, arg)
 
         // Give other threads some chance to work
         NutSleep(90);
-        FAIL_LED_OFF;
 
         //NutEventWait(&sendOutEvent, 100); // Once in 100 msec try sending anyway
 
