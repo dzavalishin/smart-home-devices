@@ -116,13 +116,13 @@
 #define LED_PIN  PING
 #define LED      PING3
 
-#if 0
+#if 1
 
-#define FAIL_LED_EXCLPOS  1
-#define FAIL_LED_DDR  DDRB
-#define FAIL_LED_PORT PORTB
-#define FAIL_LED_PIN  PINB
-#define FAIL_LED      PINB6
+#define FAIL_LED_EXCLPOS  4 // E
+#define FAIL_LED_DDR  DDRE
+#define FAIL_LED_PORT PORTE
+#define FAIL_LED_PIN  PINE
+#define FAIL_LED      PINE4
 
 #endif
 

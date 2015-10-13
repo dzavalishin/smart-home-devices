@@ -1,14 +1,9 @@
-- count bytes via tunnel, rx/tx
 
-++- clearly mark error/unread values (0x7FFF?) 
 
-- fail led
-
-++- direct (no conversion) TCP/RS485 tunnel
-
++- fail led - untested
 
 +- runtime configure IO/periferials 
--- support dynamic io conf in ddr/exclpos code
++- support dynamic io conf in ddr/exclpos code
 
 - syslog does not work!
 
@@ -28,6 +23,9 @@ timings
 
 -- lua - not enough code flash
 
++ count bytes via tunnel, rx/tx
++ direct (no conversion) TCP/RS485 tunnel
++ clearly mark error/unread values (0x7FFF?) 
 + id map for 1wire temp sensors 
 + reboot
 + web config DDR defaults

@@ -29,14 +29,26 @@ void fail_led(void); // debug
 #define LED_HI (LED_PORT |= _BV(LED))
 #define LED_LOW (LED_PORT &= ~_BV(LED))
 
+#ifdef FAIL_LED_EXCLPOS
+#  define FAIL_LED_HI (FAIL_LED_PORT |= _BV(FAIL_LED))
+#  define FAIL_LED_LOW (FAIL_LED_PORT &= ~_BV(FAIL_LED))
+#else
+#  define FAIL_LED_HI 
+#  define FAIL_LED_LOW 
+#endif
+
 #define LED_INVERTED 1
 
 #if LED_INVERTED
 #define LED_ON LED_LOW
 #define LED_OFF LED_HI
+#define FAIL_LED_ON FAIL_LED_LOW
+#define FAIL_LED_OFF FAIL_LED_HI
 #else
 #define LED_ON LED_HI
 #define LED_OFF LED_LOW
+#define FAIL_LED_ON FAIL_LED_HI
+#define FAIL_LED_OFF FAIL_LED_LOW
 #endif
 
 

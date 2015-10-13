@@ -27,6 +27,9 @@
 #include "io_bmp180.h"
 
 
+
+static uint8_t network_activity = 60; // Will wait 1 min before initial network io not showing failure
+
 //HANDLE sendOutEvent;
 
 //void triggerSendOut(void)
@@ -44,6 +47,9 @@ void each_second(HANDLE h, void *arg)
     //NutEventPostAsync(&temperatureMeterEvent);
     temperatureMeterCnt++;
     dht11meterCnt++;
+
+    if( network_activity > 0 )
+        network_activity--;
 }
 
 
@@ -60,12 +66,17 @@ THREAD(main_loop, arg)
     for (;;)
     {
         had_io = 0; // TODO http requests must do too
+
+        if( 0 == network_activity )
+            FAIL_LED_ON;
+
         LED_OFF; // at least 10 msec of LED off
         NutSleep(10);
         LED_ON;
 
         // Give other threads some chance to work
         NutSleep(90);
+        FAIL_LED_OFF;
 
         //NutEventWait(&sendOutEvent, 100); // Once in 100 msec try sending anyway
 
@@ -74,6 +85,7 @@ THREAD(main_loop, arg)
         {
             modbus_event_cnt_prev = modbus_event_cnt;
             had_io = 1;
+            notice_activity();
         }
 
         if(!had_io )
@@ -130,6 +142,9 @@ THREAD(main_loop, arg)
 
 
 
-
+void notice_activity() // Called by network code to mark that something uses us as IO. If not - we will light fail LED.
+{
+    network_activity = 30; // Seconds between network calls
+}
 
 

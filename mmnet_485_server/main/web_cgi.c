@@ -412,6 +412,7 @@ int CgiNetIO( FILE * stream, REQUEST * req )
         }
 
         httpSendString( stream, req, "Ok" );
+        notice_activity();
     }
     else
     {
@@ -426,6 +427,7 @@ int CgiNetIO( FILE * stream, REQUEST * req )
         }
 
         httpSendString( stream, req, data );
+        notice_activity();
     }
     return 0;
 }
