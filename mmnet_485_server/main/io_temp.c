@@ -64,7 +64,26 @@ void init_temperature(void)
 
     if( !(RT_IO_ENABLED(IO_1W1)|RT_IO_ENABLED(IO_1W8)) )
         return;
+#if B1W_NON_FIXED_PORT
 
+#ifndef OW_ONE_BUS
+    ow_set_bus(&PING,&PORTG,&DDRG,OW_PIN);
+#endif
+    //uint8_t sc =
+    search_sensors(0); // todo wrong bus no!
+
+#ifndef OW_ONE_BUS
+    uint8_t bus;
+    for( bus = 0; bus < N_1W_BUS; bus++ )
+    {
+        ow_set_bus(&PINB,&PORTB,&DDRB,PB0+bus);
+        //uint8_t sc =
+        search_sensors(bus);
+    }
+#endif
+
+
+#else
     // TODO choose which buses to init
 
     uint8_t bus;
@@ -76,6 +95,7 @@ void init_temperature(void)
         //uint8_t sc =
         search_sensors(bus);
     }
+#endif // B1W_NON_FIXED_PORT
 }
 
 

@@ -41,7 +41,7 @@
 
 #define SERVANT_NTEMP   8       // 1-Wire temperature sensors
 #define SERVANT_1WMAC   1       // Attempt to get MAC address from 1-wire 2401 chip
-#define OW_ONE_BUS      1
+#define OW_ONE_BUS      0
 
 // TCP to serial tunnels, incomplete, do not work
 
@@ -86,6 +86,7 @@
 #	define N_1W_BUS 8
 #endif
 
+#define B1W_NON_FIXED_PORT 1
 
 // ------------------------------------------------------------------------
 // Network

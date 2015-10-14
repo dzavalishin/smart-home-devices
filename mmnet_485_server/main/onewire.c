@@ -35,10 +35,11 @@
 /* set bus-config with ow_set_bus() */
 uint8_t OW_PIN_MASK;
 
-#if 0
-//volatile uint8_t* OW_IN;
-//volatile uint8_t* OW_OUT;
-//volatile uint8_t* OW_DDR;
+
+#if B1W_NON_FIXED_PORT
+volatile uint8_t* OW_IN;
+volatile uint8_t* OW_OUT;
+volatile uint8_t* OW_DDR;
 
 #define OW_GET_IN()   ( *OW_IN & OW_PIN_MASK )
 #define OW_OUT_LOW()  ( *OW_OUT &= (uint8_t) ~OW_PIN_MASK )
@@ -64,11 +65,11 @@ void ow_set_bus(volatile uint8_t* in,
                 volatile uint8_t* ddr,
                 uint8_t pin)
 {
-    /*
+#if B1W_NON_FIXED_PORT
      OW_DDR=ddr;
      OW_OUT=out;
      OW_IN=in;
-     */
+#endif
     OW_PIN_MASK=(1<<pin);
     ow_reset();
 }
