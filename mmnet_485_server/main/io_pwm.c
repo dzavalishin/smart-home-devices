@@ -13,6 +13,7 @@
 // для большего числа аналоговых выводов
 // PWM можно реализовать на одном таймере
 
+#define DEBUG 1
 
 #include "defs.h"
 #include "runtime_cfg.h"
@@ -24,8 +25,11 @@
 #include <inttypes.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <stdio.h>
 
 #include <sys/event.h>
+
+#define PWM_WAIT_CYCLE_START 0
 
 
 #if SERVANT_NPWM > 0
@@ -51,8 +55,9 @@ unsigned char 	pwm[SERVANT_NPWM];
 unsigned char 	pwm_sort[SERVANT_NPWM], pwm_order[SERVANT_NPWM];
 unsigned int 	pwm_time[SERVANT_NPWM+1];
 
-//static HANDLE   endOfPwmCycle;
-
+#if PWM_WAIT_CYCLE_START
+static HANDLE   endOfPwmCycle;
+#endif // PWM_WAIT_CYCLE_START
 
 //TIMER1 initialize - prescale:1 !!! для максимальной скорости PWM-ов
 // WGM: 0) Normal, TOP=0xFFFF
@@ -130,8 +135,10 @@ ISR(TIMER1_OVF_vect)
     TCNT1H = pwm_time[pwm_count]>>8;
     TCNT1L = pwm_time[pwm_count];
 
-//    if( pwm_count >= SRVANT_NPWM+1 )
-//        NutEventPostFromIrq(&endOfPwmCycle);
+#if PWM_WAIT_CYCLE_START
+    if( pwm_count >= SRVANT_NPWM+1 )
+        NutEventPostFromIrq(&endOfPwmCycle);
+#endif // PWM_WAIT_CYCLE_START
 
     sei();
 }
@@ -181,9 +188,11 @@ void set_an(unsigned char port_num, unsigned char data)
         }
     }
 
+#if PWM_WAIT_CYCLE_START
     // TODO wait for cycle end or stop/restart timer
-    //NutEventBroadcast( &endOfPwmCycle ); // reset event if any
-    //NutEventWait( &endOfPwmCycle );
+    NutEventBroadcast( &endOfPwmCycle ); // reset event if any, wait for _next_ cycle
+    NutEventWait( &endOfPwmCycle );
+#endif // PWM_WAIT_CYCLE_START
 
     // на периоде модуляции последовательно запускаем таймер между вылючениями каждого выхода PWM
     pwm_time[0] = pwm_calc_time( pwm_sort[0] );
@@ -199,6 +208,18 @@ void set_an(unsigned char port_num, unsigned char data)
     // Enable corresponding PWM channel
     pwm_mask_byte |= _BV(port_num+SERVANT_PWM_BIT);
 
+#if DEBUG
+    for( i = 0; i < SERVANT_NPWM+1; i++ )
+    {
+        printf("pwm_time[%d] = %d", i, pwm_time[i] );
+    }
+
+    for( i = 0; i < SERVANT_NPWM; i++ )
+    {
+        printf("pwm[%d] = %d", i, pwm[i] );
+        printf("pwm_order[%d] = %d", i, pwm_order[i] );
+    }
+#endif
 }
 
 
