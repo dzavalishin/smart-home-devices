@@ -1,3 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+#include <malloc.h>
+#include <sys/syslog.h>
+#include <sys/time.h>
+
+#ifdef TEST_SUITE
+#define _tm tm
+#endif
+
+#define SYSLOG_MAXBUF 1024
+
+char *syslog_buf;
+
+static int syslog_fac = LOG_USER;
+static int syslog_mask = 0xFF;
+
+static int syslog_stat;
+static size_t syslog_taglen;
+static char *syslog_tag;
+
+void syslog_flush(size_t len);
+
+
+#define BUFADD(___l) do {     strlcpy(syslog_buf+rc, ___l, SYSLOG_MAXBUF-rc ); rc += strlen(syslog_buf+rc); } while(0)
+#define SPACE() (syslog_buf[rc++] = ' ')
+#define DASH() (syslog_buf[rc++] = '-')
+
 
 /*!
  * \brief Assemble syslog header.
@@ -56,40 +84,59 @@ size_t syslog_header(int pri)
     }
 
 
+#ifdef TEST_SUITE
+    //syslog_buf[rc++] = ' ';
+    //strcpy(syslog_buf+rc, "hostname" );    rc += strlen(syslog_buf+rc);
+    SPACE();
+    BUFADD( "hostname" );
+#else
     /* HOSTNAME field. */
-    syslog_buf[rc++] = ' ';
+    //syslog_buf[rc++] = ' ';
+    SPACE();
     if (confnet.cdn_cip_addr) {
-        strcpy(syslog_buf+rc, inet_ntoa(confnet.cdn_cip_addr));
-        rc += strlen(syslog_buf+rc);
+        //strcpy(syslog_buf+rc, inet_ntoa(confnet.cdn_cip_addr));
+        //rc += strlen(syslog_buf+rc);
+        BUFADD( inet_ntoa(confnet.cdn_cip_addr) );
     }
     else if (confos.hostname[0]) {
-        strcpy(syslog_buf+rc, confos.hostname);
-        rc += strlen(syslog_buf+rc);
+        //strcpy(syslog_buf+rc, confos.hostname);
+        //rc += strlen(syslog_buf+rc);
+        BUFADD( confos.hostname );
     }
     else if (confnet.cdn_ip_addr) {
-        strcpy(syslog_buf+rc, inet_ntoa(confnet.cdn_ip_addr));
-        rc += strlen(syslog_buf+rc);
+        //strcpy(syslog_buf+rc, inet_ntoa(confnet.cdn_ip_addr));
+        //rc += strlen(syslog_buf+rc);
+        BUFADD( inet_ntoa(confnet.cdn_ip_addr) );
     } else {
-        syslog_buf[rc++] = '-';
+        //syslog_buf[rc++] = '-';
+        DASH();
     }
+#endif
 
 
 
     /* APP-NAME field. */
     if (syslog_taglen) {
-        syslog_buf[rc++] = ' ';
-        strcpy(syslog_buf+rc, syslog_tag);
-        rc += syslog_taglen;
+        //syslog_buf[rc++] = ' ';
+        //strcpy(syslog_buf+rc, syslog_tag);
+        //rc += syslog_taglen;
+        SPACE();
+        BUFADD( syslog_tag );
     }
 
     /* No PROCID and MSGID fields. */
-    syslog_buf[rc++] = ' ';
-    syslog_buf[rc++] = '-';
-    syslog_buf[rc++] = ' ';
-    syslog_buf[rc++] = '-';
+    //syslog_buf[rc++] = ' ';
+    //syslog_buf[rc++] = '-';
+    //syslog_buf[rc++] = ' ';
+    //syslog_buf[rc++] = '-';
+    SPACE();
+    DASH();
+    SPACE();
+    DASH();
 
 
-    syslog_buf[rc++] = ' ';
+    SPACE();
+    //syslog_buf[rc++] = ' ';
     syslog_buf[rc] = '\0';
 
     return rc;
@@ -107,8 +154,32 @@ void syslogs(int pri, const char *fmt)
 
     if (cnt)
     {
-        cnt += snprintf(syslog_buf+cnt, SYSLOG_MAXBUF-cnt "%s", fmt);
+        cnt += snprintf(syslog_buf+cnt, SYSLOG_MAXBUF-cnt, "%s", fmt);
         syslog_flush(cnt);
     }
 }
 
+
+#ifdef TEST_SUITE
+
+int main(void)
+{
+	syslog_buf = malloc(SYSLOG_MAXBUF+1);
+
+        syslog_tag = "mmNet485";
+        syslog_taglen = strlen(syslog_tag);
+
+	size_t rc = syslog_header(0);
+	printf("'%s'\n", syslog_buf );
+}
+void syslog_flush(size_t len)
+{
+    /* Output to stderr if requested */
+
+    write(1, syslog_buf, len);
+    write(1, "\n", 1);
+
+
+}
+
+#endif // TEST_SUITE
