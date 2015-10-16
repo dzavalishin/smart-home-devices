@@ -112,6 +112,8 @@ ISR(TIMER1_OVF_vect)
         return;
     }
 
+    // TODO don't turn on channels with level = 0
+again:
     pwm_count++; // для всех PWM
 
     if( pwm_count >= SERVANT_NPWM+1 )
@@ -132,11 +134,14 @@ ISR(TIMER1_OVF_vect)
         }
     }
 
+    if( (pwm_time[pwm_count] == 0) && (pwm_count < SERVANT_NPWM+1)  )
+        goto again;
+
     TCNT1H = pwm_time[pwm_count]>>8;
     TCNT1L = pwm_time[pwm_count];
 
 #if PWM_WAIT_CYCLE_START
-    if( pwm_count >= SRVANT_NPWM+1 )
+    if( pwm_count >= SRVANT_NPWM )
         NutEventPostFromIrq(&endOfPwmCycle);
 #endif // PWM_WAIT_CYCLE_START
 
