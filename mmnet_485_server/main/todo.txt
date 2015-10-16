@@ -1,5 +1,5 @@
 
-- multibus + man single bus - bus no problem
+- multibus + man single bus - bus number problem
 
 +- fail led - untested
 

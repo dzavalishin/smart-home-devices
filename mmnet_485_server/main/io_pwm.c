@@ -25,6 +25,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#include <sys/event.h>
 
 
 #if SERVANT_NPWM > 0
@@ -44,11 +45,13 @@
 
 #define OUTS_MASK ( ( 0x0Fu >> (4-(SERVANT_NPWM)) ) << SERVANT_PWM_BIT)
 
-unsigned char pwm_count;
-unsigned char pwm[SERVANT_NPWM];
-unsigned char pwm_sort[SERVANT_NPWM], pwm_order[SERVANT_NPWM];
-unsigned char pwm_mask_byte;
-unsigned int pwm_time[SERVANT_NPWM+1];
+unsigned char 	pwm_mask_byte;          // Active channels
+unsigned char 	pwm_count;
+unsigned char 	pwm[SERVANT_NPWM];
+unsigned char 	pwm_sort[SERVANT_NPWM], pwm_order[SERVANT_NPWM];
+unsigned int 	pwm_time[SERVANT_NPWM+1];
+
+//static HANDLE   endOfPwmCycle;
 
 
 //TIMER1 initialize - prescale:1 !!! для максимальной скорости PWM-ов
@@ -57,7 +60,8 @@ unsigned int pwm_time[SERVANT_NPWM+1];
 // actual value: 1000,000uSec (0,0%)
 void timer1_init(void)
 {
-    if(!RT_IO_ENABLED(IO_PWM)) return;
+    // Init anyway, just do not start, if turned off
+    //if(!RT_IO_ENABLED(IO_PWM)) return;
 
     TCCR1B = 0x00; //stop
     TCNT1H = 0xF0; //setup
@@ -84,49 +88,59 @@ void timer1_start(void)
 }
 
 
-// multiple PWMs using 1 timer
 
+
+// TIMER1 has overflowed
 ISR(TIMER1_OVF_vect)
 {
-    unsigned char j, mask;
+    uint8_t mask;
+
     cli();
 
-    // TIMER1 has overflowed
-
-    if( pwm_mask_byte > 0 )
+    // No active outputs
+    if( pwm_mask_byte == 0 )
     {
-        pwm_count++; // для всех PWM
-
-        if( pwm_count >= SERVANT_NPWM+1 )
-        {
-            pwm_count = 0;	// начало цикла PWM
-            mask = pwm_mask_byte & OUTS_MASK; // не включать неактивные PWM-ы
-            SERVANT_PWM_PORT |= mask;	// включить все выходы, 0-3
-        }
-
-        j = pwm_order[pwm_count-1];
-
-        // выключить каждый PWM последовательно по возрастанию значения
-        if( pwm_count != 0 )
-        {
-            if( (pwm_mask_byte & _BV(j+SERVANT_PWM_BIT)) != 0 )
-            {
-                SERVANT_PWM_PORT &= ~_BV(j+SERVANT_PWM_BIT);
-            }
-        }
-
-        TCNT1H = pwm_time[pwm_count]>>8;
-        TCNT1L = pwm_time[pwm_count];
-    }
-    else
-    {
-        // PWM-ы не включать, ждать 100 мкс.
+        // Do not turn on PWMs, wait 100 uSec
         TCNT1H = 0xF0;
         TCNT1L = 0x60;
+        sei();
+        return;
     }
+
+    pwm_count++; // для всех PWM
+
+    if( pwm_count >= SERVANT_NPWM+1 )
+    {
+        pwm_count = 0;	// начало цикла PWM
+        mask = pwm_mask_byte & OUTS_MASK; // не включать неактивные PWM-ы
+        SERVANT_PWM_PORT |= mask;	// включить все выходы, 0-3
+    }
+
+
+    // выключить каждый PWM последовательно по возрастанию значения
+    if( pwm_count > 0 )
+    {
+        uint8_t j = pwm_order[pwm_count-1];
+        if( (pwm_mask_byte & _BV(j+SERVANT_PWM_BIT)) != 0 )
+        {
+            SERVANT_PWM_PORT &= ~_BV(j+SERVANT_PWM_BIT);
+        }
+    }
+
+    TCNT1H = pwm_time[pwm_count]>>8;
+    TCNT1L = pwm_time[pwm_count];
+
+//    if( pwm_count >= SRVANT_NPWM+1 )
+//        NutEventPostFromIrq(&endOfPwmCycle);
+
     sei();
 }
 
+
+static inline uint16_t pwm_calc_time(uint8_t value)
+{
+    return ~( value * SERVANT_PWM_SPEED );
+}
 
 void set_an(unsigned char port_num, unsigned char data)
 {
@@ -135,7 +149,7 @@ void set_an(unsigned char port_num, unsigned char data)
     if(!RT_IO_ENABLED(IO_PWM)) return;
 
     // Check port number
-    if( port_num > SERVANT_NPWM ) return;
+    if( port_num >= SERVANT_NPWM ) return;
 
     pwm[ port_num ] = data;
 
@@ -168,27 +182,19 @@ void set_an(unsigned char port_num, unsigned char data)
     }
 
     // TODO wait for cycle end or stop/restart timer
+    //NutEventBroadcast( &endOfPwmCycle ); // reset event if any
+    //NutEventWait( &endOfPwmCycle );
 
-    // на периоде модуляции последовательно запускаем таймер
-    // между вылючениями каждого выхода PWM
-    pwm_time[0] = ~(pwm_sort[0] * 10);
+    // на периоде модуляции последовательно запускаем таймер между вылючениями каждого выхода PWM
+    pwm_time[0] = pwm_calc_time( pwm_sort[0] );
     for( i = 1; i < SERVANT_NPWM; i++ )
     {
-        pwm_time[i] = ~((pwm_sort[i]-pwm_sort[i-1])*SERVANT_PWM_SPEED);
+        pwm_time[i] = pwm_calc_time( pwm_sort[i] - pwm_sort[i-1] );
         // период модуляции разделяем на 256*(PWM_SPEED=10) машинных циклов
     }
 
     // после выкдючения всех PWM подождать до окончания периода
-    pwm_time[SERVANT_NPWM] = ~((0xff-pwm_sort[SERVANT_NPWM-1])*SERVANT_PWM_SPEED); // от последнего импульса до конца цикла
-
-    /*
-    pwm_mask_byte = 0;
-    for( i = 0; i < SERVANT_NPWM; i++ )
-    {
-        if( pwm[i] )
-            pwm_mask_byte |= _BV(i+SERVANT_PWM_BIT);
-    }
-    */
+    pwm_time[SERVANT_NPWM] = pwm_calc_time( 0xff - pwm_sort[SERVANT_NPWM-1] ); // от последнего импульса до конца цикла
 
     // Enable corresponding PWM channel
     pwm_mask_byte |= _BV(port_num+SERVANT_PWM_BIT);
