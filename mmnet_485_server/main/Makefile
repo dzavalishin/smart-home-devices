@@ -13,7 +13,7 @@ include ../Makedefs
 SRCS =  main.c $(PROJ).c delay.c spi.c runtime_cfg.c util.c modbus.c 
 SRCS += io_adc.c io_dig.c io_dht.c io_pwm.c io_temp.c io_bmp180.c
 SRCS += onewire.c ds18x20.c tunnel.c
-SRCS += $(WEBFILE) web_cgi.c web_cgi_os.c web_setup.c web.c web_status.c httpd.c lua.c
+SRCS += $(WEBFILE) web_cgi.c web_cgi_os.c web_setup.c web.c web_status.c httpd.c lua.c syslog.c
 # i2c.c net_io.c icp.c freq_send.c ds18x20.c onewire.c ds2482.c dallas_ds2482.c  child-1wire.c 
 OBJS =  $(SRCS:.c=.o)
 

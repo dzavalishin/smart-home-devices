@@ -9,6 +9,7 @@
 #include <sys/thread.h>
 
 #include "defs.h"
+#include "servant.h"
 #include "runtime_cfg.h"
 
 #include "cgi.h"

@@ -99,6 +99,12 @@ void init_temperature(void)
 }
 
 
+void rescan_temperature(void)
+{
+    //if( !(RT_IO_ENABLED(IO_1W1)|RT_IO_ENABLED(IO_1W8)) )        return;
+    init_temperature();
+}
+
 
 
 

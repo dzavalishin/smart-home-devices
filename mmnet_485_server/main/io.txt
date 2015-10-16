@@ -26,7 +26,7 @@ Port E
 
 	0-3 usually DO (move PWM here?)
 
-	4 - ?
+	4 - Fail LED
 
 	5 - Ethernet interrupt
 

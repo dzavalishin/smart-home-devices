@@ -162,6 +162,10 @@ static int CgiStatusRow( FILE * stream, int row_no )
             break;
         }
 
+    case 22: subhdr( stream, "DHT11" ); break;
+    case 23: ShowTableRow2i( stream, "Errors count", dht11_errorCnt );	break;
+        
+
     default:
         return 0;
     }

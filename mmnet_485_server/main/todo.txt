@@ -1,10 +1,7 @@
 
 - multibus + man single bus - bus number problem
 
-+- fail led - untested
 
-+- runtime configure IO/periferials 
-+- support dynamic io conf in ddr/exclpos code
 
 - syslog does not work!
 
@@ -24,6 +21,12 @@ timings
 
 -- lua - not enough code flash
 
++- runtime configure IO/periferials 
++- support dynamic io conf in ddr/exclpos code
++- rescan 1w once a min?
+
+
++ fail led - untested
 + count bytes via tunnel, rx/tx
 + direct (no conversion) TCP/RS485 tunnel
 + clearly mark error/unread values (0x7FFF?) 

@@ -5,6 +5,7 @@
  * TCP/Serial (485) tunneling
  *
 **/
+#define DEBUG 0
 
 #include "defs.h"
 #include "runtime_cfg.h"
@@ -42,12 +43,14 @@
 #if SERVANT_TUN0 || SERVANT_TUN1
 
 // TODO debug
-//#define DEBUG0(a)
-
-#define DEBUG0(a) printf( "tun%d: %s\n", t->nTunnel, (a) )
-#define DEBUG1i( s, i ) printf( "tun%d: %s %d\n", t->nTunnel, (s), (i) )
-
-
+//
+#if DEBUG
+#  define DEBUG0(a) printf( "tun%d: %s\n", t->nTunnel, (a) )
+#  define DEBUG1i( s, i ) printf( "tun%d: %s %d\n", t->nTunnel, (s), (i) )
+#else
+#  define DEBUG0(a)
+#  define DEBUG1i( s, i )
+#endif
 
 struct tunnel_io
 {
@@ -242,7 +245,7 @@ THREAD(tunnel_ctl, __arg)
     volatile struct tunnel_io *t = __arg;
     HANDLE rt, tt;
 
-    DEBUG0("in ctl thread");
+    //DEBUG0("in ctl thread");
 
     t->set_half_duplex(0);
 
@@ -290,16 +293,16 @@ THREAD(tunnel_ctl, __arg)
         while(t->runCount < 2)
             NutSleep(1000); // wait for threads to start
 
-        DEBUG0("Seen 2 threads");
+        //DEBUG0("Seen 2 threads");
 
         while(t->runCount == 2)
             NutSleep(1000); // wait while communications are going on - some thread will die if error
 #else
-        DEBUG0("Wait 4 start");
+        //DEBUG0("Wait 4 start");
         NutEventWait( &(t->rxThreadStarted), 1500 ); // Wait for start, no more than 1.5 sec
         NutEventWait( &(t->txThreadStarted), 1500 ); // Wait for start, no more than 1.5 sec
 
-        DEBUG0("Seen 2 threads");
+        //DEBUG0("Seen 2 threads");
 
         while(t->runCount == 2)
             NutSleep(1000); // wait while communications are going on - some thread will die if error
@@ -386,7 +389,7 @@ THREAD(tunnel_xmit, __arg)
         TunSendChar(t); // Send initial byte
 
         NutEventWait( &(t->sendDone), 1500 ); // Wait for xmit, no more than 1.5 sec
-        DEBUG1i("tx done 485 sending", t->tx_idx);
+        //DEBUG1i("tx done 485 sending", t->tx_idx);
 
         wait_empty( t );
         t->set_half_duplex(0);
@@ -418,7 +421,7 @@ THREAD(tunnel_recv, __arg)
 
     while(!t->stop)
     {
-        DEBUG0("rx wait 4 data");
+        //DEBUG0("rx wait 4 data");
         while( NutEventWait( &(t->rxGotSome), 500 ) && !TunRxEmpty(t) ) // Wait forever for some data to come
         {
             // Timeout - check if we have to die
@@ -430,7 +433,7 @@ THREAD(tunnel_recv, __arg)
         NutMutexLock( (MUTEX *)&(t->serialMutex) );
         t->set_half_duplex(0); // Make sure we recv - actually pointless
 
-        DEBUG0("rx loop recv");
+        //DEBUG0("rx loop recv");
 
         int rx_idx1, rx_idx2 = t->rx_idx;
         NutSleep( 20 ); // Give 485 some time to recv data
@@ -469,7 +472,7 @@ THREAD(tunnel_recv, __arg)
         ;
         // Now send to TCP
         int sent = NutTcpDeviceWrite( t->sock, t->rxbuf1, tx_len );
-        DEBUG1i("rx sent", sent);
+        //DEBUG1i("rx sent", sent);
 
         if( sent < 0 ) break; // error
 
@@ -483,7 +486,7 @@ THREAD(tunnel_recv, __arg)
         }
 
         NutTcpDeviceWrite( t->sock, t->rxbuf1, 0 );
-        DEBUG0("rx flushed");
+        //DEBUG0("rx flushed");
 
         //t->rx_idx = 0;
     }

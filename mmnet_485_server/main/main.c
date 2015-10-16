@@ -349,8 +349,15 @@ static void init_sntp(void)
 static void init_syslog(void)
 {
     openlog( DEVICE_NAME, LOG_PERROR, LOG_USER );
-    setlogserver( ee_cfg.ip_syslog, 0 );
-    syslog( LOG_INFO, "%s started on Nut/OS %s, build from %s", DEVICE_NAME, NutVersionString(), makeDate );
+    //setlogserver( ee_cfg.ip_syslog, 0 );
+
+    //_write(_fileno(stdout), "!!\n", 3);
+
+    char buf[512];
+    //sprintf( buf, "%s started on Nut/OS %s, build from %s", DEVICE_NAME, NutVersionString(), makeDate );
+    //syslog( LOG_INFO, 0 );
+    syslog( LOG_INFO, "!! mmnet !!", 0 );
+    //syslog( LOG_INFO, "%s started on Nut/OS %s, build from %s", DEVICE_NAME, NutVersionString(), makeDate );
 }
 #endif
 

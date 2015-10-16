@@ -16,6 +16,7 @@
 //#define OW_ROMCODE_SIZE 8
 
 void init_temperature(void);
+void rescan_temperature(void);
 void temp_meter_measure(void); // Must be called once a 750 ms (actually once a sec)
 
 extern uint8_t serialNumber [OW_ROMCODE_SIZE]; 

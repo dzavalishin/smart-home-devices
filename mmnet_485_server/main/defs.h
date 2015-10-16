@@ -41,7 +41,7 @@
 
 #define SERVANT_NTEMP   8       // 1-Wire temperature sensors
 #define SERVANT_1WMAC   1       // Attempt to get MAC address from 1-wire 2401 chip
-#define OW_ONE_BUS      0
+#define OW_ONE_BUS      1
 
 // TCP to serial tunnels, incomplete, do not work
 
@@ -59,7 +59,7 @@
 // Configuration (on/off/number) of components
 // ------------------------------------------------------------------------
 
-// SNTP/Syslog kills us :(
+// Syslog kills us :(
 #define ENABLE_SNTP 1
 #define ENABLE_SYSLOG 0
 
@@ -190,7 +190,7 @@
 // количество машинных циклов на один интервал PWM
 // период модуляции разделяется на 256 интервалов
 // частота PWM: 4.0000Mhz/256/PWM_SPEED = 1.5 Кгц.
-#define	SERVANT_PWM_SPEED	10	
+#define	SERVANT_PWM_SPEED	128
 #define	SERVANT_PWM_PORT        PORTD
 // PWM bits start at this bit, so now it's PD4..7
 #define SERVANT_PWM_BIT         4

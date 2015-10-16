@@ -27,20 +27,16 @@
 #include "io_temp.h"
 #include "io_bmp180.h"
 
+#define TEMPERATURE_RESCAN_SEC 240
 
-static uint8_t second_counter = 0; // general per second counter, used by fail led
-static uint8_t network_activity = 60; // Will wait 1 min before initial network io not showing failure
-
-//HANDLE sendOutEvent;
-
-//void triggerSendOut(void)
-//{
-//    NutEventPostAsync(&sendOutEvent);
-//}
+static uint8_t 		second_counter = 0; // general per second counter, used by fail led
+static uint8_t 		network_activity = 60; // Will wait 1 min before initial network io not showing failure
 
 static volatile uint8_t temperatureMeterCnt = 0;
-static volatile uint8_t dht11meterCnt = 0;
-static uint8_t dht11_errorCnt = 0;
+static volatile uint8_t temperatureRescanCnt = 0;
+
+static volatile uint8_t dht11meterCnt = -2; // Give sensor 2 seconds to become working
+uint8_t 		dht11_errorCnt = 0;
 
 void each_second(HANDLE h, void *arg)
 {
@@ -112,16 +108,16 @@ THREAD(main_loop, arg)
                 dht11_errorCnt++;
                 if( dht11_errorCnt > 10 )
                 {
-                    dht11_errorCnt = 1; // no roll-over 255
+                    dht11_errorCnt = 10; // no roll-over 255
                     dht_temperature = ERROR_VALUE_16;
                     dht_humidity = ERROR_VALUE_16;
                 }
-                dht11meterCnt -= 1; // Error? Redo in 1 sec
+                dht11meterCnt -= 2; // Error? Redo in 2 sec
             }
             else
             {
                 dht11_errorCnt = 0;
-                dht11meterCnt -= 2; // Ok? Once in 2 secs
+                dht11meterCnt -= 6; // Ok? Once in 6 secs
             }
         }
 #endif // SERVANT_DHT11
@@ -136,6 +132,12 @@ THREAD(main_loop, arg)
 #endif // SERVANT_BMP180
 
 #if SERVANT_NTEMP
+        if( temperatureRescanCnt <= 0 )
+        {
+            rescan_temperature();
+            temperatureRescanCnt = TEMPERATURE_RESCAN_SEC;
+        }
+
         if( temperatureMeterCnt > 0 )
         {
 //            printf(".");
