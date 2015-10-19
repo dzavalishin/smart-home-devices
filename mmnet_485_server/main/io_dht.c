@@ -228,7 +228,8 @@ static void dht11_start(void)
     //reset port
     DHT_DDR |= (1<<DHT_INPUTPIN); //output
     DHT_PORT |= (1<<DHT_INPUTPIN); //high
-    _delay_ms(100);
+    //_delay_ms(100);
+    _delay_ms(250);
 
     //send request
     DHT_PORT &= ~(1<<DHT_INPUTPIN); //low
@@ -311,7 +312,7 @@ int8_t dht_getdata(int16_t *temperature, int16_t *humidity) {
     //_delay_us(70);
 #endif
 
-#if 1
+#if 0
     if(dht11_check_response()) return -1;
 #else
     //check start condition 1
