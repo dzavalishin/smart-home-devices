@@ -6,8 +6,6 @@
 - syslog does not work!
 
 
-- multichannel PWM does it wrong, 4 channels of 255 give different
-timings
 
 - flash FS
 
@@ -17,6 +15,7 @@ timings
 
 - timeout if no IO, set default values per port?
 
++- multichannel PWM does it wrong, 4 channels of 255 give different timings
 
 
 -- lua - not enough code flash
