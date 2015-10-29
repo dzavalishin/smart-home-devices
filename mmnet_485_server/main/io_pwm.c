@@ -243,6 +243,15 @@ void set_an(unsigned char port_num, unsigned char data)
 #endif
 }
 
+void
+pwm_set_default_output_state(void)
+{
+    uint8_t i;
+    for( i = 0; i < SERVANT_NPWM+1; i++ )
+    {
+        set_an( i, 0 );
+    }
+}
 
 #endif // SERVANT_NPWM > 0
 

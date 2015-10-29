@@ -13,6 +13,7 @@ void   		dio_write_port_bit( unsigned char port, unsigned char nBit, unsigned ch
 void    	dio_set_port_ouput_mask_bit( unsigned char port, unsigned char nBit, unsigned char value ); // 1 = output
 unsigned char   dio_get_port_ouput_mask_bit( unsigned char port, unsigned char nBit ); // 1 = output
 
+void            dio_set_default_output_state( void ); // Used on start and if communications are lost
 
 void set_half_duplex0( char val );
 void set_half_duplex1( char val );

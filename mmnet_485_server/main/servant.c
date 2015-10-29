@@ -24,6 +24,7 @@
 #include "io_dht.h"
 #include "io_dig.h"
 #include "io_adc.h"
+#include "io_pwm.h"
 #include "io_temp.h"
 #include "io_bmp180.h"
 
@@ -43,6 +44,13 @@ void each_second(HANDLE h, void *arg)
     second_counter++;
     temperatureMeterCnt++;
     dht11meterCnt++;
+
+    // Will become 0 right now, point to trigger connection lost action
+    if( network_activity == 1 )
+    {
+        dio_set_default_output_state();
+        pwm_set_default_output_state();
+    }
 
     if( network_activity > 0 )
         network_activity--;

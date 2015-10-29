@@ -19,6 +19,7 @@ extern unsigned char pwm[SERVANT_NPWM];
 extern unsigned char pwm_count;
 
 
-void set_an(unsigned char port_num, unsigned char data);
+void 	set_an(unsigned char port_num, unsigned char data);
 
+void    pwm_set_default_output_state(void);
 

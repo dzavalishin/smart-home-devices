@@ -112,11 +112,7 @@ void dio_init(void)
     // TODO fixme read DDR mask from EEPROM
 
     // Set port values BEFORE enabling DDE
-    PORTB = ee_cfg.start_b;
-    PORTD = ee_cfg.start_d;
-    PORTE = ee_cfg.start_e;
-    PORTF = ee_cfg.start_f;
-    PORTG = ee_cfg.start_g;
+    dio_set_default_output_state();
 
     DDRB = ee_cfg.ddr_b;
     DDRD = ee_cfg.ddr_d;
@@ -145,6 +141,17 @@ void dio_init(void)
 
     led_ddr_init(); // again - first time was in main
 }
+
+void
+dio_set_default_output_state( void ) // Used on start and if communications are lost
+{
+    PORTB = ee_cfg.start_b;
+    PORTD = ee_cfg.start_d;
+    PORTE = ee_cfg.start_e;
+    PORTF = ee_cfg.start_f;
+    PORTG = ee_cfg.start_g;
+}
+
 
 
 
