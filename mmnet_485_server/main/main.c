@@ -48,6 +48,8 @@
 #include "modbus_srv.h"
 #include <modbus.h>
 
+#include "map.h"
+
 
 #include "io_dig.h"
 #include "io_adc.h"
@@ -80,7 +82,12 @@ void each_second(HANDLE h, void *arg);
 
 
 
-
+dev_major *alldev[] =
+{
+    &io_dig,
+    &io_adc,
+    &io_pwm,
+};
 
 
 THREAD(long_init, __arg)

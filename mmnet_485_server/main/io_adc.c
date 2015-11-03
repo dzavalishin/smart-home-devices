@@ -37,7 +37,12 @@ unsigned volatile char current_ad_input = SERVANT_NADC-1;
 // ADC initialize
 void adc_init(void)
 {
-    if( !RT_IO_ENABLED(IO_ADC) ) return;
+    if( !RT_IO_ENABLED(IO_ADC) )
+        return;
+
+    if( init_subdev( &io_adc, SERVANT_NADC, "adc" ) )
+        return;
+
 
     ADCSRA = 0x00; //disable adc
     ADMUX = ADMUX_REFS; //0b11100000;
@@ -86,6 +91,28 @@ ISR(ADC_vect)
     //postProcessAdc(current_ad_input);
     adc_start();
 }
+
+// ----------------------------------------------------------------------
+// General IO definition
+// ----------------------------------------------------------------------
+
+
+dev_major io_adc =
+{
+    .name = "adc",
+
+    .init = adc_init,
+    .start = adc_start,
+    .stop = adc_stop,
+    .timer = 0,
+
+    .to_string = 0,
+    .from_string = 0,
+
+    .minor_count = SERVANT_NADC,
+    .subdev = 0,
+};
+
 
 // ----------------------------------------------------------------------
 // Postprocessing - called after each adc cycle

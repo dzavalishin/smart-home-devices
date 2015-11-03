@@ -1,4 +1,14 @@
+/**
+ *
+ * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ *
+ * Analogue inputs.
+ *
+**/
+
+
 #include "defs.h"
+#include "map.h"
 
 void adc_init(void);
 
@@ -14,4 +24,6 @@ void request_adc_data_send(unsigned char channel);
 
 // Keeps current ADC channel value
 extern unsigned volatile int adc_value[SERVANT_NADC];
+
+extern dev_major io_adc;
 

@@ -10,7 +10,7 @@ JTAG_CONF= -B 1000 -j /dev/com6
 
 include ../Makedefs
 
-SRCS =  main.c $(PROJ).c delay.c spi.c runtime_cfg.c util.c modbus.c 
+SRCS =  main.c $(PROJ).c delay.c spi.c runtime_cfg.c util.c modbus.c map.c
 SRCS += io_adc.c io_dig.c io_dht.c io_pwm.c io_temp.c io_bmp180.c
 SRCS += onewire.c ds18x20.c tunnel.c
 SRCS += $(WEBFILE) web_cgi.c web_cgi_os.c web_setup.c web.c web_status.c httpd.c lua.c syslog.c

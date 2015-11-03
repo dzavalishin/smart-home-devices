@@ -1,4 +1,14 @@
+/**
+ *
+ * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ *
+ * Digital I/O.
+ *
+**/
+
+
 #include "defs.h"
+#include "map.h"
 
 void 		dio_init(void);
 
@@ -22,6 +32,7 @@ void set_half_duplex1( char val );
 void add_exclusion_mask( unsigned char exclPos, unsigned char bitmask );
 #define add_exclusion_pin(p,b) add_exclusion_mask(p,_BV(b))
 
+extern dev_major io_dig;
 
 
 //end
