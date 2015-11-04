@@ -10,6 +10,8 @@
 #include "util.h"
 #include "defs.h"
 
+#include "delay.h"
+
 
 #if ENABLE_SPI
 
@@ -41,9 +43,11 @@ void spi_init(void)
     // enable SPI Interrupt and SPI in Master Mode with SCK = CK/128
     SPCR  = /*(1<<SPIE)|*/ (1<<SPE)|(1<<MSTR)|_BV(SPR0)|_BV(SPR1);
 
-    // led driver needs low when idle
-    //        SPCR  |= (1<<CPOL);
-    SPCR  |= (1<<CPHA);
+    // This is for 595 shift register
+    SPCR  |= (1<<CPOL)|(1<<CPHA);
+
+    //SPCR  |= (1<<CPOL);
+    //SPCR  |= (1<<CPHA);
 
     IOReg   = SPSR;                 	// clear SPIF bit in SPSR
     IOReg   = SPDR;
@@ -74,20 +78,27 @@ unsigned char spi_send( unsigned char cmd1, unsigned char cmd2 )
     unsigned char out1, out2;
     if(spi_debug) printf("SPI send SS on...");
     ss_on();
-
-    //delay_us(10);
-    NutSleep(1);
+    delay_us(10);
+    //NutSleep(1);
 
     if(spi_debug) printf(" Xfer1...");
     out1 = spi_transfer(cmd1);
     if(spi_debug) printf(" = 0x%02X, Xfer2...", out1);
     out2 = spi_transfer(cmd2);
 
-    //delay_us(10);
-    NutSleep(1);
+    delay_us(10);
+    //NutSleep(1);
 
     if(spi_debug) printf(" = 0x%02X, SS off...", out2);
+
+    //ss_on();
+    //delay_us(100);
+
     ss_off();
+
+    //delay_us(100);
+    //ss_on();
+
     if(spi_debug) printf(" done\n");
     return out2;
 }

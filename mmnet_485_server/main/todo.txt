@@ -1,3 +1,6 @@
++ debug log on/off in config
+
+- timeout if no IO, set default values per port?
 
 - multibus + man single bus - bus number problem
 
@@ -13,7 +16,6 @@
 
 
 
-- timeout if no IO, set default values per port?
 
 +- multichannel PWM does it wrong, 4 channels of 255 give different timings
 

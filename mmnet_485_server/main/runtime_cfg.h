@@ -84,6 +84,8 @@ struct eeprom_cfg
 #define IO_1W1           (1<<6)         // 1Wire on default 1-line bus
 #define IO_1W8           (1<<7)         // 1Wire in multichannel mode
 
+#define IO_LOG           (1<<8)         // Serial logging on UART 1
+
 #define RT_IO_ENABLED(__WHAT_) ((ee_cfg.io_enable & (__WHAT_)) != 0 )
 #define RT_IO_RESET(__WHAT_) ((ee_cfg.io_enable &= ~(__WHAT_)))
 #define RT_IO_SET(__WHAT_) ((ee_cfg.io_enable |= (__WHAT_)))

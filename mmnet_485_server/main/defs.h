@@ -68,7 +68,7 @@
 #define ENABLE_TWI SERVANT_BMP180
 
 // Unused
-#define ENABLE_SPI 0
+#define ENABLE_SPI 1
 #define PB_SS_PIN (_BV(PB0))
 
 

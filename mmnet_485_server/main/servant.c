@@ -65,6 +65,19 @@ void each_second(HANDLE h, void *arg)
     else
         FAIL_LED_OFF;
 
+#if ENABLE_SPI && 0
+        static char a = 0xEF, b = 0x01;
+        {
+            a += 1;
+            b += 2;
+
+            //spi_send( a, b );
+
+            test_spi();
+
+            //NutSleep(1000); // remove
+        }
+#endif
 
 }
 
@@ -78,18 +91,21 @@ THREAD(main_loop, arg)
 {
     static uint16_t modbus_event_cnt_prev = 0;
     char had_io = 0;
+    char count = 0;
 
     for (;;)
     {
         had_io = 0; // TODO http requests must do too
 
+        if( had_io || network_activity || ( (count & 3) == 0 ) )
+            LED_ON;
 
-        LED_OFF; // at least 10 msec of LED off
         NutSleep(10);
-        LED_ON;
+
 
         // Give other threads some chance to work
         NutSleep(90);
+        LED_OFF; // at least 10 msec of LED off
 
         //NutEventWait(&sendOutEvent, 100); // Once in 100 msec try sending anyway
 
@@ -101,8 +117,7 @@ THREAD(main_loop, arg)
             notice_activity();
         }
 
-        if(!had_io )
-            LED_OFF;
+        //if(!had_io )            LED_OFF;
 
 
 
@@ -148,6 +163,19 @@ THREAD(main_loop, arg)
 
         if( temperatureMeterCnt > 0 )
         {
+#if ENABLE_SPI
+            {
+                //test_spi();
+                //spi_send( 0x55, 0xAA );
+                static char a = 0xEF, b = 0x01;
+
+                a += 2;
+                b += 1;
+
+            //spi_send( a, b );
+                spi_send( a, b );
+            }
+#endif
 //            printf(".");
             temp_meter_measure();
             temperatureMeterCnt = 0; // Can lead to less than sec delay to next call. Ignore?

@@ -17,6 +17,7 @@
 #include <dev/debug.h>
 #include <dev/urom.h>
 #include <dev/twif.h>
+#include <dev/null.h>
 
 #include <sys/nutconfig.h>
 #include <sys/version.h>
@@ -57,6 +58,8 @@
 #include "io_temp.h"
 #include "io_bmp180.h"
 
+#include "spi.h"
+
 #include "onewire.h"
 
 // NB - contains var def and init
@@ -84,7 +87,7 @@ void each_second(HANDLE h, void *arg);
 
 dev_major *alldev[] =
 {
-    &io_dig,
+//    &io_dig,
     &io_adc,
     &io_pwm,
 };
@@ -161,30 +164,36 @@ int main(void)
     //set_half_duplex1(1);
 
     // Initialize the uart device.
+    if( RT_IO_ENABLED(IO_LOG) )
+    {
 #if 1
 #if !SERVANT_TUN1
-    NutRegisterDevice(&devDebug1, 0, 0); // USB
-    freopen("uart1", "w", stdout);
+        NutRegisterDevice(&devDebug1, 0, 0); // USB
+        freopen("uart1", "w", stdout);
 #endif
 #else
 #if !SERVANT_TUN0
-    NutRegisterDevice(&devDebug0, 0, 0); // RS232
-    freopen("uart0", "w", stdout);
+        NutRegisterDevice(&devDebug0, 0, 0); // RS232
+        freopen("uart0", "w", stdout);
 #endif
 #endif
 
-    _ioctl(_fileno(stdout), UART_SETSPEED, &ee_cfg.dbg_baud);
-    NutSleep(50);
-    printf("\n\nController %s, Nut/OS %s, build from %s\n", DEVICE_NAME, NutVersionString(), makeDate );
-
+        _ioctl(_fileno(stdout), UART_SETSPEED, &ee_cfg.dbg_baud);
+        NutSleep(50);
+        printf("\n\nController %s, Nut/OS %s, build from %s\n", DEVICE_NAME, NutVersionString(), makeDate );
 
 #if 0 || defined(NUTDEBUG)
-    NutTraceTcp(stdout, 0);
-    NutTraceOs(stdout, 0);
-    NutTraceHeap(stdout, 0);
-    NutTracePPP(stdout, 0);
+        NutTraceTcp(stdout, 0);
+        NutTraceOs(stdout, 0);
+        NutTraceHeap(stdout, 0);
+        NutTracePPP(stdout, 0);
 #endif
-
+    }
+    else
+    {
+        NutRegisterDevice(&devNull, 0, 0);
+        freopen("null", "w", stdout);
+    }
     // We need it here because we use 1-wire 2401 serial as MAC address
     init_devices();
     led_ddr_init(); // Before using LED!
@@ -473,7 +482,7 @@ void init_devices(void)
 #if ENABLE_SPI
     spi_init();
     //printf("SPI = 0x%02X\n", spi_send( 0x80, 0 )); // read reg 0, whoami
-
+/*
     spi_send( 0x01, 0xFF );
     spi_send( 0x07, 0xAA );
 
@@ -482,7 +491,8 @@ void init_devices(void)
 
     spi_send( 0xFF, 0x55 );
     spi_send( 0xEE, 0x0A );
-
+*/
+    //test_spi();
 #endif
 
     //set_half_duplex0(1);
@@ -508,8 +518,70 @@ void init_devices(void)
 
 }
 
+#if 0
+
+#define NMAJOR ( sizeof(devices) / sizeof(dev_major) ) )
+
+void init_regular_devices(void)
+{
+    dev_major *	dev;
+    uint8_t	i;
 
 
+    // Init
+    for( i = 0; i < NMAJOR; i++ )
+    {
+        dev = devices+i;
+
+        dev->init( dev );
+    }
+
+    // Start
+    for( i = 0; i < NMAJOR; i++ )
+    {
+        dev = devices+i;
+
+        dev->started = ! dev->start( dev );
+
+    }
+
+}
+
+void timer_regular_devices(void)
+{
+    dev_major *	dev;
+    uint8_t	i;
+
+    for( i = 0; i < NMAJOR; i++ )
+    {
+        dev = devices+i;
+
+        if( dev->started )
+            dev->timer( dev );
+    }
+
+}
+
+// TODO call on manual reboot
+void stop_regular_devices(void)
+{
+    dev_major *	dev;
+    uint8_t	i;
+
+    for( i = 0; i < NMAJOR; i++ )
+    {
+        dev = devices+i;
+
+        if( dev->started )
+            dev->stop( dev );
+
+        dev->started = 0;
+    }
+
+}
+
+
+#endif
 
 
 
