@@ -60,7 +60,7 @@ void dio_init(void)
     add_exclusion_pin( DATAFLASH_EXCLPOS, DATAFLASH_MISO_PIN );
     add_exclusion_pin( DATAFLASH_EXCLPOS, DATAFLASH_CS_PIN );
 
-    add_exclusion_pin( OW_EXCLPOS, OW_PIN );
+    add_exclusion_pin( OW_EXCLPOS, OW_DEFAULT_PIN ); // TODO exclude multibus pins too!
 
 #if ENABLE_TWI
     add_exclusion_pin( TWI_EXCLPOS, TWI_SDA );

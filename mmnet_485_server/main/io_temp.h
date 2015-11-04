@@ -26,6 +26,11 @@ extern uint8_t nTempSensors;
 
 extern uint8_t  gTempSensorIDs[SERVANT_NTEMP][OW_ROMCODE_SIZE];
 extern uint16_t currTemperature[SERVANT_NTEMP];
+
+#if !OW_ONE_BUS
+extern uint8_t 	gTempSensorBus[SERVANT_NTEMP]; // Which bus this sensor lives on
+#endif
+
 #endif
 
 

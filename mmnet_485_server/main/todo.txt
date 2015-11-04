@@ -1,4 +1,3 @@
-+ debug log on/off in config
 
 - timeout if no IO, set default values per port?
 
@@ -27,6 +26,7 @@
 +- rescan 1w once a min?
 
 
++ debug log on/off in config
 + fail led - untested
 + count bytes via tunnel, rx/tx
 + direct (no conversion) TCP/RS485 tunnel

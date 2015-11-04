@@ -255,20 +255,24 @@ pwm_set_default_output_state(void)
 
 #endif // SERVANT_NPWM > 0
 
+static void pwm_init_dev( dev_major* d ) { (void) d; timer1_init(); }
+static void pwm_start_dev( dev_major* d ) { (void) d; timer1_start(); }
+//static void pwd_stop_dev( dev_major* d ) { (void) d;  } // TODO
+
 
 dev_major io_pwm =
 {
     .name = "pwm",
 
-    .init = timer1_init,
-    .start = timer1_start,
+    .init = pwm_init_dev,
+    .start = pwm_start_dev,
     .stop = 0, // TODO
     .timer = 0,
 
     .to_string = 0,
     .from_string = 0,
 
-    .minor_count = SERVANT_NADC,
+    .minor_count = SERVANT_NPWM,
     .subdev = 0,
 };
 

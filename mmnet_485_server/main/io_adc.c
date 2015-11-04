@@ -96,14 +96,17 @@ ISR(ADC_vect)
 // General IO definition
 // ----------------------------------------------------------------------
 
+static void adc_init_dev( dev_major* d ) { (void) d; adc_init(); }
+static void adc_start_dev( dev_major* d ) { (void) d; adc_start(); }
+static void adc_stop_dev( dev_major* d ) { (void) d; adc_stop(); }
 
 dev_major io_adc =
 {
     .name = "adc",
 
-    .init = adc_init,
-    .start = adc_start,
-    .stop = adc_stop,
+    .init = adc_init_dev,
+    .start = adc_start_dev,
+    .stop = adc_stop_dev,
     .timer = 0,
 
     .to_string = 0,

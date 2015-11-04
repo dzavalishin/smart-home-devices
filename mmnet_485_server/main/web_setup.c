@@ -14,6 +14,8 @@
 
 #include "web.h"
 
+#include "io_temp.h"
+
 
 const unsigned char *enableBitNames = (unsigned char *)"\1ADC analogue inputs\2PWM analogue outputs\3DHT11 humidity sensor\4BMP180 pressure sensor\5TUN0 TCP-485 tunnel\6TUN1 TCP-485 tunnel\7B1W1 - single bus 1Wire\10B1W8 - multibus 1Wire\11Serial debug (UART1)";
 
@@ -282,17 +284,21 @@ int ShowForm(FILE * stream, REQUEST * req)
             uint8_t *id = ee_cfg.ow_map[i].id;
             int perm_index = ee_cfg.ow_map[i].index;
             int cur_index = ow_id_map[perm_index];
-
+            int8_t bus = -1;
+#if !OW_ONE_BUS
+            if( cur_index >= SERVANT_NTEMP ) cur_index = -1;
+            bus = (cur_index < 0) ? -1 : gTempSensorBus[cur_index];
+#endif
             if( (perm_index < 0) || (perm_index >= MAX_OW_MAP ) )
             {
                 perm_index = cur_index = -1;
             }
 
 
-            sprintf( text, "%02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X (@%d)",
+            sprintf( text, "%02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X (@%d bus%d)",
                      id[0], id[1], id[2], id[3],
                      id[4], id[5], id[6], id[7],
-                     cur_index
+                     cur_index, bus
                    );
 
 

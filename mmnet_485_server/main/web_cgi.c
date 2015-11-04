@@ -123,8 +123,8 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
         if ( id == DS18S20_ID ) name = "18S";
         if ( id == DS18B20_ID ) name = "18B";
 
-        static prog_char tfmt[] = "<TR><TD> Temp </TD><TD> %u (%s) </TD><TD> %s &deg;C(0x%04X) </TD></TR>\r\n";
-        fprintf_P(stream, tfmt,  row_no, name, temptoa(currTemperature[row_no],buf) , currTemperature[row_no] );
+        static prog_char tfmt[] = "<TR><TD> Temp </TD><TD> %u (%s) </TD><TD> %s &deg;C (0x%04X) @bus %d </TD></TR>\r\n";
+        fprintf_P(stream, tfmt,  row_no, name, temptoa(currTemperature[row_no],buf) , currTemperature[row_no], gTempSensorBus[row_no] );
 
         return 1;
     }

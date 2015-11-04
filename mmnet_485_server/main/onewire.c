@@ -10,6 +10,7 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <inttypes.h>
 
 #include "defs.h"
 
@@ -22,7 +23,7 @@
 //#define delay_us _delay_us
 #define _delay_us delay_us
 
-#ifdef OW_ONE_BUS
+#if OW_ONE_BUS
 
 #define OW_GET_IN()   ( OW_IN & (1<<OW_PIN))
 #define OW_OUT_LOW()  ( OW_OUT &= (~(1 << OW_PIN)) )
@@ -66,11 +67,11 @@ void ow_set_bus(volatile uint8_t* in,
                 uint8_t pin)
 {
 #if B1W_NON_FIXED_PORT
-     OW_DDR=ddr;
-     OW_OUT=out;
-     OW_IN=in;
+     OW_DDR	= ddr;
+     OW_OUT	= out;
+     OW_IN	= in;
 #endif
-    OW_PIN_MASK=(1<<pin);
+    OW_PIN_MASK = (1<<pin);
     ow_reset();
 }
 

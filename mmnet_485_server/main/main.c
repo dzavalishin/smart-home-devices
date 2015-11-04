@@ -108,9 +108,9 @@ THREAD(long_init, __arg)
         init_syslog();
 #endif
 
-//#if SERVANT_TUN0 || SERVANT_TUN1
+#if SERVANT_TUN0 || SERVANT_TUN1
         init_tunnels();
-//#endif
+#endif
 
 #if SERVANT_LUA
         lua_init();
@@ -166,7 +166,7 @@ int main(void)
     // Initialize the uart device.
     if( RT_IO_ENABLED(IO_LOG) )
     {
-#if 1
+#if 1 // must be 1
 #if !SERVANT_TUN1
         NutRegisterDevice(&devDebug1, 0, 0); // USB
         freopen("uart1", "w", stdout);
@@ -194,6 +194,7 @@ int main(void)
         NutRegisterDevice(&devNull, 0, 0);
         freopen("null", "w", stdout);
     }
+
     // We need it here because we use 1-wire 2401 serial as MAC address
     init_devices();
     led_ddr_init(); // Before using LED!

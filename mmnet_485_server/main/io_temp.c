@@ -6,7 +6,10 @@
  *
 **/
 
+#define DEBUG 0
+
 #include "defs.h"
+#include "servant.h"
 #include "runtime_cfg.h"
 
 #include <inttypes.h>
@@ -23,7 +26,7 @@
 
 
 
-#define debug_puts(c)
+//#define debug_puts(c)
 
 
 #if SERVANT_1WMAC
@@ -34,7 +37,7 @@ uint8_t 	serialNumber [OW_ROMCODE_SIZE];
 uint8_t 	nTempSensors = 0;
 
 uint8_t 	gTempSensorIDs[SERVANT_NTEMP][OW_ROMCODE_SIZE];
-#ifndef OW_ONE_BUS
+#if !OW_ONE_BUS
 uint8_t 	gTempSensorBus[SERVANT_NTEMP]; // Which bus this sensor lives on
 #endif
 //uint8_t 	gTempSensorLogicalNumber[SERVANT_NTEMP]; // Report sensor with this logical number
@@ -43,7 +46,7 @@ uint16_t 	currTemperature[SERVANT_NTEMP];
 
 uint16_t 	ow_error_cnt; // 1wire error counter
 
-#ifndef OW_ONE_BUS
+#if !OW_ONE_BUS
 uint8_t 	ow_bus_error_cnt[N_1W_BUS]; // 1wire error counter per bus
 #endif
 
@@ -54,6 +57,10 @@ uint8_t 	ow_bus_error_cnt[N_1W_BUS]; // 1wire error counter per bus
 
 void count_1w_bus_error( uint8_t bus );
 static void clear_temperature_data(void);
+static void select_1w_bus( uint8_t bus );
+
+
+
 
 
 void init_temperature(void)
@@ -66,19 +73,21 @@ void init_temperature(void)
         return;
 #if B1W_NON_FIXED_PORT
 
-#ifndef OW_ONE_BUS
-    ow_set_bus(&PING,&PORTG,&DDRG,OW_PIN);
-#endif
-    //uint8_t sc =
-    search_sensors(0); // todo wrong bus no!
+    // Bus 0 - usual PG4 bus, 1-7 - buses on PB
 
-#ifndef OW_ONE_BUS
+#if OW_ONE_BUS
+    //uint8_t sc =
+    search_sensors(0);
+#else
     uint8_t bus;
     for( bus = 0; bus < N_1W_BUS; bus++ )
     {
-        ow_set_bus(&PINB,&PORTB,&DDRB,PB0+bus);
+        select_1w_bus( bus );
         //uint8_t sc =
         search_sensors(bus);
+
+        if( !RT_IO_ENABLED(IO_1W8) )
+            break;
     }
 #endif
 
@@ -89,8 +98,8 @@ void init_temperature(void)
     uint8_t bus;
     for( bus = 0; bus < N_1W_BUS; bus++ )
     {
-#ifndef OW_ONE_BUS
-        ow_set_bus(&PINB,&PORTB,&DDRB,PB0+bus);
+#if !OW_ONE_BUS
+        ow_set_bus(&PIND,&PORTD,&DDRD,PD0+bus);
 #endif
         //uint8_t sc =
         search_sensors(bus);
@@ -119,8 +128,8 @@ uint8_t search_sensors(uint8_t currBus)
     uint8_t id[OW_ROMCODE_SIZE];
     uint8_t diff;
 
-    debug_puts( "?" );
-    //	debug_puts( "Scan for DS18X20\n" );
+    DPUTS( "?" );
+    //	DPUTS( "Scan for DS18X20\n" );
 
     for( diff = OW_SEARCH_FIRST;
          (diff != OW_LAST_DEVICE) && (nTempSensors < SERVANT_NTEMP) ; )
@@ -129,24 +138,24 @@ uint8_t search_sensors(uint8_t currBus)
 
         if( diff == OW_PRESENCE_ERR )
         {
-            //			debug_puts( "No Sensor\n" );
-            debug_puts( "-" );
+            //			DPUTS( "No Sensor\n" );
+            DPUTS( "-" );
             break;
         }
 
         if( diff == OW_DATA_ERR )
         {
             REPORT_ERROR(ERR_FLAG_1WIRE_SCAN_FAULT);
-            //			debug_puts( "Bus Error\n" );
-            debug_puts( "B" );
+            //			DPUTS( "Bus Error\n" );
+            DPUTS( "B" );
             //ow_error_cnt++;
             //ow_bus_error_cnt[currBus];
             count_1w_bus_error( currBus );
             break;
         }
 
-        //		debug_puts( "OK! got some!\n" );
-        debug_puts( "+" );
+        //		DPUTS( "OK! got some!\n" );
+        DPUTS( "+" );
 
         onewire_available = 1;
 
@@ -161,7 +170,7 @@ uint8_t search_sensors(uint8_t currBus)
 #if SERVANT_NTEMP > 0
             ow_copy_rom( gTempSensorIDs[nTempSensors], id );
             ow_map_add_found(id, nTempSensors); // make map of permanent index to runtime array pos
-#ifndef OW_ONE_BUS
+#if !OW_ONE_BUS
             gTempSensorBus[nTempSensors] = currBus;
 #endif
 #endif
@@ -256,9 +265,7 @@ static void request_temperature_measurement(void)
 
     for( bus = 0; bus < N_1W_BUS; bus++ )
     {
-#ifndef OW_ONE_BUS
-        ow_set_bus(&PINB,&PORTB,&DDRB,PB0+bus);
-#endif
+        select_1w_bus( bus );
         // if( DS18X20_start_meas( DS18X20_POWER_PARASITE, NULL ) != DS18X20_OK)
         if( DS18X20_start_meas( DS18X20_POWER_EXTERN, NULL ) != DS18X20_OK)
         {
@@ -294,9 +301,13 @@ void read_temperature_data(void)
             continue;
         }
         */
+#if !OW_ONE_BUS
+        if( (!RT_IO_ENABLED(IO_1W8)) && (gTempSensorBus[i] != 0) )
+            continue;
 
-#ifndef OW_ONE_BUS
-        ow_set_bus(&PINB,&PORTB,&DDRB,PB0+gTempSensorBus[i]);
+
+        select_1w_bus( gTempSensorBus[i] );
+        //ow_set_bus(&PINB,&PORTB,&DDRB,PB0+gTempSensorBus[i]);
 #endif
 
         if( DS18X20_read_meas_word(&gTempSensorIDs[i][0], &out) != DS18X20_OK )
@@ -319,13 +330,42 @@ void read_temperature_data(void)
 void count_1w_bus_error( uint8_t bus )
 {
     ow_error_cnt++;
-#ifndef OW_ONE_BUS
+#if !OW_ONE_BUS
+    char s[] = "err bus _\n";
+    s[8] = '0' + bus;
+    DPUTS( s );
+
     if( bus < N_1W_BUS )
         ow_bus_error_cnt[bus]++;
 #endif
     //led1_timed( 110 );
     //led2_timed( 110 );
 }
+
+
+#if B1W_NON_FIXED_PORT
+static void select_1w_bus( uint8_t bus )
+{
+#if !OW_ONE_BUS
+    char s[] = "sel bus _\n";
+    s[8] = '0' + bus;
+    DPUTS( s );
+
+    if( bus == 0 )
+        ow_set_bus(&PING,&PORTG,&DDRG,OW_DEFAULT_PIN);
+    else
+        ow_set_bus(&PIND,&PORTD,&DDRD,PD0+bus+1); // bus starts from 1, pin from 2
+#endif
+}
+#else
+static void select_1w_bus( uint8_t bus ) // unused?
+{
+#if !OW_ONE_BUS
+    ow_set_bus(&PIND,&PORTD,&DDRD,PD0+bus);
+#endif
+}
+#endif
+
 
 
 #endif // SERVANT_NTEMP > 0

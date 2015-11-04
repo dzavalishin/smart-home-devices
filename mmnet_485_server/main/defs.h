@@ -39,14 +39,14 @@
 
 #define SERVANT_NFREQ 	0
 
-#define SERVANT_NTEMP   8       // 1-Wire temperature sensors
+#define SERVANT_NTEMP   16       // 1-Wire temperature sensors
 #define SERVANT_1WMAC   1       // Attempt to get MAC address from 1-wire 2401 chip
-#define OW_ONE_BUS      1
+#define OW_ONE_BUS      0       // 1 - have just one 1w bus, 0 - have 7: one on PG4 as usual, 6 on PD2-7
 
 // TCP to serial tunnels, incomplete, do not work
 
 // RS232 on dev board
-#define SERVANT_TUN0        1
+#define SERVANT_TUN0        1 // must be 1
 // USB serial on dev board
 #define SERVANT_TUN1        0
 
@@ -80,10 +80,11 @@
 //#define OW_PIN  PB0
 //#endif
 
-#ifdef OW_ONE_BUS
-#	define N_1W_BUS 1
+#if OW_ONE_BUS
+//#	define N_1W_BUS 1
+#	undef N_1W_BUS
 #else
-#	define N_1W_BUS 8
+#	define N_1W_BUS 7
 #endif
 
 #define B1W_NON_FIXED_PORT 1
@@ -139,12 +140,15 @@
 
 // OneWire - TODO port is hardcoded! def below is unused
 #define OW_EXCLPOS  6 // Port G
-#define OW_PIN  PG4 // TSC1
-#define OW_IN   PING
-#define OW_OUT  PORTG
-#define OW_DDR  DDRG
-#define OW_CONF_DELAYOFFSET 0
+#   define OW_DEFAULT_PIN  PG4 // TSC1
 
+#if !B1W_NON_FIXED_PORT
+#   define OW_PIN  OW_DEFAULT_PIN
+#   define OW_IN   PING
+#   define OW_OUT  PORTG
+#   define OW_DDR  DDRG
+#   define OW_CONF_DELAYOFFSET 0
+#endif
 
 // DHT11/22 port
 #define DHT_EXCLPOS  1 // Port B
