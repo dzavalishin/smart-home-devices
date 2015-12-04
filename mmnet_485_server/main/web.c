@@ -64,7 +64,7 @@ ShowTableCgi(FILE * stream, REQUEST * req, prog_char *header, table_print_func_t
     }
 
     HTML("</TABLE>");
-    HTML("<hr><br><a href=\"/\">Main page</a>");
+    //HTML("<hr><br><a href=\"/\">Main page</a>");
     HTML("</BODY></HTML>");
 
     fflush(stream);

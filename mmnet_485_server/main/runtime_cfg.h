@@ -104,5 +104,7 @@ int     runtime_cfg_eeprom_read(void);
 int     runtime_cfg_eeprom_write(void);
 
 void 	ow_map_add_found(uint8_t id[OW_ROMCODE_SIZE], int index);
+void	ow_map_clear( void );
+
 
 #endif /*RUNTIME_CFG_H_*/

@@ -164,6 +164,14 @@ int ShowForm(FILE * stream, REQUEST * req)
                     init_runtime_cfg();         // Load defaults
                     HTML("<p>Done setting factory defaults</p>");
                 }
+
+                if( 0 == strcmp( pvalue, "owire" ) )
+                {
+                    ow_map_clear();         // Clear 1wire map
+                    HTML("<p>1Wire map reset</p>");
+                }
+
+                
             }
 
             if( 0 == strcmp( pname, "os" ))
@@ -284,7 +292,7 @@ int ShowForm(FILE * stream, REQUEST * req)
             uint8_t *id = ee_cfg.ow_map[i].id;
             int perm_index = ee_cfg.ow_map[i].index;
             int cur_index = ow_id_map[perm_index];
-            int8_t bus = -1;
+            int8_t bus = 0;
 #if !OW_ONE_BUS
             if( cur_index >= SERVANT_NTEMP ) cur_index = -1;
             bus = (cur_index < 0) ? -1 : gTempSensorBus[cur_index];
@@ -295,7 +303,7 @@ int ShowForm(FILE * stream, REQUEST * req)
             }
 
 
-            sprintf( text, "%02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X (@%d bus%d)",
+            sprintf( text, "%02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X (@%d B%d)",
                      id[0], id[1], id[2], id[3],
                      id[4], id[5], id[6], id[7],
                      cur_index, bus
@@ -326,6 +334,7 @@ int ShowForm(FILE * stream, REQUEST * req)
         HTML("<a href=\"/cgi-bin/form.cgi?eeprom=save\"><button>Save to EEPROM</button></a> ");
     HTML("<a href=\"/cgi-bin/form.cgi?eeprom=load\"><button>Load from EEPROM</button></a> ");
     HTML("<a href=\"/cgi-bin/form.cgi?eeprom=init\"><button>Load factory defaults</button></a> ");
+    HTML("<a href=\"/cgi-bin/form.cgi?eeprom=owire\"><button>reset 1wire map</button></a> ");
     HTML("<a href=\"/cgi-bin/form.cgi?os=boot\"><button>Reboot</button></a> ");
     HTML("<p></p>");
 
@@ -350,7 +359,7 @@ static void subheader( FILE * stream, char *title )
 static void form_element( FILE * stream, char *title, char *field_name, char *curr_value )
 {
     static prog_char fmt[] =
-        "<tr> <TD height=\"22\" width=\"460\">&nbsp;%s:&nbsp;</TD> <TD height=\"22\" width=\"140\"><input type=\"text\" name=\"%s\" size=\"16\" value=\"%s\"></TD> </tr>";
+        "<tr> <TD height=\"22\" width=\"490\">&nbsp;%s:&nbsp;</TD> <TD height=\"22\" width=\"140\"><input type=\"text\" name=\"%s\" size=\"12\" value=\"%s\"></TD> </tr>";
 
     fprintf_P( stream, fmt, title, field_name, curr_value );
 }

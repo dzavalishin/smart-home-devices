@@ -164,3 +164,12 @@ new:
     }
 }
 
+
+void
+ow_map_clear( void )
+{
+    memset( ee_cfg.ow_map, 0, sizeof( ee_cfg.ow_map ) );
+}
+
+
+
