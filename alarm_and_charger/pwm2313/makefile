@@ -20,6 +20,19 @@ LIBS       =
 
 CC         = avr-gcc
 
+JTAG_CONF= -B 1000 -j /dev/com6
+
+
+#ISPFUSES    = avrdude -c $(ISPTOOL) -p m128 -P $(ISPPORT) $(ISPSPEED) -u -U efuse:w:0xff:m -U hfuse:w:0xc8:m -U lfuse:w:0xdf:m
+#ISPFLASH    = avrdude -c $(ISPTOOL) -p m128 -P $(ISPPORT) $(ISPSPEED) -V -U flash:w:$(PROGRAM)_$(PRODUCT)_$(BUILD).hex
+
+ISPFLASH    = avarice $(JTAG_CONF) -e -p -f $(PROGRAM).hex
+#ISPFUSES    = avarice $(JTAG_CONF) -W ff972f
+
+#debug::
+#	avarice -B 1000 -j /dev/com6 --ignore-intr :1234 &
+#	avr-gdb servant.elf
+
 
 # Override is only needed by avr-lib build system.
 
@@ -29,7 +42,7 @@ override LDFLAGS       = -Wl,-Map,$(PROGRAM).map,$(LDSECTION)
 OBJCOPY        = avr-objcopy
 OBJDUMP        = avr-objdump
 
-all: $(PROGRAM).elf lst text
+all: $(PROGRAM).elf #isp
 
 isp: $(PROGRAM).hex
 	$(ISPFUSES)
