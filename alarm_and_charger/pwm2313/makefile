@@ -42,7 +42,7 @@ override LDFLAGS       = -Wl,-Map,$(PROGRAM).map,$(LDSECTION)
 OBJCOPY        = avr-objcopy
 OBJDUMP        = avr-objdump
 
-all: $(PROGRAM).elf #isp
+all: $(PROGRAM).elf text #isp
 
 isp: $(PROGRAM).hex
 	$(ISPFUSES)

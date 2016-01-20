@@ -8,12 +8,26 @@
 
 uint8_t usart_pwm = 128; 
 
+static void set_usart_data(void)
+{
+	uint8_t reduced = usart_pwm >> 5; // We can do only 3 bit pwm with usart
+
+	uint8_t bits = 0xFF;
+	bits >>= 8 - reduced;
+
+	UDR = bits;		
+}
+
 void
 init_usart(void)
 {
+
+	//DDR_XCK - set sync master mode
+	DDRD |= _BV(PD2);
+
 #if 1
-	// Just maximum possible baud rate - supposed to be 0.5 mbps @8 MHz
-	UBRRL = 0; 
+	// About 20 KHz, if set higher it loads CPU too much
+	UBRRL = 40; 
 	UBRRH = 0;
 #else
 	// 0.5 mbps (*2?)
@@ -38,15 +52,13 @@ init_usart(void)
 	// Enable The receiver and transmitter
 	//UCSRB |= _BV(RXEN) | _BV(TXEN);
 	UCSRB |= _BV(TXEN);
+
+	set_usart_data();
 }
 
 
 ISR(USART_UDRE_vect) 
 {
-	uint8_t reduced = usart_pwm >> 5; // We can do only 3 bit pwm with usart
-
-	uint8_t bits = 0xFF;
-	bits >>= 8 - reduced;
-	UDR = bits;		
-
+	set_usart_data();
 }
+

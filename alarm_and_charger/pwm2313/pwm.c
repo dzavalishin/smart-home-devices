@@ -25,19 +25,23 @@ void init_pwm(void)
     DDRB |= (1 << PB3);
     DDRB |= (1 << PB4);
 
+    DDRD |= (1 << PD5);
+
     // set outputs to PWM
     TCCR0A |= (1 << COM0A1);
+    TCCR0A |= (1 << COM0B1);
+
     TCCR1A |= (1 << COM1A1);
     TCCR1A |= (1 << COM1B1);
 
     // initial PWM duty cycle
     OCR0A = 0;
     OCR1A = 0;
+    OCR0B = 0;
     OCR1B = 0;
 
     // overflow interrupt setup
-    //TIMSK |= (1 << TOIE0);
-    sei();
+    TIMSK |= (1 << TOIE0);
 }
 
 
@@ -47,11 +51,15 @@ ISR(TIMER0_OVF_vect)
 
     if (elapsed_cycles == 10000)
     {
-        red = rand() / (RAND_MAX / 0xff + 1);
-        green = rand() / (RAND_MAX / 0xff + 1);
-        blue = rand() / (RAND_MAX / 0xff + 1);
+        red			= rand() / (RAND_MAX / 0xff + 1);
+        green		= rand() / (RAND_MAX / 0xff + 1);
+        blue		= rand() / (RAND_MAX / 0xff + 1);
+
+		usart_pwm	= rand() / (RAND_MAX / 0xff + 1);
 
         elapsed_cycles = 0;
+
+		activity++;
     }
 
     OCR0A = red;

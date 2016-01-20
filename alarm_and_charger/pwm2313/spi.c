@@ -44,5 +44,7 @@ ISR(USI_OVERFLOW_vect)
     USISR = _BV(USIOIF);
      
     USIDR = ~res;   
+
+	activity++;
 }
 
