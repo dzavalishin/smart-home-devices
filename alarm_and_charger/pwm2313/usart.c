@@ -5,8 +5,11 @@
 
 #include "main.h"
 
+// sync gives higher speed?!
+#define SYNC_MODE 1
 
-uint8_t usart_pwm = 128; 
+
+volatile uint8_t usart_pwm = 128; 
 
 static void set_usart_data(void)
 {
@@ -21,13 +24,14 @@ static void set_usart_data(void)
 void
 init_usart(void)
 {
-
+#if SYNC_MODE
 	//DDR_XCK - set sync master mode
 	DDRD |= _BV(PD2);
+#endif
 
 #if 1
-	// About 20 KHz, if set higher it loads CPU too much
-	UBRRL = 40; 
+	// About 25 KHz, if set higher it loads CPU too much
+	UBRRL = 15; 
 	UBRRH = 0;
 #else
 	// 0.5 mbps (*2?)
@@ -37,9 +41,13 @@ init_usart(void)
 	UBRRL = ubrr_value & 255; 
 	UBRRH = ubrr_value >> 8;
 #endif
-	// Frame Format: __synchronous__, 8 data bits
-	UCSRC = _BV(UCSZ1) | _BV(UCSZ0) | _BV(UMSEL);
+	// Frame Format: 8 data bits
+	UCSRC = _BV(UCSZ1) | _BV(UCSZ0);
 	//if(stopbits == 2) UCSRC |= _BV(USBS);
+
+#if SYNC_MODE
+	UCSRC |= _BV(UMSEL);
+#endif
 
 	//if(x2) 
 	//UCSRA = _BV(U2X); // 2x - async only

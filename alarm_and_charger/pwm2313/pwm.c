@@ -8,7 +8,10 @@
 #include "main.h"
 
 volatile unsigned int elapsed_cycles = 0;
-volatile unsigned char red, green, blue;
+//volatile unsigned char red, green, blue;
+
+volatile uint8_t main_pwm[4] = { 0, 0, 0, 0 };
+
 
 void init_pwm(void)
 {
@@ -49,11 +52,12 @@ ISR(TIMER0_OVF_vect)
 {
     elapsed_cycles++;
 
-    if (elapsed_cycles == 10000)
+    if (elapsed_cycles == 20000)
     {
-        red			= rand() / (RAND_MAX / 0xff + 1);
-        green		= rand() / (RAND_MAX / 0xff + 1);
-        blue		= rand() / (RAND_MAX / 0xff + 1);
+        main_pwm[0]	= rand() / (RAND_MAX / 0xff + 1);
+        main_pwm[1]	= rand() / (RAND_MAX / 0xff + 1);
+        main_pwm[2]	= rand() / (RAND_MAX / 0xff + 1);
+        main_pwm[3]	= rand() / (RAND_MAX / 0xff + 1);
 
 		usart_pwm	= rand() / (RAND_MAX / 0xff + 1);
 
@@ -62,9 +66,11 @@ ISR(TIMER0_OVF_vect)
 		activity++;
     }
 
-    OCR0A = red;
-    OCR1A = green;
-    OCR1B = blue;
+    OCR0A = main_pwm[2];
+	OCR0B = main_pwm[3];
+
+    OCR1A = main_pwm[1];
+    OCR1B = main_pwm[0];
 }
 
 
