@@ -2,12 +2,21 @@
 #define MAIN_H
 
 void init_spi(void);
+void init_ss(void);
+
 void init_pwm(void);
 void init_usart(void);
 void init_eeprom(void);
 
 void eeprom_load(void);
 void eeprom_save(void);
+
+void init_encoders(void);
+void read_encoders(void);
+
+
+void timer10hz(void);
+
 
 
 

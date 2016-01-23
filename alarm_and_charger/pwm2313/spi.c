@@ -12,9 +12,9 @@ uint8_t	spi_count = 0; 	// SPI n bytes received
 uint8_t	spi_rx_enable = 0;	// SPI can receive bytes
 
 
-#define CTRL_PORT   DDRB
+#define DDR_PORT   DDRB
 #define DATA_PORT   PORTB
-#define SS_PIN      PB4
+//#define SS_PIN      PB4
 #define CLK_PIN     PB7
 #define DI_PIN      PB5
 #define DO_PIN      PB6
@@ -25,9 +25,13 @@ uint8_t	spi_rx_enable = 0;	// SPI can receive bytes
 void init_spi(void)
 {
     // DO pin is configured for output
-    CTRL_PORT |= _BV(DO_PIN);
+    DDR_PORT |= _BV(DO_PIN);
+
     // All other pins as input
-    CTRL_PORT &= ~_BV(DI_PIN) | ~_BV(CLK_PIN) | ~_BV(SS_PIN);
+    DDR_PORT &= ~_BV(DI_PIN);
+    DDR_PORT &= ~_BV(CLK_PIN);
+    //DDR_PORT &= ~_BV(SS_PIN);
+
     // I didn't think that I needed to set pull ups.
     //DATA_PORT |= _BV(DI_PIN) | _BV(CLK_PIN);
 

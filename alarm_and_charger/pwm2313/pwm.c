@@ -7,6 +7,9 @@
 
 #include "main.h"
 
+// test with random data
+#define SPI_RAND 0
+
 volatile unsigned int elapsed_cycles = 0;
 //volatile unsigned char red, green, blue;
 
@@ -48,13 +51,25 @@ void init_pwm(void)
 }
 
 
+#define HZ10COUNT 3125
+
+
+
 ISR(TIMER0_OVF_vect)
 {
+	static int hz10 = 0;
+
+	hz10++;
+
+	if( hz10 >= HZ10COUNT )
+		timer10hz();
+
+#if SPI_RAND
     elapsed_cycles++;
 
     if (elapsed_cycles == 20000)
     {
-        main_pwm[0]	= rand() / (RAND_MAX / 0xff + 1);
+//        main_pwm[0]	= rand() / (RAND_MAX / 0xff + 1);
         main_pwm[1]	= rand() / (RAND_MAX / 0xff + 1);
         main_pwm[2]	= rand() / (RAND_MAX / 0xff + 1);
         main_pwm[3]	= rand() / (RAND_MAX / 0xff + 1);
@@ -63,8 +78,9 @@ ISR(TIMER0_OVF_vect)
 
         elapsed_cycles = 0;
 
-		activity++;
+//		activity++;
     }
+#endif
 
     OCR0A = main_pwm[2];
 	OCR0B = main_pwm[3];
