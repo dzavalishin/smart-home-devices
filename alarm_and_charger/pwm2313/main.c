@@ -19,6 +19,10 @@ main(void)
 
 	turn_led_on();
 
+	init_eeprom();
+	eeprom_load();
+
+
 	init_spi();
 	init_pwm();
 	init_usart();

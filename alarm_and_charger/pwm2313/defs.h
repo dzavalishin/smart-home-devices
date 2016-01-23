@@ -4,6 +4,9 @@
 #define DEVICE_NAME "SPI-PWM-2313"
 
 
+#define SPI_BUF_SIZE 8
+
+
 /*
 #define HALF_DUPLEX 1
 

@@ -11,7 +11,7 @@ MCU_TARGET = attiny2313
 
 LDSECTION  = --section-start=.text=0x00000
 
-OBJ        = main.o util.o pwm.o spi.o usart.o
+OBJ        = main.o util.o pwm.o spi.o spi_ss.o usart.o encoder.o eeprom.o
 #inputs.o outputs.o
 OPTIMIZE   = -O2
 
@@ -93,6 +93,10 @@ util.o: *.h
 pwm.o: *.h
 
 spi.o: *.h
+ss_spi.o: *.h
 
 usart.o: *.h
 
+encoder.o: *.h
+
+eeprom.o: *.h
