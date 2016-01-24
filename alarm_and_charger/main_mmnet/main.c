@@ -66,6 +66,11 @@
 #include "makedate.h"
 
 
+#define DEBUG 1
+
+
+
+
 static int tryToFillMac(unsigned char *mac, unsigned char *oneWireId);
 
 
@@ -529,19 +534,24 @@ dev_major *devices[] =
 };
 
 uint8_t n_minor_total = 0;
+uint8_t n_major_total = 0;
 
-#define NMAJOR ( sizeof(devices) / sizeof(dev_major) )
+#define NMAJOR ( sizeof(devices) / sizeof(dev_major *) )
 
 void init_regular_devices(void)
 {
     dev_major *	dev;
     uint8_t	i;
 
+    printf("init_regular_devices(): %d majors in table\n", NMAJOR );
 
     // Init
     for( i = 0; i < NMAJOR; i++ )
     {
         dev = devices[i];
+
+        //DPUTS( "Init dev " ); DPUTS( dev->name );
+        printf("init_regular_devices(): init dev %s\n", dev->name );
 
         if( 0 == dev->init )
             continue;
@@ -558,13 +568,26 @@ void init_regular_devices(void)
     {
         dev = devices[i];
 
+        //DPUTS( "Start dev " ); DPUTS( dev->name );
+        printf("init_regular_devices(): start dev %s\n", dev->name );
+
         if( (0 == dev->init) || (0 == dev->start) )
             continue;
 
-        dev->started = ! dev->start( dev );
+        int8_t rc = dev->start( dev );
+
+        dev->started = !rc;
+
+        if( dev->started ) n_major_total++;
+        else
+        {
+            printf("init_regular_devices(): dev %s start failed, rc = %d\n", dev->name, rc );
+        }
     }
 
     n_minor_total = dev_count_devices( devices, NMAJOR );
+
+    printf("init_regular_devices(): %d majors started, %d minors total\n", n_major_total, n_minor_total );
 
 }
 

@@ -23,6 +23,7 @@
 
 #include "io_temp.h"
 
+#include "dev_map.h"
 
 static void printTime( FILE * stream, struct _tm *stm )
 {
@@ -162,8 +163,9 @@ static int CgiStatusRow( FILE * stream, int row_no )
             break;
         }
 
-    case 22: subhdr( stream, "DHT11" ); break;
-    case 23: ShowTableRow2i( stream, "Errors count", dht11_errorCnt );	break;
+    case 22: subhdr( stream, "DevMap" ); break;
+    case 23: ShowTableRow2i( stream, "Major dev count", n_major_total );	break;
+    case 24: ShowTableRow2i( stream, "Minor dev count", n_minor_total );	break;
         
 
     default:

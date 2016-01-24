@@ -75,6 +75,7 @@ int8_t      dev_uint16_to_string( struct dev_minor *sub, char *out, uint8_t out_
 
 
 
+extern uint8_t n_major_total;
 extern uint8_t n_minor_total;
 
 

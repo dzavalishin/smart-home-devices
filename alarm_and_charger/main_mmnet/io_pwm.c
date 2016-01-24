@@ -104,7 +104,7 @@ static int8_t      pwm_from_string( struct dev_minor *sub, char *)         			//
 static int8_t pwm_init_dev( dev_major* d )
 {
     uint8_t i;
-
+return;
     if( init_subdev( d, SERVANT_NADC, "pwm" ) )
         return -1;
 
