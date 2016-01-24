@@ -303,12 +303,19 @@ static int CgiOutputsRow( FILE * stream, int row_no )
 
     if( row_no  <  n_minor_total )
     {
+        static prog_char tfmt[] = "<TR><TD> %s </TD><TD>  </TD><TD> %s </TD></TR>\r\n";
+
         dev_minor *minor = dev_get_minor( row_no );
 
-        char *val = (minor->to_string) ? (minor->to_string( minor )) : "?";
+        char buf[32] = "?";
 
-        static prog_char tfmt[] = "<TR><TD> %s </TD><TD>  </TD><TD> %s </TD></TR>\r\n";
-        fprintf_P(stream, tfmt, minor->name, val );
+        if(minor->to_string)
+        {
+            //int8_t ret =
+            minor->to_string( minor, buf, sizeof(buf) );
+        }
+
+        fprintf_P(stream, tfmt, minor->name, buf );
         return 1;
     }
 

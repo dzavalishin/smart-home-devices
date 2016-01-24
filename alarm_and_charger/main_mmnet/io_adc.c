@@ -31,16 +31,33 @@ unsigned volatile char current_ad_input = SERVANT_NADC-1;
 #define ADMUX_REFS (_BV(REFS1)|_BV(REFS0))
 
 
-// ADC initialize
-static void adc_init( dev_major* d )
+static int8_t
+adc_to_string( struct dev_minor *sub, char *out, uint8_t out_size )
 {
-    (void) d;
+    return dev_uint16_to_string( sub, out, out_size, adc_value[ sub->number ] );
 
-    if( !RT_IO_ENABLED(IO_ADC) )
-        return;
+    //snprintf( out, out_size, "%d", adc_value[ sub->number ] );
+    //return 0;
+}
 
-    if( init_subdev( &io_adc, SERVANT_NADC, "adc" ) )
-        return;
+
+// ADC initialize
+static int8_t adc_init( dev_major* d )
+{
+    uint8_t i;
+
+    //if( !RT_IO_ENABLED(IO_ADC) )        return;
+
+    if( init_subdev( d, SERVANT_NADC, "adc" ) )
+        return -1;
+
+    for( i = 0; i < d->minor_count; i++ )
+    {
+        dev_minor *m = d->subdev + i;
+
+        m->to_string = adc_to_string;
+        //m->from_string = pwm_from_string;
+    }
 
 
     ADCSRA = 0x00; //disable adc
@@ -48,6 +65,8 @@ static void adc_init( dev_major* d )
 
     ACSR  = 0x80; // disable analog comparator
     ADCSRA = 0x7|_BV(ADEN); // enabled, PreScaler = 111
+
+    return 0;
 }
 
 

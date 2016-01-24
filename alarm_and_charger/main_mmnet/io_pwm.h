@@ -2,7 +2,7 @@
  *
  * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
  *
- * Software PWM.
+ * Hardware PWM.
  *
 **/
 

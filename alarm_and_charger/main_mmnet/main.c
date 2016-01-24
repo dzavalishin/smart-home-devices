@@ -546,7 +546,11 @@ void init_regular_devices(void)
         if( 0 == dev->init )
             continue;
 
-        dev->init( dev );
+        int8_t ret = dev->init( dev );
+
+        // Do not start if init failed
+        if( ret )
+            dev->start = 0;
     }
 
     // Start

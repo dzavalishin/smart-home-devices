@@ -140,3 +140,15 @@ uint8_t dev_count_devices( dev_major *devices[], uint8_t n_major )
 }
 
 
+
+int8_t
+dev_uint16_to_string( struct dev_minor *sub, char *out, uint8_t out_size, uint16_t val )
+{
+    snprintf( out, out_size, "%d", val );
+    return 0;
+}
+
+
+
+
+

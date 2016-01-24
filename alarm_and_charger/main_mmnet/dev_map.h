@@ -22,8 +22,8 @@ struct dev_minor
 
     struct dev_major *dev;
 
-    char *      (*to_string)( struct dev_minor *sub );
-    int16_t     (*from_string)( struct dev_minor *sub, char *);         // 0 - success
+    int8_t      (*to_string)( struct dev_minor *sub, char *out, uint8_t out_size );     // 0 - success
+    int8_t      (*from_string)( struct dev_minor *sub, char *);         		// 0 - success
 
     uint16_t    io_count;
     uint16_t    err_count;
@@ -36,13 +36,14 @@ struct dev_major
 {
     const char *name;
 
-    void        (*init)(struct dev_major *dev);     // Called on system init
+    int8_t      (*init)(struct dev_major *dev);     // Called on system init, returns 0 on success
     int8_t      (*start)(struct dev_major *dev);    // Called after all inits if dev is enabled, returns 0 on success
     void        (*stop)(struct dev_major *dev);     // Called if dev is disabled runtime
     void        (*timer)(struct dev_major *dev);    // Called once a second
 
-    char *      (*to_string)( struct dev_major *dev );
-    int16_t     (*from_string)( struct dev_major *dev, char *);         // 0 - success
+    //char *      (*to_string)( struct dev_major *dev );
+    int8_t      (*to_string)( struct dev_minor *sub, char *out, uint8_t out_size );     // 0 - success
+    int8_t      (*from_string)( struct dev_major *dev, char *);         		// 0 - success
 
     uint16_t    minor_count; // Number of sub-devices found
     struct dev_minor *subdev;
@@ -61,6 +62,11 @@ int8_t init_subdev( dev_major *dev, uint8_t n_minor, const char *name );
 uint8_t dev_count_devices( dev_major *devices[], uint8_t n_major );
 dev_minor *dev_get_minor( uint8_t n_minor ); // get minor by global index (counting through all the minors)
 
+// -----------------------------------------------------------------------
+// Helpers
+// -----------------------------------------------------------------------
+
+int8_t      dev_uint16_to_string( struct dev_minor *sub, char *out, uint8_t out_size, uint16_t val );
 
 
 // -----------------------------------------------------------------------
