@@ -47,30 +47,33 @@ static int CgiStatusRow( FILE * stream, int row_no )
     {
 
     case -1:
-        //HTML("<TR><TH> Type </TH><TH> Value </TH><TH> Comment </TH></TR>\r\n");    break;
-        //HTML("<TR><TH align=left> &nbsp; </TH><TH align=left> &nbsp; </TH></TR>\r\n");    break;
-        //HTML("<th colspan=\"2\" align=left>Time</th>"); break;
-        subhdr( stream, "Time" ); break;
+        if( sntp_available )
+            subhdr( stream, "Time (SNTP)" );
+        else
+            subhdr( stream, "Time" ); 
+        break;
 
     case 0:
         {
-            HTML("<TR><TD>&nbsp;GMT Time </TD><TD>&nbsp;");
+            HTML("<TR><TD>&nbsp;GMT/Local Time </TD><TD>&nbsp;");
             printTime( stream, gmtime(&secs) );
-            HTML(" </TD></TR>\r\n");
+            HTML("&nbsp;&nbsp;<b>");
+            printTime( stream, localtime(&secs) );
+            HTML("</b> </TD></TR>\r\n");
 
             //ShowTableRow3( stream, char *c1, char *c2, char *c3 );
 
         }
         break;
-
     case 1:
+/*
         {
             HTML("<TR><TD>&nbsp;Local Time </TD><TD>&nbsp;");
             printTime( stream, localtime(&secs) );
             HTML(" </TD></TR>\r\n");
         }
+*/
         break;
-
     case 2:
         {
             char minus = _timezone < 0;
@@ -103,7 +106,8 @@ static int CgiStatusRow( FILE * stream, int row_no )
         break;
 
     //case 4: ShowTableRow2b( stream, "DST", _daylight  );			break;
-    case 4: ShowTableRow2b( stream, "Used SNTP", sntp_available );		break;
+    //case 4: ShowTableRow2b( stream, "Used SNTP", sntp_available );		break;
+    case 4: break;
 
     //case 6: HTML("<th colspan=\"2\">FirmWare</th>"); break;
     case 5: subhdr( stream, "FirmWare" ); break;

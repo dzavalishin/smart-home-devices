@@ -121,39 +121,8 @@ THREAD(main_loop, arg)
 
 
 
-#if SERVANT_DHT11
-        if(dht11meterCnt > 0)
-        {
-            int8_t rc = dht_getdata( &dht_temperature, &dht_humidity );
 
-            if( rc )
-            {
-                dht11_errorCnt++;
-                if( dht11_errorCnt > 10 )
-                {
-                    dht11_errorCnt = 10; // no roll-over 255
-                    dht_temperature = ERROR_VALUE_16;
-                    dht_humidity = ERROR_VALUE_16;
-                }
-                dht11meterCnt -= 2; // Error? Redo in 2 sec
-            }
-            else
-            {
-                dht11_errorCnt = 0;
-                dht11meterCnt -= 6; // Ok? Once in 6 secs
-            }
-        }
-#endif // SERVANT_DHT11
-
-#if SERVANT_BMP180
-        if( bmp180_getdata() )
-        {
-            bmp180_temperature   = ERROR_VALUE_32;
-            bmp180_pressure      = ERROR_VALUE_32;
-            bmp180_pressure_mmHg = ERROR_VALUE_16;
-        }
-#endif // SERVANT_BMP180
-
+/*
 #if SERVANT_NTEMP
         if( temperatureRescanCnt <= 0 )
         {
@@ -163,25 +132,12 @@ THREAD(main_loop, arg)
 
         if( temperatureMeterCnt > 0 )
         {
-#if ENABLE_SPI
-            {
-                //test_spi();
-                //spi_send( 0x55, 0xAA );
-                static char a = 0xEF, b = 0x01;
-
-                a += 2;
-                b += 1;
-
-            //spi_send( a, b );
-                spi_send( a, b );
-            }
-#endif
 //            printf(".");
             temp_meter_measure();
             temperatureMeterCnt = 0; // Can lead to less than sec delay to next call. Ignore?
         }
 #endif
-
+*/
 
     }
 

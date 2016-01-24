@@ -52,7 +52,7 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
         fputs_P(th, stream);
         return 1;
     }
-
+/*
 #if SERVANT_NADC > 0
     if( row_no  < SERVANT_NADC )
     {
@@ -66,7 +66,8 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
 
     row_no -= SERVANT_NADC;
 #endif
-
+*/
+/*
 #if SERVANT_NFREQ > 0
     if( row_no  < SERVANT_NFREQ )
     {
@@ -182,7 +183,7 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
 
     row_no -= 2;
 #endif // SERVANT_DHT11
-
+*/
     return 0;
 }
 
@@ -308,20 +309,27 @@ static int CgiOutputsRow( FILE * stream, int row_no )
 
         dev_minor *minor = dev_get_minor( row_no );
 
-        char buf[32] = "?";
+        char buf[32] = "";
 
         if( minor->number == 0 )
         {
-            fprintf_P(stream, tfmt, minor->dev->name, "" );
+            dev_major* d = minor->dev;
+
+            if( d->to_string )
+                d->to_string( minor, buf, sizeof(buf) );
+
+            fprintf_P(stream, tfmt, d->name, buf );
         }
 
+        //buf[0] = '?';
+        //buf[1] = 0;
         if(minor->to_string)
         {
             //int8_t ret =
-            minor->to_string( minor, buf, sizeof(buf) );
+            uint8_t rc = minor->to_string( minor, buf, sizeof(buf) );
+            if(!rc) fprintf_P(stream, tfmt, minor->name, buf );
         }
 
-        fprintf_P(stream, tfmt, minor->name, buf );
         return 1;
     }
 

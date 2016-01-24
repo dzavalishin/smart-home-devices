@@ -100,13 +100,10 @@ THREAD(long_init, __arg)
 {
     while(1) // to satisfy no return
     {
-        // SNTP kills us :(
 #if ENABLE_SNTP
         init_sntp();
 #endif
 
-//        _timezone = -((long)ee_cfg.timezone) * 60L * 60L;
-//        _daylight = 0; // No DST in Russia now
 #if ENABLE_SYSLOG
         init_syslog();
 #endif
@@ -117,21 +114,6 @@ THREAD(long_init, __arg)
 
 #if SERVANT_LUA
         lua_init();
-#endif
-
-#if ENABLE_SPI && 0
-        char a = 0xEF, b = 0x01;
-        while( 1 )
-        {
-            a += 1;
-            b += 2;
-
-            spi_send( a, b );
-
-            test_spi();
-
-            NutSleep(1000); // remove
-        }
 #endif
 
         NutThreadExit();
@@ -152,8 +134,6 @@ THREAD(long_init, __arg)
 int main(void)
 {
 
-    //u_long baud = DEFAULT_BAUD;
-
     NutThreadSetSleepMode(SLEEP_MODE_IDLE); // Let the CPU sleep in idle
 
     // DO VERY EARLY!
@@ -163,8 +143,6 @@ int main(void)
     led_ddr_init(); // Before using LED!
     LED_ON;
 
-    //set_half_duplex0(0);
-    //set_half_duplex1(1);
 
     // Initialize the uart device.
     if( RT_IO_ENABLED(IO_LOG) )
@@ -200,10 +178,10 @@ int main(void)
 
     // We need it here because we use 1-wire 2401 serial as MAC address
     init_devices();
+    init_regular_devices(); // Before Net to have 1wire 2401 MAC address
+
     led_ddr_init(); // Before using LED!
     LED_ON;
-
-    init_regular_devices(); // Before Net to have 1wire 2401 MAC address
 
     init_net();
 
@@ -222,7 +200,6 @@ int main(void)
     printf("httpd ready\n");
 
 
-
     modbus_init( 9600, 1 ); // we don't need both parameters, actually
     NutThreadCreate( "ModBusTCP", ModbusService, (void *) 0, 640);
     NutThreadSetPriority(254);
@@ -234,7 +211,7 @@ int main(void)
     NutThreadCreate("MainLoop", main_loop, 0, 640);
 
     NutThreadExit();
-    //for(;;) ; // make compiler happy
+
     for (;;)
     {
         NutSleep(1000);
@@ -256,7 +233,6 @@ static void init_net(void)
         fail_led();
         return;
     }
-
 
 
     // TODO fixme
@@ -450,78 +426,25 @@ void init_devices(void)
 
 
     dio_init();
-//#if SERVANT_NADC > 0
-//    adc_init();
-//#endif
 
-
-//#if SERVANT_NPWM > 0
-//    timer1_init();
-//#endif
-
-
-#if SERVANT_NFREQ > 0
-    //freq_meter_init();
-    icp_init();
-#endif
 
     sei(); //re-enable interrupts
 
 
-#if SERVANT_NTEMP > 0
-    init_temperature();
-#endif
+//#if SERVANT_NTEMP > 0
+//    init_temperature();
+//#endif
 
 
-#if 0
-    DEBUG_PUTS("sending temperature from init... ");
-    temp_meter_sec_timer();
-    NutSleep(1000);
-    DEBUG_PUTS("sending temperature from init... ");
-    temp_meter_sec_timer();
-#endif
 
     set_half_duplex0(0);
     set_half_duplex1(0);
 
-#if ENABLE_SPI
-    spi_init();
-    //printf("SPI = 0x%02X\n", spi_send( 0x80, 0 )); // read reg 0, whoami
-/*
-    spi_send( 0x01, 0xFF );
-    spi_send( 0x07, 0xAA );
-
-    spi_send( 0x33, 0xFF );
-    spi_send( 0x77, 0xAA );
-
-    spi_send( 0xFF, 0x55 );
-    spi_send( 0xEE, 0x0A );
-*/
-    //test_spi();
-#endif
-
-    //set_half_duplex0(1);
-    //set_half_duplex1(1);
-
-#if SERVANT_BMP180
-    bmp180_calibration();
-#endif // SERVANT_BMP180
-
-    //all peripherals are now initialized
-
-//#if SERVANT_NADC > 0
-//    adc_start();
-//#endif
-
-//#if SERVANT_NPWM > 0
-//    timer1_start();
-//#endif
-
-
-
-
-
 }
+
+
+
+
 
 #if 1
 
@@ -531,6 +454,8 @@ dev_major *devices[] =
 //    &io_dig,
     &io_adc,
     &io_pwm,
+    &io_spi,
+    &io_temp,
 };
 
 uint8_t n_minor_total = 0;

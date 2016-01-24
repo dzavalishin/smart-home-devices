@@ -37,10 +37,31 @@ static uint8_t          pwm_val[SERVANT_NPWM];
 
 
 
+
+
+// TODO KILLME
+void set_an(unsigned char port_num, unsigned char data)
+{
+}
+
+
+// ----------------------------------------------------------------------
+// IO
+// ----------------------------------------------------------------------
+
+
 static inline void pwm_init_timer_0(void)
 {
     // fast PWM, non-inverting, max clock
-    TCCR0 = WGM00 | WGM01 | COM01 | CS00;
+    //CR0 = WGM00 | WGM01 | COM01 | CS00;
+
+    // TODO move OS clock to timer 3
+
+    // fast PWM, non-inverting, don't touch clock - network stack uses it, apparently
+    TCCR0 |= WGM00 | WGM01 | COM01;
+    TCCR0 &= COM00;
+
+    DDRB |= PB4;
 }
 
 static inline void pwm_set_pwm_0( uint8_t val )
@@ -52,6 +73,8 @@ static inline void pwm_init_timer_2(void)
 {
     // fast PWM, non-inverting, max clock
     TCCR2 = WGM20 | WGM21 | COM21 | CS20;
+
+    DDRB |= PB7;
 }
 
 
@@ -63,30 +86,9 @@ static inline void pwm_set_pwm_2( uint8_t val )
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// TODO KILLME
-void set_an(unsigned char port_num, unsigned char data)
-{
-}
-
+// ----------------------------------------------------------------------
+// Report status / set value
+// ----------------------------------------------------------------------
 
 static int8_t      pwm_to_string( struct dev_minor *sub, char *out, uint8_t out_size )   	// 0 - success
 {
@@ -94,18 +96,32 @@ static int8_t      pwm_to_string( struct dev_minor *sub, char *out, uint8_t out_
     return dev_uint16_to_string( sub, out, out_size, pwm_val[sub->number] );
 }
 
-/*
-static int8_t      pwm_from_string( struct dev_minor *sub, char *)         			// 0 - success
+
+static int8_t      pwm_from_string( struct dev_minor *sub, char *in)         			// 0 - success
 {
-    return -1;
+    int data = atoi(in);
+
+    uint16_t channel = sub->number;
+
+    if( channel >= SERVANT_NPWM )
+        return -1;
+
+     pwm_val[channel] = data;
+
+    return 0;
 }
-*/
+
+
+
+// ----------------------------------------------------------------------
+// Init/start
+// ----------------------------------------------------------------------
 
 static int8_t pwm_init_dev( dev_major* d )
 {
     uint8_t i;
-return;
-    if( init_subdev( d, SERVANT_NADC, "pwm" ) )
+//return -1;
+    if( init_subdev( d, SERVANT_NPWM, "pwm" ) )
         return -1;
 
     for( i = 0; i < d->minor_count; i++ )
@@ -113,8 +129,8 @@ return;
         dev_minor *m = d->subdev+i;
 
 
-        m->to_string = pwm_to_string;
-        //m->from_string = pwm_from_string;
+        m->to_string   = pwm_to_string;
+        m->from_string = pwm_from_string;
     }
 
     pwm_init_timer_0();
@@ -127,13 +143,29 @@ static int8_t pwm_start_dev( dev_major* d )
 {
     (void) d;
 
-    return -1;
+    //return -1;
+    return 0;
 }
 
 // TODO
 static void pwd_stop_dev( dev_major* d )
 {
     (void) d;
+
+}
+
+// ----------------------------------------------------------------------
+// Test
+// ----------------------------------------------------------------------
+
+static void pwm_test_data( dev_major* d )
+{
+    pwm_val[0]	= rand() / (RAND_MAX / 0xff + 1);
+    pwm_val[1]	= rand() / (RAND_MAX / 0xff + 1);
+
+    // TODO FIXME dio resets DDRs for us, fix it there and remove here
+    DDRB |= PB4;
+    DDRB |= PB7;
 
 }
 
@@ -150,7 +182,7 @@ dev_major io_pwm =
     .init	= pwm_init_dev,
     .start	= pwm_start_dev,
     .stop	= pwd_stop_dev, // TODO
-    .timer	= 0,
+    .timer	= pwm_test_data,
 #endif
 
     .started	= 0,

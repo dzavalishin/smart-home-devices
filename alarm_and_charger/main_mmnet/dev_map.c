@@ -35,7 +35,7 @@ int8_t init_subdev( dev_major *dev, uint8_t n_minor, const char *name )
         dev_minor *m = dev->subdev+i;
 
         m->number = i;
-        m->name = name;
+//        m->name = name;
         m->name = make_subdev_name( name, i );
 
         m->dev = dev;

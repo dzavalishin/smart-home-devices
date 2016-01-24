@@ -42,7 +42,7 @@ adc_to_string( struct dev_minor *sub, char *out, uint8_t out_size )
     //return dev_uint16_to_string( sub, out, out_size, adc_value[ sub->number ] );
 
     //snprintf( out, out_size, "%d", adc_value[ sub->number ] );
-    //return 0;
+    return 0;
 }
 
 

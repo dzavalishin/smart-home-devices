@@ -24,6 +24,9 @@
 
 #include "ds18x20.h"
 
+#include "dev_map.h"
+
+
 
 
 //#define debug_puts(c)
@@ -57,13 +60,15 @@ uint8_t 	ow_bus_error_cnt[N_1W_BUS]; // 1wire error counter per bus
 
 void count_1w_bus_error( uint8_t bus );
 static void clear_temperature_data(void);
+
+#if !OW_ONE_BUS
 static void select_1w_bus( uint8_t bus );
+#endif
 
 
 
 
-
-void init_temperature(void)
+static void init_temperature(void)
 {
     nTempSensors = 0;
 
@@ -108,7 +113,7 @@ void init_temperature(void)
 }
 
 
-void rescan_temperature(void)
+static void rescan_temperature(void)
 {
     //if( !(RT_IO_ENABLED(IO_1W1)|RT_IO_ENABLED(IO_1W8)) )        return;
     init_temperature();
@@ -209,7 +214,7 @@ static void request_temperature_measurement(void);
 
 #if 1
 // Called from main loop once a second
-void temp_meter_measure(void)
+static void temp_meter_measure(void)
 {
     if( !(RT_IO_ENABLED(IO_1W1)|RT_IO_ENABLED(IO_1W8)) )
         return;
@@ -261,8 +266,8 @@ void temp_meter_measure(void)
 
 static void request_temperature_measurement(void)
 {
-    uint8_t bus;
 #if !OW_ONE_BUS
+    uint8_t bus;
     for( bus = 0; bus < N_1W_BUS; bus++ )
     {
         select_1w_bus( bus );
@@ -413,6 +418,136 @@ static void clear_temperature_data(void)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ----------------------------------------------------------------------
+// Report status / set value
+// ----------------------------------------------------------------------
+
+
+static int8_t
+temp_to_string( struct dev_minor *sub, char *out, uint8_t out_size )
+{
+    if( out_size < 20 ) return -1;
+
+    if( sub->number >= nTempSensors ) return -1;
+
+    temptoa( currTemperature[ sub->number ], out);
+
+    return 0;
+}
+
+
+// ----------------------------------------------------------------------
+// Once a second
+// ----------------------------------------------------------------------
+
+
+static void temp_timer( dev_major* d )
+{
+    static volatile uint8_t temperatureRescanCnt = 0;
+
+    (void) d;
+
+    temp_meter_measure();
+
+    // TODO FIXME hangs
+    if( temperatureRescanCnt-- <= 0 )
+    {
+//        rescan_temperature();
+        temperatureRescanCnt = TEMPERATURE_RESCAN_SEC;
+    }
+
+}
+
+// ----------------------------------------------------------------------
+// Init/start
+// ----------------------------------------------------------------------
+
+
+static int8_t temp_init( dev_major* d )
+{
+    uint8_t i;
+
+    //if( !RT_IO_ENABLED(IO_ADC) )        return;
+
+    if( init_subdev( d, SERVANT_NTEMP, "temp" ) )
+        return -1;
+
+    // TODO general func
+    for( i = 0; i < d->minor_count; i++ )
+    {
+        dev_minor *m = d->subdev + i;
+
+        m->to_string = temp_to_string;
+        //m->from_string = pwm_from_string;
+    }
+
+    init_temperature();
+
+    return 0;
+}
+
+
+
+static int8_t temp_start( dev_major* d )
+{
+
+    return 0;
+}
+
+
+// ----------------------------------------------------------------------
+// General IO definition
+// ----------------------------------------------------------------------
+
+
+
+
+dev_major io_temp =
+{
+    .name = "temp",
+
+#if SERVANT_NTEMP > 0
+    .init	= temp_init,
+    .start	= temp_start,
+//    .stop	= temp_stop,
+    .timer 	= temp_timer,
+#endif // ENABLE_SPI
+
+//    .to_string = temp_to_string,
+    .from_string = 0,
+
+    .minor_count = SERVANT_NTEMP,
+    .subdev = 0,
+};
 
 
 

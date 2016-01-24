@@ -9,33 +9,54 @@
 #include "io_spi.h"
 #include "util.h"
 #include "defs.h"
+#include "dev_map.h"
 
 #include "delay.h"
 
 
 #if ENABLE_SPI
 
+#define DEBUG 1
+
 //#define PB_SS_PIN (_BV(PB0))
 
-char spi_debug = 0;
+char spi_debug = DEBUG;
 
+static uint16_t spi_xfer_count = 0;
+
+// ----------------------------------------------------------------------
+// Slave on/off
+// ----------------------------------------------------------------------
+
+
+static void set_slave( uint8_t slave );
 
 // turn SSEL on
-static inline void ss_on(void) {    PORTB &= (~PB_SS_PIN); }
+static inline void ss_on( uint8_t slave )  { set_slave( slave );  PB_SS_PORT &= (~PB_SS_PIN); }
 
 // turn SSEL off
-static inline void ss_off(void){    PORTB |= PB_SS_PIN;  }
+static inline void ss_off( void )          {  PB_SS_PORT |= PB_SS_PIN;    }
+
+
+// ----------------------------------------------------------------------
+// Init/start
+// ----------------------------------------------------------------------
 
 
 // Assume interrupts disabled during init
-void spi_init(void)
+static int8_t spi_init( dev_major* d )
 {
     volatile char IOReg;
     if(spi_debug) printf("SPI init...");
 
+    if( init_subdev( d, 1, "spi" ) )
+        return -1;
+
     ss_off();
     // set PB0(/SS), PB1(SCK), PB2(MOSI) as output
-    DDRB |= PB_SS_PIN|(_BV(PB0))|(_BV(PB1))|(_BV(PB2));
+    DDRB |= (_BV(PB0)) | (_BV(PB1)) | (_BV(PB2));
+
+    PB_SS_DDR |= PB_SS_PIN;
 
 
     // enable SPI Interrupt and SPI in Master Mode with SCK = CK/16
@@ -53,6 +74,8 @@ void spi_init(void)
     IOReg   = SPDR;
 
     if(spi_debug) printf(" done\n");
+
+    return 0;
 }
 
 // transmit complete
@@ -60,6 +83,33 @@ ISR(SPI_STC_vect)
 {
     sei();
 }
+
+static int8_t spi_start( dev_major* d )
+{
+    return 0;
+}
+
+
+// ----------------------------------------------------------------------
+// Report status
+// ----------------------------------------------------------------------
+
+
+int8_t
+spi_to_string( struct dev_minor *sub, char *out, uint8_t out_size )     // 0 - success
+{
+    if( out_size < 25 ) return -1;
+
+    sprintf( out, "xfer count = %u", spi_xfer_count );
+
+    return 0;
+}
+
+
+
+// ----------------------------------------------------------------------
+// IO
+// ----------------------------------------------------------------------
 
 
 static char spi_transfer(volatile char data)
@@ -71,13 +121,15 @@ static char spi_transfer(volatile char data)
 }
 
 
-unsigned char spi_send( unsigned char cmd1, unsigned char cmd2 )
+unsigned char spi_send( unsigned char ss, unsigned char cmd1, unsigned char cmd2 )
 {
     //spi_init();
 
+    spi_xfer_count++;
+
     unsigned char out1, out2;
     if(spi_debug) printf("SPI send SS on...");
-    ss_on();
+    ss_on(ss);
     delay_us(10);
     //NutSleep(1);
 
@@ -104,24 +156,59 @@ unsigned char spi_send( unsigned char cmd1, unsigned char cmd2 )
 }
 
 
-void test_spi(void)
+#endif // ENABLE_SPI
+
+// ----------------------------------------------------------------------
+// Slave select logic
+// ----------------------------------------------------------------------
+
+static void
+set_slave( uint8_t slave )
 {
+    PORTD &= 0x1F; // clear top 3 bits
+    PORTD |= (slave & 0x7) << 5;
+}
 
-    ss_on();
-    NutSleep(1);
+// ----------------------------------------------------------------------
+// Test
+// ----------------------------------------------------------------------
 
-    spi_transfer(0x55);
-    spi_transfer(0xAA);
-    spi_transfer(0x55);
-    spi_transfer(0xAA);
-    spi_transfer(0x55);
-    spi_transfer(0xAA);
-    spi_transfer(0x55);
+static void spi_test_send( dev_major* d )
+{
+    static char a = 0xEF, b = 0x01;
 
-    NutSleep(1);
-    ss_off();
+    (void) d;
+
+    a += 2;
+    b += 1;
+
+    spi_send( 0, a, b );
 }
 
 
+// ----------------------------------------------------------------------
+// General IO definition
+// ----------------------------------------------------------------------
+
+//static int8_t spi_start_dev( dev_major* d ) { (void) d; spi_start(); return 0; }
+
+
+dev_major io_spi =
+{
+    .name = "spi",
+
+#if ENABLE_SPI
+    .init	= spi_init,
+    .start	= spi_start,
+//    .stop	= spi_stop,
+    .timer 	= spi_test_send,
 #endif // ENABLE_SPI
+
+    .to_string = spi_to_string,
+    .from_string = 0,
+
+    .minor_count = 1,
+    .subdev = 0,
+};
+
 

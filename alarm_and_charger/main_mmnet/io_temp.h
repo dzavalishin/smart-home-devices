@@ -11,13 +11,20 @@
 #include <inttypes.h>
 #include "onewire.h"
 
+#include "dev_map.h"
 
-// TODO remove?
-//#define OW_ROMCODE_SIZE 8
 
-void init_temperature(void);
-void rescan_temperature(void);
-void temp_meter_measure(void); // Must be called once a 750 ms (actually once a sec)
+extern dev_major io_temp;
+
+
+#define TEMPERATURE_RESCAN_SEC 240
+
+
+
+//void init_temperature(void);
+//void rescan_temperature(void);
+//void temp_meter_measure(void); // Must be called once a 750 ms (actually once a sec)
+
 
 extern uint8_t serialNumber [OW_ROMCODE_SIZE]; 
 
@@ -32,6 +39,7 @@ extern uint8_t 	gTempSensorBus[SERVANT_NTEMP]; // Which bus this sensor lives on
 #endif
 
 #endif
+
 
 
 uint8_t search_sensors(uint8_t currBus);

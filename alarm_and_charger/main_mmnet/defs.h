@@ -79,6 +79,8 @@
 
 // Unused
 #define ENABLE_SPI 1
+#define PB_SS_PORT PORTB
+#define PB_SS_DDR  DDRB
 #define PB_SS_PIN (_BV(PB0))
 
 
