@@ -1,0 +1,53 @@
+Basic pin map for MMNET101
+
+Port B
+
+	0 - output, SS decoder enable (active low)
+
+	1-3 - SPI SCK/MOSI/MISO
+
+	4 - PWM 12v
+
+	5 - data flash SS
+
+	6 - TX enable 0
+
+	7 - PWM 24v
+
+Port D
+
+	0,1 - I2C SCL/SDA - RTC, NVRAM
+         
+	2,3 - UART1 ??
+        
+	4 - ?
+
+	3-7 - SS decode (non-inverted output number code)
+
+Port E
+
+	0-1 - UART0
+
+	0-3 
+
+	4 - Fail LED
+
+	5 - Ethernet interrupt
+
+	6,7 - ?
+
+Port F
+
+	0-1 Ain 12v battery/line
+
+	2-3 Ain 24v batttery/line
+
+	4-7 Ain/Di/Do
+
+Port G
+
+	3 - Activity LED
+        
+	4 - 1Wire, 2401 serial/MAC, 18b20 temperature
+
+

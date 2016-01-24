@@ -10,7 +10,7 @@
 #include "util.h"
 
 uint8_t volatile activity = 0;
-
+uint8_t eeprom_timeout_counter = 0;
 
 int
 main(void)
@@ -26,13 +26,13 @@ main(void)
 	init_pwm();
 	init_usart();
 
-//	init_spi();
-//	init_ss();
+	init_spi();
+	init_ss();
 
 	init_encoders();
 
 	activity = 1;
-//main_pwm[0] = 0xFF;
+
     sei();
 
 	for(;;)
@@ -45,10 +45,16 @@ main(void)
 	{
 		activity = 0;
 		turn_led_on();
+
+		// If some activity (pwm data changed) - plan eeprom save.
+		// Not immediate - let's wait for 20 sec to gather all changes.
+		eeprom_timeout_counter = 20*5; // 20 sec
 	}
 
+	if( eeprom_timeout_counter-- == 1 )
+		eeprom_save();
+
     _delay_ms(200);
-//main_pwm[1] = 0xFF;
 	}
 
 }
@@ -58,7 +64,6 @@ void timer10hz(void)
 {
 
 	read_encoders();
-//	activity = 1;
 
 }
 
