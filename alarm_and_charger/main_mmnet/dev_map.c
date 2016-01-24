@@ -35,7 +35,8 @@ int8_t init_subdev( dev_major *dev, uint8_t n_minor, const char *name )
         dev_minor *m = dev->subdev+i;
 
         m->number = i;
-        m->name = name; //make_subdev_name( name, i );
+        m->name = name;
+        m->name = make_subdev_name( name, i );
 
         m->dev = dev;
 
@@ -111,7 +112,11 @@ static char *make_subdev_name( const char *name, int minor )
 
     char *ret = malloc( len );
 
-    snprintf( ret, len, "%s%d", name, minor );
+    // TODO
+    //snprintf( ret, len, "%s%d", name, minor );
+    // snprintf doesnt work
+
+    sprintf( ret, "%s%d", name, minor );
 
     return ret;
 }
@@ -144,7 +149,15 @@ uint8_t dev_count_devices( dev_major *devices[], uint8_t n_major )
 int8_t
 dev_uint16_to_string( struct dev_minor *sub, char *out, uint8_t out_size, uint16_t val )
 {
-    snprintf( out, out_size, "%d", val );
+    //snprintf( out, out_size, "%d", val );
+
+    // TODO
+    // snprintf doesnt work
+
+    if( out_size < 5 ) return -1;
+
+    sprintf( out, "%d", val );
+
     return 0;
 }
 

@@ -296,18 +296,24 @@ static int CgiOutputsRow( FILE * stream, int row_no )
 
     if(row_no < 0)
     {
-        static prog_char th[] = "<TR><TH> Type </TH><TH> Number </TH><TH> Value </TH></TR>\r\n";
+        //static prog_char th[] = "<TR><TH> Type </TH><TH> Number </TH><TH> Value </TH></TR>\r\n";
+        static prog_char th[] = "<TR><TH> Channel </TH><TH> &nbsp;&nbsp; </TH><TH> Value </TH></TR>\r\n";
         fputs_P(th, stream);
         return 1;
     }
 
     if( row_no  <  n_minor_total )
     {
-        static prog_char tfmt[] = "<TR><TD> %s </TD><TD>  </TD><TD> %s </TD></TR>\r\n";
+        static prog_char tfmt[] = "<TR><TD> %s </TD><TD> &nbsp;&nbsp; </TD><TD> %s </TD></TR>\r\n";
 
         dev_minor *minor = dev_get_minor( row_no );
 
         char buf[32] = "?";
+
+        if( minor->number == 0 )
+        {
+            fprintf_P(stream, tfmt, minor->dev->name, "" );
+        }
 
         if(minor->to_string)
         {
@@ -321,51 +327,6 @@ static int CgiOutputsRow( FILE * stream, int row_no )
 
     row_no -= n_minor_total;
 
-#if 0
-    if( row_no  < SERVANT_NPWM )
-    {
-        static prog_char tfmt[] = "<TR><TD> PWM </TD><TD> %u </TD><TD> 0x%03X </TD></TR>\r\n";
-        fprintf_P(stream, tfmt, row_no, pwm[row_no] );
-        return 1;
-    }
-
-    row_no -= SERVANT_NPWM;
-#endif
-
-#if SERVANT_NFREQ > 0
-    if( row_no  < SERVANT_NFREQ )
-    {
-        static prog_char tfmt[] = "<TR><TD> %s </TD><TD> %u </TD><TD> 0x%02X </TD></TR>\r\n";
-        fprintf_P(stream, tfmt,  row_no&1 ? "Duty" : "Freq", row_no, freq_outs[row_no] );
-
-        return 1;
-    }
-
-    row_no -= SERVANT_NFREQ;
-#endif
-
-#if 0 // inputs shows actual walue
-    if( row_no  < SERVANT_NDIGOUT )
-    {
-        static prog_char tfmt[] = "<TR><TD> Dig </TD><TD> %u </TD><TD> 0x%02X (";
-        static prog_char te[] = " ) </TD></TR>\r\n";
-        fprintf_P(stream, tfmt,  row_no, get_dig_out(row_no) );
-
-        char bit, c = get_dig_out(row_no);
-        for( bit = 7; bit >=0; bit-- )
-        {
-            fputs(" ", stream);
-            fputs( c & 0x80 ? "1" : "0", stream);
-            c <<= 1;
-        }
-
-        fputs_P(te, stream);
-
-        return 1;
-    }
-
-    row_no -= SERVANT_NDIGOUT;
-#endif
 
     return 0;
 }

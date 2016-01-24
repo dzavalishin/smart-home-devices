@@ -34,7 +34,12 @@ unsigned volatile char current_ad_input = SERVANT_NADC-1;
 static int8_t
 adc_to_string( struct dev_minor *sub, char *out, uint8_t out_size )
 {
-    return dev_uint16_to_string( sub, out, out_size, adc_value[ sub->number ] );
+    if( out_size < 20 ) return -1;
+
+    double fav = adc_value[ sub->number ] / 400.0;
+    dtostrf( fav, 5, 3, out );
+
+    //return dev_uint16_to_string( sub, out, out_size, adc_value[ sub->number ] );
 
     //snprintf( out, out_size, "%d", adc_value[ sub->number ] );
     //return 0;
