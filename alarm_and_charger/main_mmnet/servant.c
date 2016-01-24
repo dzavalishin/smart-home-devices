@@ -28,22 +28,21 @@
 #include "io_temp.h"
 //#include "io_bmp180.h"
 
-#define TEMPERATURE_RESCAN_SEC 240
 
 static uint8_t 		second_counter = 0; // general per second counter, used by fail led
 static uint8_t 		network_activity = 60; // Will wait 1 min before initial network io not showing failure
 
-static volatile uint8_t temperatureMeterCnt = 0;
-static volatile uint8_t temperatureRescanCnt = 0;
+//static volatile uint8_t temperatureMeterCnt = 0;
+//static volatile uint8_t temperatureRescanCnt = 0;
 
-static volatile uint8_t dht11meterCnt = -2; // Give sensor 2 seconds to become working
-uint8_t 		dht11_errorCnt = 0;
+//static volatile uint8_t dht11meterCnt = -2; // Give sensor 2 seconds to become working
+//uint8_t 		dht11_errorCnt = 0;
 
 void each_second(HANDLE h, void *arg)
 {
     second_counter++;
-    temperatureMeterCnt++;
-    dht11meterCnt++;
+    //temperatureMeterCnt++;
+    //dht11meterCnt++;
 
     // Will become 0 right now, point to trigger connection lost action
     if( network_activity == 1 )
@@ -65,19 +64,6 @@ void each_second(HANDLE h, void *arg)
     else
         FAIL_LED_OFF;
 
-#if ENABLE_SPI && 0
-        static char a = 0xEF, b = 0x01;
-        {
-            a += 1;
-            b += 2;
-
-            //spi_send( a, b );
-
-            test_spi();
-
-            //NutSleep(1000); // remove
-        }
-#endif
 
 }
 

@@ -58,6 +58,9 @@ uint8_t 	ow_bus_error_cnt[N_1W_BUS]; // 1wire error counter per bus
 
 #if ENABLE_1WIRE
 
+uint8_t search_sensors(uint8_t currBus);
+
+
 void count_1w_bus_error( uint8_t bus );
 static void clear_temperature_data(void);
 

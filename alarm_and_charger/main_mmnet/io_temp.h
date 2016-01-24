@@ -42,6 +42,6 @@ extern uint8_t 	gTempSensorBus[SERVANT_NTEMP]; // Which bus this sensor lives on
 
 
 
-uint8_t search_sensors(uint8_t currBus);
+//uint8_t search_sensors(uint8_t currBus);
 
 const char *temptoa( uint16_t temperature, char *buf ); // NB! Uses buf to print to!

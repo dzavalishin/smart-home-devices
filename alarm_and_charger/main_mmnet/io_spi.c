@@ -1,3 +1,7 @@
+#include "defs.h"
+
+#include <sys/thread.h>
+#include <sys/timer.h>
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -8,7 +12,6 @@
 
 #include "io_spi.h"
 #include "util.h"
-#include "defs.h"
 #include "dev_map.h"
 
 #include "delay.h"
@@ -16,7 +19,8 @@
 
 #if ENABLE_SPI
 
-#define DEBUG 1
+
+#define DEBUG 0
 
 //#define PB_SS_PIN (_BV(PB0))
 
@@ -47,7 +51,7 @@ static inline void ss_off( void )          {  PB_SS_PORT |= PB_SS_PIN;    }
 static int8_t spi_init( dev_major* d )
 {
     volatile char IOReg;
-    if(spi_debug) printf("SPI init...");
+    //if(spi_debug) printf("SPI init...");
 
     if( init_subdev( d, 1, "spi" ) )
         return -1;
@@ -73,7 +77,7 @@ static int8_t spi_init( dev_major* d )
     IOReg   = SPSR;                 	// clear SPIF bit in SPSR
     IOReg   = SPDR;
 
-    if(spi_debug) printf(" done\n");
+    //if(spi_debug) printf(" done\n");
 
     return 0;
 }
@@ -121,13 +125,14 @@ static char spi_transfer(volatile char data)
 }
 
 
-unsigned char spi_send( unsigned char ss, unsigned char cmd1, unsigned char cmd2 )
+uint16_t spi_send( unsigned char ss, unsigned char cmd1, unsigned char cmd2 )
 {
+    unsigned char out1, out2;
     //spi_init();
 
     spi_xfer_count++;
 
-    unsigned char out1, out2;
+
     if(spi_debug) printf("SPI send SS on...");
     ss_on(ss);
     delay_us(10);
@@ -152,11 +157,11 @@ unsigned char spi_send( unsigned char ss, unsigned char cmd1, unsigned char cmd2
     //ss_on();
 
     if(spi_debug) printf(" done\n");
-    return out2;
+
+    return (((uint16_t)out2) << 8) | out1;
 }
 
 
-#endif // ENABLE_SPI
 
 // ----------------------------------------------------------------------
 // Slave select logic
@@ -168,6 +173,53 @@ set_slave( uint8_t slave )
     PORTD &= 0x1F; // clear top 3 bits
     PORTD |= (slave & 0x7) << 5;
 }
+
+
+// ----------------------------------------------------------------------
+// IO Thread, polls actual devices
+// ----------------------------------------------------------------------
+//
+// Do all required SPI IO in cycle
+//
+// ----------------------------------------------------------------------
+
+uint8_t spi_do0 = 0;
+uint8_t spi_do1 = 0;
+
+uint8_t spi_slave_pwm[N_SPI_SLAVE_PWM];
+
+
+THREAD(spi_loop, __arg)
+{
+    while(1)
+    {
+        NutSleep(10); // 100 Hz
+
+        // LCD
+
+        // TODO byte queue?
+
+        // 2313 PWMs
+
+        uint8_t i;
+        for( i = 0; i < N_SPI_SLAVE_PWM; i++ )
+            spi_send( (i < 5) ? SPI_SS_2313_A : SPI_SS_2313_B, i, spi_slave_pwm[i] );
+
+        // Do
+
+        spi_send( SPI_SS_DO, spi_do0, spi_do1 );
+
+        // Di
+
+        // Data in (555ir10) needs some clock with SS off to load register.
+        // Previous Do communications are ok for that.
+
+        uint16_t spi_di = spi_send( SPI_SS_DI, 0, 0 ); // Send nothing (zero)
+
+    }
+}
+
+
 
 // ----------------------------------------------------------------------
 // Test
@@ -184,6 +236,8 @@ static void spi_test_send( dev_major* d )
 
     spi_send( 0, a, b );
 }
+
+#endif // ENABLE_SPI
 
 
 // ----------------------------------------------------------------------
