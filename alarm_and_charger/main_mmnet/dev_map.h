@@ -14,6 +14,12 @@
 #include <inttypes.h>
 
 struct dev_major;
+struct dev_minor;
+
+typedef    int8_t      (*minor_to_string_f)( struct dev_minor *sub, char *out, uint8_t out_size );
+typedef    int8_t      (*minor_from_string_f)( struct dev_minor *sub, char *);
+
+
 
 struct dev_minor
 {
@@ -57,6 +63,9 @@ typedef struct dev_major dev_major;
 dev_major *new_dev( uint8_t n_minor, const char *name );
 int8_t init_dev( dev_major *dev, uint8_t n_minor, const char *name );
 int8_t init_subdev( dev_major *dev, uint8_t n_minor, const char *name );
+
+// set all subdev from/to string func
+void 	dev_init_subdev_getset( dev_major *dev, minor_from_string_f, minor_to_string_f );
 
 
 uint8_t dev_count_devices( dev_major *devices[], uint8_t n_major );

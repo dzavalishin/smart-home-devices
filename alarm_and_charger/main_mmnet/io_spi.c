@@ -188,6 +188,13 @@ uint8_t spi_do1 = 0;
 
 uint8_t spi_slave_pwm[N_SPI_SLAVE_PWM];
 
+#warning read encoder value from 2313
+// uint8_t encoder_value[2] = { 0, 0 };
+// uint8_t encoder_button[2] = { 0, 0 };
+// uint8_t spi_data = spi_send();
+// uint8_t nencoder = i >= 5;
+// encoder_value[nencoder] = spi_data & 0x7F;
+// encoder_button[nencoder] = (spi_data & 0x80) ? 0xFF : 0;
 
 THREAD(spi_loop, __arg)
 {

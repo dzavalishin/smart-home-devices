@@ -22,6 +22,8 @@
 
 #include <sys/event.h>
 
+//#warning use timer 1 instead of 0, timer 0 is OS
+
 
 #define DEBUG 0
 
@@ -49,7 +51,7 @@ void set_an(unsigned char port_num, unsigned char data)
 // IO
 // ----------------------------------------------------------------------
 
-
+#if 0
 static inline void pwm_init_timer_0(void)
 {
     // fast PWM, non-inverting, max clock
@@ -59,22 +61,39 @@ static inline void pwm_init_timer_0(void)
 
     // fast PWM, non-inverting, don't touch clock - network stack uses it, apparently
     TCCR0 |= WGM00 | WGM01 | COM01;
-    TCCR0 &= COM00;
+    TCCR0 &= ~COM00;
 
-    DDRB |= PB4;
+    DDRB |= _BV(PB4);
 }
 
 static inline void pwm_set_pwm_0( uint8_t val )
 {
     OCR0 = val;
 }
+#endif
+
+static inline void pwm_init_timer_1(void)
+{
+    TCCR1A = COM1B1 | WGM10;
+    TCCR1B = WGM12 | CS10;
+    DDRB |= _BV(PB6);
+}
+
+static inline void pwm_set_pwm_1( uint8_t val )
+{
+    //OCR1BH = val;
+    //OCR1BL = 0;
+    OCR1BH = 0;
+    OCR1BL = val;
+}
+
 
 static inline void pwm_init_timer_2(void)
 {
     // fast PWM, non-inverting, max clock
     TCCR2 = WGM20 | WGM21 | COM21 | CS20;
 
-    DDRB |= PB7;
+    DDRB |= _BV(PB7);
 }
 
 
@@ -119,11 +138,13 @@ static int8_t      pwm_from_string( struct dev_minor *sub, char *in)         			
 
 static int8_t pwm_init_dev( dev_major* d )
 {
-    uint8_t i;
+    //uint8_t i;
 //return -1;
     if( init_subdev( d, SERVANT_NPWM, "pwm" ) )
         return -1;
 
+    dev_init_subdev_getset( d, pwm_from_string, pwm_to_string );
+/*
     for( i = 0; i < d->minor_count; i++ )
     {
         dev_minor *m = d->subdev+i;
@@ -132,8 +153,9 @@ static int8_t pwm_init_dev( dev_major* d )
         m->to_string   = pwm_to_string;
         m->from_string = pwm_from_string;
     }
-
-    pwm_init_timer_0();
+*/
+    //pwm_init_timer_0();
+    pwm_init_timer_1();
     pwm_init_timer_2();
 
     return 0;
@@ -147,10 +169,19 @@ static int8_t pwm_start_dev( dev_major* d )
     return 0;
 }
 
-// TODO
 static void pwd_stop_dev( dev_major* d )
 {
     (void) d;
+
+    // Turn off outputs
+    TCCR0 &= ~COM00;
+    TCCR0 &= ~COM01;
+
+    TCCR2 &= ~COM21;
+    TCCR2 &= ~COM20;
+
+    DDRB &= ~_BV(PB4);
+    DDRB &= ~_BV(PB7);
 
 }
 
@@ -163,9 +194,13 @@ static void pwm_test_data( dev_major* d )
     pwm_val[0]	= rand() / (RAND_MAX / 0xff + 1);
     pwm_val[1]	= rand() / (RAND_MAX / 0xff + 1);
 
+    pwm_set_pwm_1( pwm_val[0] );
+    pwm_set_pwm_2( pwm_val[1] );
+
     // TODO FIXME dio resets DDRs for us, fix it there and remove here
-    DDRB |= PB4;
-    DDRB |= PB7;
+    // TODO really? try to remove it here
+    DDRB |= _BV(PB4);
+    DDRB |= _BV(PB7);
 
 }
 

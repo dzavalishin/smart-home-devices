@@ -162,6 +162,19 @@ dev_uint16_to_string( struct dev_minor *sub, char *out, uint8_t out_size, uint16
 }
 
 
+void
+dev_init_subdev_getset( dev_major *dev, minor_from_string_f from, minor_to_string_f to )
+{
+    uint8_t i;
+
+    for( i = 0; i < dev->minor_count; i++ )
+    {
+        dev_minor *m = dev->subdev + i;
+
+        m->to_string = to;
+        m->from_string = from;
+    }
+}
 
 
 

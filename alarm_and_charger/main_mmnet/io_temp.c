@@ -497,14 +497,14 @@ static void temp_timer( dev_major* d )
 
 static int8_t temp_init( dev_major* d )
 {
-    uint8_t i;
+//    uint8_t i;
 
     //if( !RT_IO_ENABLED(IO_ADC) )        return;
 
     if( init_subdev( d, SERVANT_NTEMP, "temp" ) )
         return -1;
-
-    // TODO general func
+/*
+    // TO DO general func
     for( i = 0; i < d->minor_count; i++ )
     {
         dev_minor *m = d->subdev + i;
@@ -512,6 +512,8 @@ static int8_t temp_init( dev_major* d )
         m->to_string = temp_to_string;
         //m->from_string = pwm_from_string;
     }
+*/
+    dev_init_subdev_getset( d, 0, temp_to_string );
 
     init_temperature();
 

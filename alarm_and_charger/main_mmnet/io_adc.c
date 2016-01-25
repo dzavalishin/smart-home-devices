@@ -49,13 +49,15 @@ adc_to_string( struct dev_minor *sub, char *out, uint8_t out_size )
 // ADC initialize
 static int8_t adc_init( dev_major* d )
 {
-    uint8_t i;
+    //uint8_t i;
 
     //if( !RT_IO_ENABLED(IO_ADC) )        return;
 
     if( init_subdev( d, SERVANT_NADC, "adc" ) )
         return -1;
 
+    dev_init_subdev_getset( d, 0, adc_to_string );
+/*
     for( i = 0; i < d->minor_count; i++ )
     {
         dev_minor *m = d->subdev + i;
@@ -63,7 +65,7 @@ static int8_t adc_init( dev_major* d )
         m->to_string = adc_to_string;
         //m->from_string = pwm_from_string;
     }
-
+*/
 
     ADCSRA = 0x00; //disable adc
     ADMUX = ADMUX_REFS; //0b11100000;
