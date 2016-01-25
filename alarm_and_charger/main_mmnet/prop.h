@@ -43,5 +43,6 @@ typedef struct dev_property
 errno_t dev_drv_listproperties( struct dev_major *drv, int nProperty, char *pValue, int vlen );
 errno_t	dev_drv_getproperty   ( struct dev_major *drv, const char *pName, char *pValue, int vlen );
 errno_t	dev_drv_setproperty   ( struct dev_major *drv, const char *pName, const char *pValue );
+uint8_t	dev_drv_property_rw( struct dev_major *drv, const char *pName );
 
 

@@ -127,7 +127,7 @@ static int CgiStatusRow( FILE * stream, int row_no )
     case 14: subhdr( stream, "1-Wire" ); break;
 
     case 15: ShowTableRow2b( stream, "Devices detected", onewire_available );	break;
-    case 16: ShowTableRow2i( stream, "Temp sensors count", nTempSensors );	break;
+    case 16: /*ShowTableRow2i( stream, "Temp sensors count", nTempSensors ); */   break;
     case 17:
 #if SERVANT_1WMAC
         {

@@ -25,6 +25,7 @@
 #include "ds18x20.h"
 
 #include "dev_map.h"
+#include "prop.h"
 
 
 
@@ -528,12 +529,38 @@ static int8_t temp_start( dev_major* d )
     return 0;
 }
 
+// ----------------------------------------------------------------------
+// Properties
+// ----------------------------------------------------------------------
+
+
+
+
+errno_t
+temp_get_sensors_count(struct dev_properties *ps, void *context, uint16_t offset, void *vp, char *val, uint16_t len)
+{
+    //*((uint16_t*)vp) = nTempSensors;
+    if( len < 16 ) return ENOMEM;
+    sprintf( val, "%d",  nTempSensors );
+    return 0;
+}
+
 
 // ----------------------------------------------------------------------
 // General IO definition
 // ----------------------------------------------------------------------
 
 
+static dev_property temp_prop[] =
+{
+    {	.type = pt_int16, .name = "sensors", .getf = temp_get_sensors_count }
+};
+
+static dev_properties temp_props =
+{
+    temp_prop,
+    PROP_COUNT(temp_prop)
+};
 
 
 dev_major io_temp =
@@ -552,14 +579,9 @@ dev_major io_temp =
 
     .minor_count = SERVANT_NTEMP,
     .subdev = 0,
+
+    .prop = &temp_props,
 };
-
-
-
-
-
-
-
 
 
 

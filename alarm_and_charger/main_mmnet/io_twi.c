@@ -80,12 +80,12 @@ static int8_t twi_start( dev_major* d )
 // General IO definition
 // ----------------------------------------------------------------------
 
-dev_property twi_prop[] =
+static dev_property twi_prop[] =
 {
     {	.type = pt_int16, .name = "speed", .valp = &twi_speed, .activate = twi_activate_prop_change }
 };
 
-dev_properties twi_props =
+static dev_properties twi_props =
 {
     twi_prop,
     PROP_COUNT(twi_prop)

@@ -187,6 +187,21 @@ act:
 
 
 
+uint8_t	dev_gen_property_rw( dev_properties *ps, const char *pName )
+{
+    dev_property *p = find_property( ps, pName );
+    if( 0 == p )
+        return 0;
+
+    if( p->setf ) return 0xFF; // yes
+    if( p->valp ) return 0xFF; // yes
+
+    if( ps->valp ) return 0xFF; // not completely correct, but suppose yes
+
+    return 0;
+}
+
+
 
 
 //-------------------------------------------------------------------
@@ -211,6 +226,10 @@ errno_t	dev_drv_setproperty( struct dev_major *drv, const char *pName, const cha
 	return dev_gen_setproperty( drv->prop, drv, pName, pValue );
 }
 
+uint8_t	dev_drv_property_rw( struct dev_major *drv, const char *pName )
+{
+    return dev_gen_property_rw( drv->prop, pName );
+}
 
 //-------------------------------------------------------------------
 //

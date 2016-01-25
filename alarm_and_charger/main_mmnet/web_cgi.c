@@ -70,162 +70,32 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
         int nprop = 0;
         for(;;)
         {
-            char buf1[32];
+            char pName[32];
             char buf2[32] = "(?)";
 
-            errno_t rc = dev_drv_listproperties( dev, nprop++, buf1, sizeof(buf1)-1 );
+            errno_t rc = dev_drv_listproperties( dev, nprop++, pName, sizeof(pName)-1 );
             if( rc )
                 break;
 
-            dev_drv_getproperty( dev, buf1, buf2, sizeof(buf2)-1 );
+            uint8_t rw = dev_drv_property_rw( dev, pName );
 
-            static prog_char tfmt[] = "<TR><TD> </TD><TD> %s = </TD><TD> %s </TD></TR>\r\n";
-            fprintf_P(stream, tfmt, buf1, buf2 );
+            rc = dev_drv_getproperty( dev, pName, buf2, sizeof(buf2)-1 );
+            if( rc && DEBUG )
+                printf("dev_drv_getproperty() = %d\n", rc);
+
+            static prog_char tfmt2[] = "<TR><TD> </TD><TD> %s </TD><TD>= %s %s</TD></TR>\r\n";
+            fprintf_P(stream, tfmt2, pName, buf2, rw ? "(rw)" : "(ro)" );
         }
 
     }
 
     return 1;
-
-/*
-#if SERVANT_NADC > 0
-    if( row_no  < SERVANT_NADC )
-    {
-        double fav = adc_value[row_no] / 400.0;
-        char str[20];
-        dtostrf( fav, 5, 3, str );
-        static prog_char tfmt[] = "<TR><TD> ADC </TD><TD> %u </TD><TD> %s (0x%03X) </TD></TR>\r\n";
-        fprintf_P(stream, tfmt, row_no, str, adc_value[row_no] );
-        return 1;
-    }
-
-    row_no -= SERVANT_NADC;
-#endif
-*/
-/*
-#if SERVANT_NFREQ > 0
-    if( row_no  < SERVANT_NFREQ )
-    {
-        static prog_char tfmt[] = "<TR><TD> %s </TD><TD> %u </TD><TD> 0x%02X </TD></TR>\r\n";
-        fprintf_P(stream, tfmt,  row_no&1 ? "Duty" : "Freq", row_no, freq_outs[row_no] );
-
-        return 1;
-    }
-
-    row_no -= SERVANT_NFREQ;
-#endif
-
-#if SERVANT_NDIG > 0
-    if( row_no  < SERVANT_NDIG )
-    {
-        if( (row_no == 0) || (row_no == 2) ) return 1; // Skip ports A and C - used as address/data bus in MMNET
-
-        unsigned char pv = dio_read_port( row_no );
-        unsigned char ddrv = dio_get_port_ouput_mask( row_no );
-
-        static prog_char tfmt[] = "<TR><TD> Dig </TD><TD> %u %c </TD><TD> 0x%02X (";
-        //static prog_char dfmt[] = "<TR><TD> &nbsp;ddr </TD><TD> %u </TD><TD> 0x%02X (";
-        static prog_char te[] = " ) </TD></TR>\r\n";
-
-        fprintf_P(stream, tfmt,  row_no, 'A'+row_no, pv );	//dig_value[row_no] );
-
-        char bit, c = pv, d  = ddrv;
-        for( bit = 7; bit >=0; bit-- )
-        {
-            char isout = d & 0x80;
-            d <<= 1;
-
-            fputs(isout? " <b>": " ", stream);
-            fputs( c & 0x80 ? "1" : "0", stream);
-            fputs(isout? "</b>": "", stream);
-            c <<= 1;
-        }
-
-        fputs_P(te, stream);
-        return 1;
-    }
-
-    row_no -= SERVANT_NDIG;
-#endif
-
-#if SERVANT_NTEMP > 0
-    if( row_no  < SERVANT_NTEMP )
-    {
-        char buf[30];
-
-        uint8_t id = gTempSensorIDs[row_no][0];
-        char *name = "?";
-
-        if ( id == DS18S20_ID ) name = "18S";
-        if ( id == DS18B20_ID ) name = "18B";
-
-        static prog_char tfmt[] = "<TR><TD> Temp </TD><TD> %u (%s) </TD><TD> %s &deg;C (0x%04X) @bus %d </TD></TR>\r\n";
-        fprintf_P(stream, tfmt,  row_no, name, temptoa(currTemperature[row_no],buf) , currTemperature[row_no], 
-#if !OW_ONE_BUS
-			gTempSensorBus[row_no] 
-#else
-			0
-#endif
-);
-
-        return 1;
-    }
-
-    row_no -= SERVANT_NTEMP;
-#endif
-
-#if SERVANT_DHT11
-    if( row_no == 0 )
-    {
-        static prog_char tfmt[] = "<TR><TD> DHT11 Temperature </TD><TD>&nbsp;</TD><TD>%u &deg;C</TD></TR>\r\n";
-        fprintf_P(stream, tfmt, dht_temperature );
-
-        return 1;
-    }
-    if( row_no == 1 )
-    {
-        static prog_char tfmt[] = "<TR><TD> DHT11 Humidity </TD><TD>&nbsp;</TD><TD> %u %%</TD></TR>\r\n";
-        fprintf_P(stream, tfmt, dht_humidity );
-
-        return 1;
-    }
-
-    row_no -= 2;
-#endif // SERVANT_DHT11
-
-#if SERVANT_BMP180
-    if( row_no == 0 )
-    {
-        double fav = bmp180_temperature / 10.0;
-        char str[20];
-        dtostrf( fav, 4, 1, str );
-        //static prog_char tfmt[] = "<TR><TD> BMP180 Temp/Pressure &nbsp;</TD><TD> %ld (%d) </TD><TD> %ld (%ld) </TD></TR>\r\n";
-        //fprintf_P(stream, tfmt, bmp180_temperature, bmp180_temperature_raw, bmp180_pressure, bmp180_pressure_raw );
-        static prog_char tfmt[] = "<TR><TD> BMP180 Temperature &nbsp;</TD><TD>&nbsp;</TD><TD>%s &deg;C</TD></TR>\r\n";
-        fprintf_P(stream, tfmt, str );
-
-        return 1;
-    }
-    if( row_no == 1 )
-    {
-        //static prog_char tfmt[] = "<TR><TD> BMP180 Temp/Pressure &nbsp;</TD><TD> %ld (%d) </TD><TD> %ld (%ld) </TD></TR>\r\n";
-        //fprintf_P(stream, tfmt, bmp180_temperature, bmp180_temperature_raw, bmp180_pressure, bmp180_pressure_raw );
-        static prog_char tfmt[] = "<TR><TD> BMP180 Pressure &nbsp;</TD><TD>&nbsp;</TD><TD> %ld Pa</TD></TR>\r\n";
-        fprintf_P(stream, tfmt, bmp180_pressure );
-
-        return 1;
-    }
-
-    row_no -= 2;
-#endif // SERVANT_DHT11
-*/
-    return 0;
 }
 
 
 int CgiInputs( FILE * stream, REQUEST * req )
 {
-    return ShowTableCgi( stream, req, "Inputs", CgiAnalogueInputsRow );
+    return ShowTableCgi( stream, req, "Drivers", CgiAnalogueInputsRow );
 }
 
 
@@ -351,7 +221,7 @@ static int CgiOutputsRow( FILE * stream, int row_no )
 
 int CgiOutputs( FILE * stream, REQUEST * req )
 {
-    return ShowTableCgi( stream, req, "Outputs", CgiOutputsRow );
+    return ShowTableCgi( stream, req, "Ports", CgiOutputsRow );
 }
 
 
@@ -443,7 +313,6 @@ int CgiNetIO( FILE * stream, REQUEST * req )
 
 static char * getNamedParameter( const char *name )
 {
-    //int nin;
     static char out[64];
 
     int8_t rc = dev_global_to_string( name, out, sizeof( out ) );	// 0 - success
@@ -451,74 +320,6 @@ static char * getNamedParameter( const char *name )
         return 0;
 
     return out;
-
-
-/*
-#if SERVANT_NADC > 0
-    if( 0 == strncmp( name, "adc", 3 ) )
-    {
-        nin = atoi( name + 3 );
-        if( nin >= SERVANT_NADC ) nin = -1; // SERVANT_NADC-1;
-
-        if( nin < 0 ) return 0;
-
-        sprintf( out, "%d", adc_value[nin] );
-        return out;
-    }
-#endif
-
-#if SERVANT_NDIG > 0
-    if( 0 == strncmp( name, "dig", 3 ) )
-    {
-        nin = atoi( name + 3 );
-        if( nin >= SERVANT_NDIG*8 ) nin = -1; //(SERVANT_NDIG*8) - 1;
-
-        if( nin < 0 ) return 0;
-
-        unsigned char port = nin / 8;
-        unsigned char bit = nin % 8;
-
-        //sprintf( out, "%d", (dig_value[port] >> bit) & 1 );
-        sprintf( out, "%d", dio_read_port_bit( port, bit ) );
-        return out;
-    }
-#endif
-
-#if SERVANT_NTEMP > 0
-    // unmapped temperature - undefined order of sensors
-    if( 0 == strncmp( name, "utemp", 4 ) )
-    {
-        nin = atoi( name + 5 );
-        if( nin >= SERVANT_NTEMP ) nin = -1;
-
-        if( nin < 0 ) return 0;
-
-        // todo float point?
-        sprintf( out, "%d", currTemperature[nin] );
-        return out;
-    }
-
-    // mapped - order set in web interface
-    if( 0 == strncmp( name, "temp", 4 ) )
-    {
-        nin = atoi( name + 4 );
-        if( nin >= MAX_OW_MAP ) nin = -1;
-        if( nin < 0 ) return 0;
-
-        uint8_t p = ow_id_map[nin];
-        if( p >= SERVANT_NTEMP ) return 0;
-
-        // todo float point?
-        sprintf( out, "%d", currTemperature[p] );
-        return out;
-    }
-
-
-#endif // SERVANT_NTEMP
-*/
-
-
-//    return 0;
 }
 
 
@@ -528,47 +329,6 @@ static int setNamedParameter( const char *name, const char *value )
     int8_t rc = dev_global_from_string( name, value );          // 0 - success
     if( !rc ) return 0;
 
-    /*
-    int nout = atoi( name + 3 );
-#if SERVANT_NPWM > 0
-    if( 0 == strncmp( name, "pwm", 3 ) )
-    {
-        if( nout >= SERVANT_NPWM ) nout = -1;
-
-        if( nout < 0 ) return MODBUS_EXCEPTION_ILLEGAL_DATA_ADDFRESS;
-
-        set_an( (unsigned char)nout, (unsigned char) atoi(value) );
-
-        return 0;
-    }
-#endif
-
-#if SERVANT_NDIG > 0
-    {
-        unsigned char port = nout / 8;
-        unsigned char bit = nout % 8;
-
-        if( 0 == strncmp( name, "dig", 3 ) )
-        {
-            if( nout >= SERVANT_NDIG*8 ) nout = -1;
-            if( nout < 0 ) return MODBUS_EXCEPTION_ILLEGAL_DATA_ADDFRESS;
-
-            dio_write_port_bit( port, bit, atoi(value) ? 0xFF : 0 );
-            return 0;
-        }
-
-        if( 0 == strncmp( name, "ddr", 3 ) )
-        {
-            if( nout >= SERVANT_NDIG*8 ) nout = -1;
-            if( nout < 0 ) return MODBUS_EXCEPTION_ILLEGAL_DATA_ADDFRESS;
-
-            dio_set_port_ouput_mask_bit( port, bit, atoi(value) ? 0xFF : 0 );
-            return 0;
-        }
-
-    }
-#endif
-*/
     return MODBUS_EXCEPTION_ILLEGAL_DATA_ADDFRESS;
 }
 
