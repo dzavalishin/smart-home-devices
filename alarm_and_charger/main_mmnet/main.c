@@ -16,7 +16,7 @@
 #include <dev/nicrtl.h>
 #include <dev/debug.h>
 #include <dev/urom.h>
-#include <dev/twif.h>
+//#include <dev/twif.h>
 #include <dev/null.h>
 
 #include <sys/nutconfig.h>
@@ -399,7 +399,7 @@ static int tryToFillMac(unsigned char *mac, unsigned char *oneWireId)
 
 
 
-
+#include <dev/ds1307rtc.h>
 
 // Initialize all peripherals
 
@@ -425,6 +425,14 @@ void init_devices(void)
 
     set_half_duplex0(0);
     set_half_duplex1(0);
+
+    int rc = DS1307Init( &rtcDs1307 );
+    printf("RTC 1307 init = %d\n", rc );
+
+    // int DS1307RtcGetClock(NUTRTC *rtc, struct _tm *tm)
+    // int DS1307RtcSetClock(NUTRTC *rtc, const struct _tm *tm)
+
+
 
 }
 
