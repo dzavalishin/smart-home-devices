@@ -17,9 +17,10 @@
 #include "io_dig.h"
 #include "io_adc.h"
 #include "io_pwm.h"
-//#include "io_dht.h"
 #include "io_temp.h"
-//#include "io_bmp180.h"
+
+#include "prop.h"
+#include "errno.h"
 
 #include "ds18x20.h"
 
@@ -52,6 +53,39 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
         fputs_P(th, stream);
         return 1;
     }
+
+    // scan through drivers
+
+    if( row_no >= n_major_total )
+        return 0;
+
+    dev_major *dev = devices[row_no];
+
+    static prog_char tfmt[] = "<TR><TD> %s </TD><TD> %s </TD><TD> </TD></TR>\r\n";
+    fprintf_P(stream, tfmt, dev->name, dev->started ? "run" : "stop" );
+
+    if( dev->prop )
+    {
+        int nprop = 0;
+        for(;;)
+        {
+            char buf1[32];
+            char buf2[32] = "(?)";
+
+            errno_t rc = dev_drv_listproperties( dev, nprop, buf1, sizeof(buf1)-1 );
+            if( rc )
+                break;
+
+            dev_drv_getproperty( dev, buf1, buf2, sizeof(buf2)-1 );
+
+            static prog_char tfmt[] = "<TR><TD> </TD><TD> %s = </TD><TD> %s </TD></TR>\r\n";
+            fprintf_P(stream, tfmt, buf1, buf2 );
+        }
+
+    }
+
+    return 1;
+
 /*
 #if SERVANT_NADC > 0
     if( row_no  < SERVANT_NADC )
@@ -216,32 +250,6 @@ static int CgiNetworkRow( FILE * stream, int row_no )
         return 1;
     }
 
-/*
-
-    if( row_no  == 1 )
-    {
-        static prog_char tfmt[] = "<TR><TD> Address </TD><TD> IP </TD><TD> %s </TD></TR>\r\n";
-        fprintf_P(stream, tfmt, inet_ntoa(confnet.cdn_ip_addr)
-                 );
-        return 1;
-    }
-
-    if( row_no  == 2 )
-    {
-        static prog_char tfmt[] = "<TR><TD> Address </TD><TD> Configured IP </TD><TD> %s </TD></TR>\r\n";
-        fprintf_P(stream, tfmt, inet_ntoa(confnet.cdn_cip_addr)
-                 );
-        return 1;
-    }
-
-    if( row_no  == 3 )
-    {
-        static prog_char tfmt[] = "<TR><TD> Address </TD><TD> Gateway </TD><TD> %s </TD></TR>\r\n";
-        fprintf_P(stream, tfmt, inet_ntoa(confnet.cdn_gateway)
-                 );
-        return 1;
-    }
-*/
     switch( row_no )
     {
     case 0:

@@ -56,7 +56,7 @@
 #include "io_adc.h"
 #include "io_pwm.h"
 #include "io_temp.h"
-//#include "io_bmp180.h"
+#include "io_twi.h"
 
 #include "io_spi.h"
 
@@ -405,20 +405,6 @@ static int tryToFillMac(unsigned char *mac, unsigned char *oneWireId)
 
 void init_devices(void)
 {
-#if ENABLE_TWI
-    {
-        unsigned long busspeed = 10000;	// 10kHz
-        //unsigned long busspeed = 25;	// 50 Hz
-
-        printf("I2C init...");
-
-        TwInit(0);
-        TwIOCtl(TWI_SETSPEED, &busspeed);
-        TwIOCtl(TWI_GETSPEED, &busspeed);
-        printf(" done, speed is %ld\n", busspeed);
-    }
-#endif // ENABLE_TWI
-
 
 
     //stop errant interrupts until set up
@@ -456,6 +442,7 @@ dev_major *devices[] =
     &io_pwm,
     &io_spi,
     &io_temp,
+    &io_twi,
 };
 
 uint8_t n_minor_total = 0;
