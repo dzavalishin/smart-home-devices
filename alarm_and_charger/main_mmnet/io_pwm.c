@@ -58,8 +58,8 @@ static inline void pwm_init_timer_0(void)
     // TODO move OS clock to timer 3
 
     // fast PWM, non-inverting, don't touch clock - network stack uses it, apparently
-    TCCR0 |= WGM00 | WGM01 | COM01;
-    TCCR0 &= ~COM00;
+    TCCR0 |= _BV(WGM00) | _BV(WGM01) | _BV(COM01);
+    TCCR0 &= ~_BV(COM00);
 
     DDRB |= _BV(PB4);
 }
@@ -72,8 +72,8 @@ static inline void pwm_set_pwm_0( uint8_t val )
 
 static inline void pwm_init_timer_1(void)
 {
-    TCCR1A = COM1B1 | WGM10;
-    TCCR1B = WGM12 | CS10;
+    TCCR1A = _BV(COM1B1) | _BV(WGM10);
+    TCCR1B = _BV(WGM12)  | _BV(CS10);
     DDRB |= _BV(PB6);
 }
 
@@ -89,7 +89,7 @@ static inline void pwm_set_pwm_1( uint8_t val )
 static inline void pwm_init_timer_2(void)
 {
     // fast PWM, non-inverting, max clock
-    TCCR2 = WGM20 | WGM21 | COM21 | CS20;
+    TCCR2 = _BV(WGM20) | _BV(WGM21) | _BV(COM21) | _BV(CS20);
 
     DDRB |= _BV(PB7);
 }
@@ -109,8 +109,10 @@ static inline void pwm_set_pwm_2( uint8_t val )
 
 static int8_t      pwm_to_string( struct dev_minor *sub, char *out, uint8_t out_size )   	// 0 - success
 {
-    //snprintf( out, out_size, "%d", pwm_val[sub->number] );
-    return dev_uint16_to_string( sub, out, out_size, pwm_val[sub->number] );
+    //return dev_uint16_to_string( sub, out, out_size, pwm_val[sub->number] );
+
+    if( sub->number )   return dev_uint16_to_string( sub, out, out_size, TCNT1L );
+    else                return dev_uint16_to_string( sub, out, out_size, OCR1BL );
 }
 
 
@@ -172,11 +174,11 @@ static void pwd_stop_dev( dev_major* d )
     (void) d;
 
     // Turn off outputs
-    TCCR0 &= ~COM00;
-    TCCR0 &= ~COM01;
+    TCCR0 &= ~_BV(COM00);
+    TCCR0 &= ~_BV(COM01);
 
-    TCCR2 &= ~COM21;
-    TCCR2 &= ~COM20;
+    TCCR2 &= ~_BV(COM21);
+    TCCR2 &= ~_BV(COM20);
 
     DDRB &= ~_BV(PB4);
     DDRB &= ~_BV(PB7);
@@ -199,7 +201,6 @@ static void pwm_test_data( dev_major* d )
     // TODO really? try to remove it here
     DDRB |= _BV(PB4);
     DDRB |= _BV(PB7);
-
 }
 
 
