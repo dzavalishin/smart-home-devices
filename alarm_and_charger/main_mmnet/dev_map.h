@@ -17,7 +17,7 @@ struct dev_major;
 struct dev_minor;
 
 typedef    int8_t      (*minor_to_string_f)( struct dev_minor *sub, char *out, uint8_t out_size );
-typedef    int8_t      (*minor_from_string_f)( struct dev_minor *sub, char *);
+typedef    int8_t      (*minor_from_string_f)( struct dev_minor *sub, const char *);
 
 
 
@@ -29,7 +29,7 @@ struct dev_minor
     struct dev_major *dev;
 
     int8_t      (*to_string)( struct dev_minor *sub, char *out, uint8_t out_size );     // 0 - success
-    int8_t      (*from_string)( struct dev_minor *sub, char *);         		// 0 - success
+    int8_t      (*from_string)( struct dev_minor *sub, const char *);         		// 0 - success
 
     uint16_t    io_count;
     uint16_t    err_count;
@@ -49,7 +49,7 @@ struct dev_major
 
     //char *      (*to_string)( struct dev_major *dev );
     int8_t      (*to_string)( struct dev_minor *sub, char *out, uint8_t out_size );     // 0 - success
-    int8_t      (*from_string)( struct dev_major *dev, char *);         		// 0 - success
+    int8_t      (*from_string)( struct dev_major *dev, const char *);         		// 0 - success
 
     uint16_t    minor_count; // Number of sub-devices found
     struct dev_minor *subdev;
@@ -82,10 +82,23 @@ int8_t      dev_uint16_to_string( struct dev_minor *sub, char *out, uint8_t out_
 // Global state
 // -----------------------------------------------------------------------
 
-
-
 extern uint8_t n_major_total;
 extern uint8_t n_minor_total;
+
+extern dev_major *devices[];
+
+
+// -----------------------------------------------------------------------
+// Global from/to string (data read/write)
+// -----------------------------------------------------------------------
+
+dev_minor *  	dev_get_minor_by_name( const char *name );
+int8_t          dev_global_from_string( const char *name, const char *value );          // 0 - success
+int8_t      	dev_global_to_string( const char *name, char *out, uint8_t out_size );	// 0 - success
+
+
+// TODO set/get property
+
 
 
 

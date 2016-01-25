@@ -116,7 +116,7 @@ static int8_t      pwm_to_string( struct dev_minor *sub, char *out, uint8_t out_
 }
 
 
-static int8_t      pwm_from_string( struct dev_minor *sub, char *in)         			// 0 - success
+static int8_t      pwm_from_string( struct dev_minor *sub, const char *in)         			// 0 - success
 {
     int data = atoi(in);
 

@@ -178,3 +178,63 @@ dev_init_subdev_getset( dev_major *dev, minor_from_string_f from, minor_to_strin
 
 
 
+// -----------------------------------------------------------------------
+// Global from/to string (data read/write)
+// -----------------------------------------------------------------------
+
+dev_minor *  	dev_get_minor_by_name( const char *name )
+{
+    uint8_t i,j;
+    dev_major *	dev;
+    dev_minor * ret = 0;
+
+    for( i = 0; i < n_major_total; i++ )
+    {
+        dev = devices[i];
+
+        if( (0 == dev->init) || (0 == dev->start) )
+            continue;
+
+        if( !dev->started )
+            continue;
+
+        for( j = 0; j < dev->minor_count; j++ )
+        {
+            char *subname = dev->subdev[j].name;
+            if( (0 == subname) || strcmp( name, subname ) )
+                continue;
+            return dev->subdev+j;
+        }
+        
+    }
+
+    return ret;
+
+}
+
+
+int8_t
+dev_global_from_string( const char *name, const char *value )          // 0 - success
+{
+    dev_minor *m = dev_get_minor_by_name( name );
+
+    if( m == 0 ) return -1;
+
+    if( 0 == m->from_string ) return -1;
+
+    return m->from_string( m, value );
+}
+
+int8_t
+dev_global_to_string( const char *name, char *out, uint8_t out_size )	// 0 - success
+{
+    dev_minor *m = dev_get_minor_by_name( name );
+
+    if( m == 0 ) return -1;
+
+    if( 0 == m->to_string ) return -1;
+
+    return m->to_string( m, out, out_size );
+}
+
+

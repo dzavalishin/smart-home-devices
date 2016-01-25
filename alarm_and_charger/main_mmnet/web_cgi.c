@@ -434,10 +434,17 @@ int CgiNetIO( FILE * stream, REQUEST * req )
 
 static char * getNamedParameter( const char *name )
 {
-    int nin;
-    static char out[30];
+    //int nin;
+    static char out[64];
+
+    int8_t rc = dev_global_to_string( name, out, sizeof( out ) );	// 0 - success
+    if(rc)
+        return 0;
+
+    return out;
 
 
+/*
 #if SERVANT_NADC > 0
     if( 0 == strncmp( name, "adc", 3 ) )
     {
@@ -499,25 +506,20 @@ static char * getNamedParameter( const char *name )
 
 
 #endif // SERVANT_NTEMP
-
-#if SERVANT_DHT11
-    if( 0 == strcmp( name, "dht-h" ) ) return itoa( dht_humidity, out, 10 );
-    if( 0 == strcmp( name, "dht-t" ) ) return itoa( dht_temperature, out, 10 );
-#endif // SERVANT_DHT11
-
-#if SERVANT_BMP180
-    if( 0 == strcmp( name, "bmp-p" ) ) return ltoa( bmp180_pressure, out, 10 );
-    if( 0 == strcmp( name, "bmp-t" ) ) return ltoa( bmp180_temperature, out, 10 );
-#endif // SERVANT_BMP180
+*/
 
 
-    return 0;
+//    return 0;
 }
 
 
 
 static int setNamedParameter( const char *name, const char *value )
 {
+    int8_t rc = dev_global_from_string( name, value );          // 0 - success
+    if( !rc ) return 0;
+
+    /*
     int nout = atoi( name + 3 );
 #if SERVANT_NPWM > 0
     if( 0 == strncmp( name, "pwm", 3 ) )
@@ -557,7 +559,7 @@ static int setNamedParameter( const char *name, const char *value )
 
     }
 #endif
-
+*/
     return MODBUS_EXCEPTION_ILLEGAL_DATA_ADDFRESS;
 }
 
