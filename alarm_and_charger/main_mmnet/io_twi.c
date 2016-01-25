@@ -15,6 +15,8 @@
 #include "dev_map.h"
 #include "prop.h"
 
+#include <dev/twif.h>
+
 //#include "delay.h"
 
 #if ENABLE_TWI
@@ -36,6 +38,7 @@ errno_t
 twi_activate_prop_change(struct dev_properties *ps, void *context, uint16_t offset, void *vp )
 {
     twi_setup();
+    return 0;
 }
 
 // ----------------------------------------------------------------------
@@ -85,7 +88,7 @@ dev_property twi_prop[] =
 dev_properties twi_props =
 {
     twi_prop,
-    PROP_COUNT(twi_prop);
+    PROP_COUNT(twi_prop)
 };
 
 

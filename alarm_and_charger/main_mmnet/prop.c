@@ -155,7 +155,7 @@ errno_t	dev_gen_setproperty( dev_properties *ps, void *context, const char *pNam
     case pt_mstring:
         {
             size_t len = strlen( pValue )+1;
-            if( len > 64*1024 )
+            if( len > 2*1024 )
                 return EINVAL;
 
             char *olds = *(char **)vp;
