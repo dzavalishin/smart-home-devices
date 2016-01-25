@@ -16,6 +16,9 @@
 struct dev_major;
 struct dev_minor;
 
+struct dev_property;
+struct dev_properties;
+
 typedef    int8_t      (*minor_to_string_f)( struct dev_minor *sub, char *out, uint8_t out_size );
 typedef    int8_t      (*minor_from_string_f)( struct dev_minor *sub, const char *);
 
@@ -55,6 +58,8 @@ struct dev_major
     struct dev_minor *subdev;
 
     uint8_t     started;
+
+    struct dev_properties *prop;
 };
 
 typedef struct dev_major dev_major;
