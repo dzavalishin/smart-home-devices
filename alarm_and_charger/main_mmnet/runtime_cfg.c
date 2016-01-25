@@ -1,6 +1,6 @@
 /**
  *
- * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ * DZ-MMNET-CHARGER: Acc charger module based on MMNet101.
  *
  * Runtime-configurable data. EEPROM config save/restore.
  *

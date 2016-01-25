@@ -1,10 +1,8 @@
 /**
  *
- * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ * DZ-MMNET-CHARGER: Acc charger module based on MMNet101.
  *
- * Software PWM.
- *
- * Multiple-output PWM using one HW timer.
+ * Hardware PWM.
  *
 **/
 

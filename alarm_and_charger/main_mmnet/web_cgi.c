@@ -1,6 +1,6 @@
 /**
  *
- * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ * DZ-MMNET-CHARGER: Acc charger module based on MMNet101.
  *
  * HTTPD/CGI code for program-specific (not OS) data.
  *
@@ -35,7 +35,7 @@
 
 
 
-
+#define DEBUG 1
 
 
 
@@ -49,7 +49,7 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
 
     if(row_no < 0)
     {
-        static prog_char th[] = "<TR><TH> Type </TH><TH> Number </TH><TH> Value </TH></TR>\r\n";
+        static prog_char th[] = "<TR><TH> Driver </TH><TH> Property </TH><TH> Value </TH></TR>\r\n";
         fputs_P(th, stream);
         return 1;
     }
@@ -66,13 +66,14 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
 
     if( dev->prop )
     {
+        if(DEBUG) printf("%s has properties\n", dev->name );
         int nprop = 0;
         for(;;)
         {
             char buf1[32];
             char buf2[32] = "(?)";
 
-            errno_t rc = dev_drv_listproperties( dev, nprop, buf1, sizeof(buf1)-1 );
+            errno_t rc = dev_drv_listproperties( dev, nprop++, buf1, sizeof(buf1)-1 );
             if( rc )
                 break;
 

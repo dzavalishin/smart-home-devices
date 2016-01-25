@@ -1,6 +1,6 @@
 /**
  *
- * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ * DZ-MMNET-CHARGER: Acc charger module based on MMNet101.
  *
  * 1-Wire temperature sensors.
  *
@@ -37,6 +37,9 @@ extern uint16_t currTemperature[SERVANT_NTEMP];
 #if !OW_ONE_BUS
 extern uint8_t 	gTempSensorBus[SERVANT_NTEMP]; // Which bus this sensor lives on
 #endif
+
+extern uint16_t 	ow_error_cnt; // 1wire error counter
+
 
 #endif
 

@@ -1,6 +1,14 @@
+/**
+ *
+ * DZ-MMNET-CHARGER: Modbus/TCP I/O module based on MMNet101.
+ *
+ * SPI IO.
+ *
+**/
+
 #include "defs.h"
 #include "dev_map.h"
-//void spi_init(void);
+
 
 extern dev_major io_spi;
 

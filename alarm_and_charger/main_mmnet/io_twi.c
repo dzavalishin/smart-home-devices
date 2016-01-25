@@ -108,4 +108,6 @@ dev_major io_twi =
 
     .minor_count = 1,
     .subdev = 0,
+
+    .prop = &twi_props,
 };

@@ -1,6 +1,6 @@
 /**
  *
- * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ * DZ-MMNET-CHARGER: Modbus/TCP I/O module based on MMNet101.
  *
  * Main: startup code.
  *
@@ -426,8 +426,8 @@ void init_devices(void)
     set_half_duplex0(0);
     set_half_duplex1(0);
 
-    int rc = DS1307Init( &rtcDs1307 );
-    printf("RTC 1307 init = %d\n", rc );
+//    int rc = DS1307Init( &rtcDs1307 );
+//    printf("RTC 1307 init = %d\n", rc );
 
     // int DS1307RtcGetClock(NUTRTC *rtc, struct _tm *tm)
     // int DS1307RtcSetClock(NUTRTC *rtc, const struct _tm *tm)

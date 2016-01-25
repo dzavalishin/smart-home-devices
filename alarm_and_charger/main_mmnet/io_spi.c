@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-CHARGER: Modbus/TCP I/O module based on MMNet101.
+ *
+ * SPI IO.
+ *
+**/
+
 #include "defs.h"
 
 #include <sys/thread.h>
@@ -11,6 +19,8 @@
 #include <stdio.h> // printf
 
 #include "io_spi.h"
+#include "ui_lcd_queue.h"
+
 #include "util.h"
 #include "dev_map.h"
 
@@ -188,6 +198,10 @@ uint8_t spi_do1 = 0;
 
 uint8_t spi_slave_pwm[N_SPI_SLAVE_PWM];
 
+
+#define SLAVE_MIRROR 0
+
+
 #warning read encoder value from 2313
 // uint8_t encoder_value[2] = { 0, 0 };
 // uint8_t encoder_button[2] = { 0, 0 };
@@ -196,21 +210,51 @@ uint8_t spi_slave_pwm[N_SPI_SLAVE_PWM];
 // encoder_value[nencoder] = spi_data & 0x7F;
 // encoder_button[nencoder] = (spi_data & 0x80) ? 0xFF : 0;
 
+
+#if SLAVE_MIRROR
+static uint8_t spi_slave_pwm_mirror[N_SPI_SLAVE_PWM];
+#endif
+
 THREAD(spi_loop, __arg)
 {
     while(1)
     {
-        NutSleep(10); // 100 Hz
+        //NutSleep(10); // 100 Hz
+        NutSleep(9); // 100 Hz - 1ms more is in LCD code
 
         // LCD
 
-        // TODO byte queue?
+        if( !lcd_q_empty() )
+        {
+            uint16_t data = lcd_q_get();
+            // Upped byhte structure is XXXX X E R/W RS
+
+            // Do a transaction on LCD SPI slave
+
+            // Make sure E is high, set data and RS bits
+            spi_send( SPI_SS_LCD, ((data >> 8) & 1) | 0x4, data & 0xFF );
+            NutSleep(1);
+            // Now make H->L changge on E bit
+            spi_send( SPI_SS_LCD, ((data >> 8) & 1) | 0x0, data & 0xFF );
+
+            if( !lcd_q_empty() )
+                NutSleep(1); // No need if q is empty - we have 10 ms until next transaction anyway
+
+        }
 
         // 2313 PWMs
 
         uint8_t i;
         for( i = 0; i < N_SPI_SLAVE_PWM; i++ )
+        {
+#if SLAVE_MIRROR
+            if( spi_slave_pwm_mirror[i] == spi_slave_pwm[i] )
+                continue;
+
+            spi_slave_pwm_mirror[i] = spi_slave_pwm[i];
+#endif
             spi_send( (i < 5) ? SPI_SS_2313_A : SPI_SS_2313_B, i, spi_slave_pwm[i] );
+        }
 
         // Do
 

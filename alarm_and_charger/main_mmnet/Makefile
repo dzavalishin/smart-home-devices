@@ -14,7 +14,8 @@ SRCS =  main.c $(PROJ).c delay.c runtime_cfg.c util.c modbus.c dev_map.c
 SRCS += io_adc.c io_dig.c io_pwm.c io_temp.c io_spi.c io_twi.c
 SRCS += onewire.c ds18x20.c tunnel.c prop.c
 SRCS += $(WEBFILE) web_cgi.c web_cgi_os.c web_setup.c web_util.c web_status.c web_httpd.c lua.c syslog.c eeprom.c
-# i2c.c net_io.c icp.c freq_send.c ds18x20.c onewire.c ds2482.c dallas_ds2482.c  child-1wire.c 
+SRCS += ui_lcd.c ui_lcd_queue.c ui_menu.c
+
 OBJS =  $(SRCS:.c=.o)
 
 LIBS =  $(LIBDIR)/nutinit.o $(MODS) -lnutnet -lnutpro -lnutfs -lnutos -lnutdev -lnutnet -lnutcrt -lnutarch -lnutgorp ../../modbus-lib/libmodbus.a  ../../avr-util-lib/libdz-avr-util.a 
