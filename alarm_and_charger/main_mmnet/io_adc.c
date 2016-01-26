@@ -104,6 +104,7 @@ ISR(ADC_vect)
     ADCSRA &= ~_BV(ADIE); // no more ints
 
     adc_value[current_ad_input] = (0xFFu & ADCL) | (0x300u & (((unsigned int)ADCH) << 8));
+    io_adc.subdev[current_ad_input].io_count++;
 
     sei();
     //postProcessAdc(current_ad_input);

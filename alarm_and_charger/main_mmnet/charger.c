@@ -82,10 +82,11 @@ static void     ch_dump( charger *c );
 
 
 // -----------------------------------------------------------------------
-// State switches
+// Inc/dec - saturated
 // -----------------------------------------------------------------------
 
-//static inline void ch_st_to_init( charger *c ) { c->state = ch_init; }
+#define INCS( __VV ) do { if( (__VV) < 0xFF ) (__VV)++; } while(0)
+#define DECS( __VV ) do { if( (__VV) > 0 ) (__VV)--; } while(0)
 
 // -----------------------------------------------------------------------
 // Read and calc voltages and currents
@@ -204,7 +205,7 @@ ch_set_charge_current( charger *c )
     // overvoltage safety first
     if( c->load_voltage > (c->max_charge_voltage + V_DIODE_DROP) )
     {
-        c->charge_pwm_percentage--;
+        DECS(c->charge_pwm_percentage);
         return;
     }
 /*
@@ -220,10 +221,10 @@ ch_set_charge_current( charger *c )
         // In idle state we keep acc voltage on max+0.1 to max-0.1 volt level
     as_idle:
         if( c->acc_voltage > c->max_charge_voltage+0.1 )
-            c->charge_pwm_percentage--;
+            DECS(c->charge_pwm_percentage);
 
         if( c->acc_voltage < (c->max_charge_voltage-0.1) )
-            c->charge_pwm_percentage++;
+            INCS(c->charge_pwm_percentage);
 
         return;
     }
@@ -234,11 +235,11 @@ ch_set_charge_current( charger *c )
     {
         // Current control
 
-        if( c->charge_current > c->max_charge_current )
-            c->charge_pwm_percentage--;
+        if( c->charge_current > c->max_charge_current+0.01 )
+            DECS(c->charge_pwm_percentage);
 
-        if( c->charge_current > c->min_charge_current )
-            c->charge_pwm_percentage--;
+        if( c->charge_current < c->max_charge_current-0.01 )
+            INCS(c->charge_pwm_percentage);
     }
     else
     {

@@ -30,6 +30,10 @@
 #if ENABLE_TWI
 
 
+static int8_t      twi_rtc_to_string( struct dev_minor *sub, char *out, uint8_t out_size );
+static int8_t      twi_eeprom_to_string( struct dev_minor *sub, char *out, uint8_t out_size );
+
+
 // ----------------------------------------------------------------------
 // Parameters
 // ----------------------------------------------------------------------
@@ -57,8 +61,14 @@ twi_activate_prop_change(struct dev_properties *ps, void *context, uint16_t offs
 // Assume interrupts disabled during init
 static int8_t twi_init( dev_major* d )
 {
-    if( init_subdev( d, 1, "spi" ) )
+    if( init_subdev( d, 2, 0 ) )
         return -1;
+
+    d->subdev[0].name = "twi.rtc";
+    d->subdev[0].to_string = twi_rtc_to_string;
+
+    d->subdev[1].name = "twi.eeprom";
+    d->subdev[1].to_string = twi_eeprom_to_string;
 
 
     unsigned long busspeed = twi_speed;	
@@ -82,6 +92,24 @@ static int8_t twi_start( dev_major* d )
 }
 
 #endif // ENABLE_TWI
+
+// ----------------------------------------------------------------------
+// ToString
+// ----------------------------------------------------------------------
+
+static int8_t      twi_rtc_to_string( struct dev_minor *sub, char *out, uint8_t out_size )
+{
+{
+    return dev_uint16_to_string( sub, out, out_size, 0 );
+}
+}
+
+static int8_t      twi_eeprom_to_string( struct dev_minor *sub, char *out, uint8_t out_size )
+{
+{
+    return dev_uint16_to_string( sub, out, out_size, 0 );
+}
+}
 
 
 // ----------------------------------------------------------------------

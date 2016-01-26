@@ -174,16 +174,14 @@ static int CgiOutputsRow( FILE * stream, int row_no )
 
     if(row_no < 0)
     {
-        //static prog_char th[] = "<TR><TH> Type </TH><TH> Number </TH><TH> Value </TH></TR>\r\n";
-        static prog_char th[] = "<TR><TH> Channel </TH><TH> &nbsp;&nbsp; </TH><TH> Value </TH></TR>\r\n";
+        //static prog_char th[] = "<TR><TH> Channel </TH><TH> &nbsp;&nbsp; </TH><TH> Value </TH></TR>\r\n";
+        static prog_char th[] = "<TR><TH width=\"150\"> Dev </TH><TH width=\"150\"> Channel </TH><TH width=\"150\"> Value </TH><TH width=\"150\"> IO </TH><TH width=\"150\"> Err </TH></TR>\r\n";
         fputs_P(th, stream);
         return 1;
     }
 
     if( row_no  <  n_minor_total )
     {
-        static prog_char tfmt[] = "<TR><TD> %s </TD><TD> &nbsp;&nbsp; </TD><TD> %s </TD></TR>\r\n";
-
         dev_minor *minor = dev_get_minor( row_no );
 
         char buf[32] = "";
@@ -195,16 +193,18 @@ static int CgiOutputsRow( FILE * stream, int row_no )
             if( d->to_string )
                 d->to_string( minor, buf, sizeof(buf) );
 
-            fprintf_P(stream, tfmt, d->name, buf );
+            static prog_char dh[] = "<TR><td> %s </td><td>  </td><td> %s </td><td>  </td><td>  </td></TR>\r\n";
+            fprintf_P(stream, dh, d->name, buf );
         }
 
         //buf[0] = '?';
         //buf[1] = 0;
         if(minor->to_string)
         {
+            static prog_char mh[] = "<TR><td>  </td><td> %s </td><td> %s </td><td> %u </td><td> %u </td></TR>\r\n";
             //int8_t ret =
             uint8_t rc = minor->to_string( minor, buf, sizeof(buf) );
-            if(!rc) fprintf_P(stream, tfmt, minor->name, buf );
+            if(!rc) fprintf_P(stream, mh, minor->name, buf, minor->io_count, minor->err_count );
         }
 
         return 1;

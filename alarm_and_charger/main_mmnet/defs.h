@@ -136,7 +136,7 @@
 #define FAIL_LED_DDR  DDRE
 #define FAIL_LED_PORT PORTE
 #define FAIL_LED_PIN  PINE
-#define FAIL_LED      PINE4
+#define FAIL_LED      PINE2
 
 #endif
 

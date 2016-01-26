@@ -23,6 +23,8 @@
 //#warning use timer 1 instead of 0, timer 0 is OS
 
 
+#define T3 1
+
 #define DEBUG 0
 
 #if SERVANT_NPWM > 0
@@ -73,7 +75,7 @@ static inline void pwm_set_pwm_0( uint8_t val )
     OCR0 = val;
 }
 #endif
-
+/*
 static inline void pwm_init_timer_1(void)
 {
     TCCR1A = _BV(COM1B1) | _BV(WGM10);
@@ -103,6 +105,32 @@ static inline void pwm_set_pwm_2( uint8_t val )
 {
     OCR2 = val;
 }
+
+*/
+
+
+
+
+static inline void pwm_init_timer_3(void)
+{
+    TCCR3A = _BV(COM3A1) |_BV(COM3B1) | _BV(WGM30);
+    TCCR3B = _BV(WGM32)  | _BV(CS30);
+
+    DDRE |= _BV(PE3);
+    DDRE |= _BV(PE4);
+}
+
+
+static inline void pwm_set_pwm_3a( uint8_t val )
+{
+    OCR3A = val;
+}
+
+static inline void pwm_set_pwm_3b( uint8_t val )
+{
+    OCR3B = val;
+}
+
 
 
 
@@ -142,25 +170,18 @@ static int8_t      pwm_from_string( struct dev_minor *sub, const char *in)      
 
 static int8_t pwm_init_dev( dev_major* d )
 {
-    //uint8_t i;
-//return -1;
     if( init_subdev( d, SERVANT_NPWM, "pwm" ) )
         return -1;
 
     dev_init_subdev_getset( d, pwm_from_string, pwm_to_string );
-/*
-    for( i = 0; i < d->minor_count; i++ )
-    {
-        dev_minor *m = d->subdev+i;
 
-
-        m->to_string   = pwm_to_string;
-        m->from_string = pwm_from_string;
-    }
-*/
     //pwm_init_timer_0();
+#if T3
+    pwm_init_timer_3();
+#else
     pwm_init_timer_1();
     pwm_init_timer_2();
+#endif
 
     return 0;
 }
@@ -184,8 +205,8 @@ static void pwd_stop_dev( dev_major* d )
     TCCR2 &= ~_BV(COM21);
     TCCR2 &= ~_BV(COM20);
 
-    DDRB &= ~_BV(PB4);
-    DDRB &= ~_BV(PB7);
+//    DDRB &= ~_BV(PB4);
+//    DDRB &= ~_BV(PB7);
 
 }
 
@@ -198,9 +219,13 @@ static void pwm_test_data( dev_major* d )
     pwm_val[0]	= rand() / (RAND_MAX / 0xff + 1);
     pwm_val[1]	= rand() / (RAND_MAX / 0xff + 1);
 
+#if T3
+    pwm_set_pwm_3a( pwm_val[0] );
+    pwm_set_pwm_3b( pwm_val[1] );
+#else
     pwm_set_pwm_1( pwm_val[0] );
     pwm_set_pwm_2( pwm_val[1] );
-
+#endif
     // TODO FIXME dio resets DDRs for us, fix it there and remove here
     // TODO really? try to remove it here
     DDRB |= _BV(PB4);

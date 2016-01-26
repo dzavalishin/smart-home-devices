@@ -330,10 +330,14 @@ void read_temperature_data(void)
             //ow_bus_error_cnt[i]++;
             count_1w_bus_error( i );
 
+            io_temp.subdev[i].err_count++;
+
             currTemperature[i] = ERROR_VALUE_16;
 
             continue;
         }
+
+        io_temp.subdev[i].io_count++;
 
         currTemperature[i] = out;
     }

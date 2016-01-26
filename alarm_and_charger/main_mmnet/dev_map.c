@@ -23,11 +23,7 @@ int8_t init_subdev( dev_major *dev, uint8_t n_minor, const char *name )
 {
     uint8_t i;
 
-    // for free in case of error
-    //for( i = 0; i < n_minor; i++ )
-    //  dev->subdev[i] = 0;
-
-    dev->subdev = malloc( n_minor * sizeof (dev_minor) );
+    dev->subdev = calloc( n_minor * sizeof (dev_minor), 1 );
     if( 0 == dev->subdev ) goto free;
 
     for( i = 0; i < n_minor; i++ )
@@ -35,8 +31,10 @@ int8_t init_subdev( dev_major *dev, uint8_t n_minor, const char *name )
         dev_minor *m = dev->subdev+i;
 
         m->number = i;
-//        m->name = name;
-        m->name = make_subdev_name( name, i );
+
+        m->name = 0;
+        if( name )
+            m->name = make_subdev_name( name, i );
 
         m->dev = dev;
 

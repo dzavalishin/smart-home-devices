@@ -38,6 +38,14 @@ char spi_debug = DEBUG;
 
 static uint16_t spi_xfer_count = 0;
 
+static int8_t      spi_lcd_to_string( struct dev_minor *sub, char *out, uint8_t out_size );
+static int8_t      spi_2313a_to_string( struct dev_minor *sub, char *out, uint8_t out_size );
+static int8_t      spi_2313b_to_string( struct dev_minor *sub, char *out, uint8_t out_size );
+static int8_t      spi_do_to_string( struct dev_minor *sub, char *out, uint8_t out_size );
+static int8_t      spi_di_to_string( struct dev_minor *sub, char *out, uint8_t out_size );
+
+
+
 // ----------------------------------------------------------------------
 // Slave on/off
 // ----------------------------------------------------------------------
@@ -63,8 +71,26 @@ static int8_t spi_init( dev_major* d )
     volatile char IOReg;
     //if(spi_debug) printf("SPI init...");
 
-    if( init_subdev( d, 1, "spi" ) )
+    if( init_subdev( d, 5, 0 ) )
         return -1;
+
+    d->subdev[0].name = "spi.lcd";
+    d->subdev[0].to_string = spi_lcd_to_string;
+
+    d->subdev[1].name = "spi.2313.a";
+    d->subdev[1].to_string = spi_2313a_to_string;
+
+    d->subdev[2].name = "spi.2313.b";
+    d->subdev[2].to_string = spi_2313b_to_string;
+
+    d->subdev[3].name = "spi.do";
+    d->subdev[3].to_string = spi_do_to_string;
+
+    d->subdev[4].name = "spi.di";
+    d->subdev[4].to_string = spi_di_to_string;
+
+
+
 
     ss_off();
     // set PB0(/SS), PB1(SCK), PB2(MOSI) as output
@@ -193,6 +219,9 @@ set_slave( uint8_t slave )
 //
 // ----------------------------------------------------------------------
 
+#define SLAVE_MIRROR 0
+
+
 uint8_t spi_do0 = 0;
 uint8_t spi_do1 = 0;
 
@@ -201,16 +230,9 @@ uint16_t spi_di = 0;
 uint8_t spi_slave_pwm[N_SPI_SLAVE_PWM];
 
 
-#define SLAVE_MIRROR 0
+uint8_t encoder_value[2] = { 0, 0 };
+uint8_t encoder_button[2] = { 0, 0 };
 
-
-#warning read encoder value from 2313
-// uint8_t encoder_value[2] = { 0, 0 };
-// uint8_t encoder_button[2] = { 0, 0 };
-// uint8_t spi_data = spi_send();
-// uint8_t nencoder = i >= 5;
-// encoder_value[nencoder] = spi_data & 0x7F;
-// encoder_button[nencoder] = (spi_data & 0x80) ? 0xFF : 0;
 
 
 #if SLAVE_MIRROR
@@ -255,7 +277,14 @@ THREAD(spi_loop, __arg)
 
             spi_slave_pwm_mirror[i] = spi_slave_pwm[i];
 #endif
-            spi_send( (i < 5) ? SPI_SS_2313_A : SPI_SS_2313_B, i, spi_slave_pwm[i] );
+            uint8_t spi_data = spi_send( (i < 5) ? SPI_SS_2313_A : SPI_SS_2313_B, i, spi_slave_pwm[i] );
+
+
+            uint8_t nencoder = i >= 5;
+
+            encoder_value[nencoder] = spi_data & 0x7F;
+            encoder_button[nencoder] = (spi_data & 0x80) ? 0xFF : 0;
+
         }
 
         // Do
@@ -271,6 +300,39 @@ THREAD(spi_loop, __arg)
 
     }
 }
+
+// ----------------------------------------------------------------------
+// ToString
+// ----------------------------------------------------------------------
+
+
+static int8_t
+spi_lcd_to_string( struct dev_minor *sub, char *out, uint8_t out_size )
+{
+    return dev_uint16_to_string( sub, out, out_size, 0 );
+}
+
+static int8_t      spi_2313a_to_string( struct dev_minor *sub, char *out, uint8_t out_size )
+{
+    return dev_uint16_to_string( sub, out, out_size, encoder_value[0] );
+}
+
+static int8_t      spi_2313b_to_string( struct dev_minor *sub, char *out, uint8_t out_size )
+{
+    return dev_uint16_to_string( sub, out, out_size, encoder_value[1] );
+}
+
+static int8_t      spi_do_to_string( struct dev_minor *sub, char *out, uint8_t out_size )
+{
+    return dev_uint16_to_string( sub, out, out_size, (spi_do1 << 8)|spi_do0 );
+}
+
+static int8_t      spi_di_to_string( struct dev_minor *sub, char *out, uint8_t out_size )
+{
+    return dev_uint16_to_string( sub, out, out_size, spi_di );
+}
+
+
 
 
 
