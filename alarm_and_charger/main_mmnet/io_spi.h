@@ -25,6 +25,8 @@ uint16_t spi_send( unsigned char ss, unsigned char cmd1, unsigned char cmd2 );
 extern uint8_t spi_do0;
 extern uint8_t spi_do1;
 
+extern uint16_t spi_di;
+
 #define N_SPI_SLAVE_PWM 10
 extern uint8_t spi_slave_pwm[N_SPI_SLAVE_PWM];
 

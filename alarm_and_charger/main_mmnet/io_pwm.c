@@ -42,6 +42,10 @@ static uint8_t          pwm_val[SERVANT_NPWM];
 // TODO KILLME
 void set_an(unsigned char port_num, unsigned char data)
 {
+    if( port_num >= SERVANT_NPWM )
+        return;
+
+    pwm_val[port_num] = data;
 }
 
 

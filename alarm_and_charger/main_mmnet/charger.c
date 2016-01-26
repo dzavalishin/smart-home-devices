@@ -9,10 +9,18 @@
 // TODO detect insanity, shutdown
 // TODO disconnect self on battery very low
 
+#include "defs.h"
+#include "servant.h"
+
+
 #include <inttypes.h>
 #include <stdio.h>
 
 #include "io_adc.h"
+#include "io_pwm.h"
+#include "io_spi.h"
+
+#include <sys/timer.h>
 
 
 #define V_DIODE_DROP 0.7
@@ -59,6 +67,8 @@ typedef struct charger
 
     uint8_t             load_enabled; // load connected (relay)
 
+    uint8_t             red_led, green_led;
+    uint8_t             button;
 
 } charger;
 
@@ -94,6 +104,9 @@ static void ch_input_12v( struct charger *c )
     c->mains_voltage = get_float_adc( 0 ) / ADC_DIVIDER;
     c->load_voltage  = get_float_adc( 1 ) / ADC_DIVIDER;
     c->acc_voltage   = get_float_adc( 2 ) / ADC_DIVIDER;
+
+    c->button = !! (spi_di & 0x10); // TODO real bit?
+
 }
 
 static void ch_input_24v( struct charger *c )
@@ -101,6 +114,8 @@ static void ch_input_24v( struct charger *c )
     c->mains_voltage = get_float_adc( 4 ) / ADC_DIVIDER;
     c->load_voltage  = get_float_adc( 5 ) / ADC_DIVIDER;
     c->acc_voltage   = get_float_adc( 6 ) / ADC_DIVIDER;
+
+    c->button = !! (spi_di & 0x20); // TODO real bit?
 }
 
 // -----------------------------------------------------------------------
@@ -120,7 +135,7 @@ static void ch_output_12v( struct charger *c )
     set_an( 0, c->charge_pwm_percentage );
 
     // TODO relay control - c->load_enabled
-
+    // TODO LEDs
 }
 
 static void ch_output_24v( struct charger *c )
@@ -128,6 +143,7 @@ static void ch_output_24v( struct charger *c )
     set_an( 1, c->charge_pwm_percentage );
 
     // TODO relay control - c->load_enabled
+    // TODO LEDs
 
 }
 
@@ -154,6 +170,13 @@ ch_acc_hi( charger *c )
 {
     return c->acc_voltage > c->max_charge_voltage;
 }
+
+static inline bool
+ch_acc_50_percent( charger *c )
+{
+    return c->acc_voltage < (c->max_charge_voltage + c->low_charge_voltage) / 2;
+}
+
 
 // -----------------------------------------------------------------------
 // Charge current control
@@ -353,6 +376,8 @@ charger_main_loop( void )
 
         ch_display( &c24v );
         ch_dump( &c24v );
+
+        NutSleep( 500 );
     }
 
 }
@@ -368,12 +393,36 @@ ch_display( charger *c )
 
     // We have 2 buttons and 4 lights
 
-    // if button c->state = ch_init
+    if( c->button )
+        c->state = ch_init;
 
     // Green light - on = load is on, flash = on battery
 
+    if( !c->load_enabled )
+        c->green_led = 0;
+    else
+    {
+        if( c->state == ch_discharge )
+            c->green_led = !c->green_led;
+        if( c->state == ch_charge )
+        {
+            c->green_led++;
+            if( c->green_led > 3 )
+                c->green_led = 0; // flash slowly
+        }
+        else
+            c->green_led = 1;
+    }
+
     // Red light - on = battery is empty, flash = battery is low
 
+    if( !c->load_enabled )
+        c->red_led = 1;
+    else
+    {
+        if( ch_acc_50_percent( c ) )
+            c->red_led = !c->red_led;
+    }
 }
 
 

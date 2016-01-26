@@ -196,6 +196,8 @@ set_slave( uint8_t slave )
 uint8_t spi_do0 = 0;
 uint8_t spi_do1 = 0;
 
+uint16_t spi_di = 0;
+
 uint8_t spi_slave_pwm[N_SPI_SLAVE_PWM];
 
 
@@ -265,7 +267,7 @@ THREAD(spi_loop, __arg)
         // Data in (555ir10) needs some clock with SS off to load register.
         // Previous Do communications are ok for that.
 
-        uint16_t spi_di = spi_send( SPI_SS_DI, 0, 0 ); // Send nothing (zero)
+        spi_di = spi_send( SPI_SS_DI, 0, 0 ); // Send nothing (zero)
 
     }
 }
