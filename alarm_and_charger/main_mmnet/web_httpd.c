@@ -8,7 +8,9 @@
 
 #include <sys/heap.h>
 
+#include "defs.h"
 #include "web.h"
+#include "servant.h"
 
 
 /*! \fn Service(void *arg)

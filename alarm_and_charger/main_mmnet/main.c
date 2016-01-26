@@ -43,11 +43,8 @@
 
 #include <sys/syslog.h>
 
-#include "cgi.h"
-
 #include "web.h"
 
-#include "modbus_srv.h"
 #include <modbus.h>
 
 #include "dev_map.h"

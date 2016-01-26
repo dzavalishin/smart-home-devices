@@ -20,6 +20,33 @@
 #  define DPUTS(___s) 
 #endif
 
+// -----------------------------------------------------------------------
+// Service threads
+// -----------------------------------------------------------------------
+
+
+#include <sys/thread.h>
+
+THREAD(ModbusService, arg);
+
+// -----------------------------------------------------------------------
+// All the CGI entries.
+// -----------------------------------------------------------------------
+
+#include <pro/httpd.h>
+
+int ShowThreads(FILE * stream, REQUEST * req);
+int ShowTimers(FILE * stream, REQUEST * req);
+int ShowSockets(FILE * stream, REQUEST * req);
+int ShowForm(FILE * stream, REQUEST * req);
+
+
+int CgiNetIO( FILE * stream, REQUEST * req );
+int CgiInputs( FILE * stream, REQUEST * req );
+int CgiOutputs( FILE * stream, REQUEST * req );
+int CgiNetwork( FILE * stream, REQUEST * req );
+int CgiStatus( FILE * stream, REQUEST * req );
+
 
 
 // -----------------------------------------------------------------------

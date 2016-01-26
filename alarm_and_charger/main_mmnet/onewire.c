@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-CHARGER: Modbus/TCP I/O module based on MMNet101.
+ *
+ * 1Wire IO.
+ *
+**/
+
 /************************************************************************/
 /*                                                                      */
 /*        Access Dallas 1-Wire Device with ATMEL AVRs                   */

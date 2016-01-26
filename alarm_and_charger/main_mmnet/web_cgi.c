@@ -12,8 +12,6 @@
 #include "servant.h"
 #include "runtime_cfg.h"
 
-#include "cgi.h"
-
 #include "io_dig.h"
 #include "io_adc.h"
 #include "io_pwm.h"

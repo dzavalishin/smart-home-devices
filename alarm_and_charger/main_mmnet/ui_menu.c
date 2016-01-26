@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-CHARGER: Modbus/TCP I/O module based on MMNet101.
+ *
+ * UI: Menu code.
+ *
+**/
+
 #include "defs.h"
 
 #include <inttypes.h>

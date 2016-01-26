@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-CHARGER: Modbus/TCP I/O module based on MMNet101.
+ *
+ * Runtime config defs.
+ *
+**/
+
 #ifndef RUNTIME_CFG_H_
 #define RUNTIME_CFG_H_
 

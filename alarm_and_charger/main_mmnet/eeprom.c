@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-CHARGER: Modbus/TCP I/O module based on MMNet101.
+ *
+ * I2C EEPROM io.
+ *
+**/
+
 #include <dev/at24c.h>
 
 

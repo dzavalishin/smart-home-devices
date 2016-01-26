@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-CHARGER: Modbus/TCP I/O module based on MMNet101.
+ *
+ * Dallas temperature sensors io.
+ *
+**/
+
 #include <avr/io.h>
 
 #include "ds18x20.h"

@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-CHARGER: Modbus/TCP I/O module based on MMNet101.
+ *
+ * Attempt to fix broken syslog.
+ *
+**/
+
 /*
  * Copyright (C) 2004 by egnite Software GmbH. All rights reserved.
  *

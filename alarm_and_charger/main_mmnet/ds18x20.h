@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-CHARGER: Modbus/TCP I/O module based on MMNet101.
+ *
+ * Dallas temperature sensors defs.
+ *
+**/
+
 #ifndef DS18X20_H_
 #define DS18X20_H_
 
@@ -79,35 +87,5 @@ uint8_t		DS18X20_read_meas_word(uint8_t id[], uint16_t *out);
 uint16_t	DS18X20_meas_to_word( uint8_t fc, uint8_t *sp);
 
 
-/*
-	
-extern uint8_t	DS18X20_get_power_status(uint8_t id[]);
-
-extern uint8_t DS18X20_read_meas(uint8_t id[], 	uint8_t *subzero, uint8_t *cel, uint8_t *cel_frac_bits);
-extern uint8_t DS18X20_read_meas_single(uint8_t familycode,	uint8_t *subzero, uint8_t *cel, uint8_t *cel_frac_bits);
-
-
-
-
-extern uint8_t DS18X20_meas_to_cel( uint8_t fc, uint8_t *sp, uint8_t* subzero, uint8_t* cel, uint8_t* cel_frac_bits);
-extern	uint16_t DS18X20_temp_to_decicel(uint8_t subzero, uint8_t cel, 	uint8_t cel_frac_bits);
-extern int8_t DS18X20_temp_cmp(uint8_t subzero1, uint16_t cel1, uint8_t subzero2, uint16_t cel2);
-
-#ifdef DS18X20_EEPROMSUPPORT
-// write th, tl and config-register to scratchpad (config ignored on S20)
-uint8_t DS18X20_write_scratchpad( uint8_t id[], uint8_t th, uint8_t tl, uint8_t conf);
-// read scratchpad into array SP
-uint8_t DS18X20_read_scratchpad( uint8_t id[], uint8_t sp[]);
-// copy values th,tl (config) from scratchpad to DS18x20 eeprom
-uint8_t DS18X20_copy_scratchpad( uint8_t with_power_extern, uint8_t id[] );
-// copy values from DS18x20 eeprom to scratchpad
-uint8_t DS18X20_recall_E2( uint8_t id[] );
-#endif
-
-#ifdef DS18X20_VERBOSE
-extern void DS18X20_show_id_uart( uint8_t *id, size_t n );
-extern uint8_t DS18X20_read_meas_all_verbose( void );
-#endif
-*/
 
 #endif

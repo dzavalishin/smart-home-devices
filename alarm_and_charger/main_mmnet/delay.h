@@ -1,3 +1,13 @@
+/**
+ *
+ * DZ-MMNET-CHARGER: Modbus/TCP I/O module based on MMNet101.
+ *
+ * Busy loop delay code.
+ *
+ * TODO KILLME
+ *
+**/
+
 
 #ifndef _delay_h_
 #define _delay_h_

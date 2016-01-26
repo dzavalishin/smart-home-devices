@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-CHARGER: Modbus/TCP I/O module based on MMNet101.
+ *
+ * TWI (I2C) support.
+ *
+**/
+
 #include "defs.h"
 
 //#include <sys/thread.h>

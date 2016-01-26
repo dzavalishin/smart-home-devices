@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-CHARGER: Modbus/TCP I/O module based on MMNet101.
+ *
+ * 1Wire defs.
+ *
+**/
+
 #ifndef _1wire_h_
 #define _1wire_h_
 

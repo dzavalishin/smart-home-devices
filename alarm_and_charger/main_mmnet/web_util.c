@@ -9,6 +9,7 @@
 
 #include "defs.h"
 #include "runtime_cfg.h"
+#include "servant.h"
 
 #include "web.h"
 

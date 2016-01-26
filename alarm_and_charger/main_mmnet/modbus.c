@@ -8,6 +8,7 @@
 
 #include "defs.h"
 #include "runtime_cfg.h"
+#include "servant.h"
 
 #include <sys/event.h>
 #include <sys/timer.h>
@@ -17,7 +18,6 @@
 #include <string.h>
 
 
-#include "modbus_srv.h"
 #include "modbus_reg.h"
 #include <modbus.h>
 
@@ -25,8 +25,6 @@
 #include "io_pwm.h"
 #include "io_dig.h"
 #include "io_temp.h"
-//#include "io_dht.h"
-//#include "io_bmp180.h"
 
 static const int modbus_debug = 0;
 
