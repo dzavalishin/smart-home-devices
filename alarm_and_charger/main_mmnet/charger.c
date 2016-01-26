@@ -6,10 +6,19 @@
  *
 **/
 
+// TODO detect insanity, shutdown
+// TODO disconnect self on battery very low
+
 #include <inttypes.h>
+#include <stdio.h>
+
+#include "io_adc.h"
+
 
 #define V_DIODE_DROP 0.7
 #define R_CURRENT_SENSE 0.1
+
+#define ADC_DIVIDER 20.0
 
 typedef enum ch_state
 {
@@ -18,6 +27,8 @@ typedef enum ch_state
     ch_discharge,    	//
     ch_idle,    	// Acc is charged, no current flow
     ch_low_charge,    	// Acc charge is very low, load is disconnected
+
+    ch_failed,          // Something wen completely wrong, all shut down - TODO
 
 } ch_state;
 
@@ -32,6 +43,7 @@ typedef struct charger
     float               max_charge_current;
 
     void                (*ch_input)( struct charger *c );
+    void                (*ch_output)( struct charger *c );
 
     // Voltage circuit:
     // mains -> diode -> PWM MOSFET -> load <-> Isense resistor <-> acc
@@ -43,12 +55,21 @@ typedef struct charger
 
     float               charge_current;  // maximal charge acc voltage
 
-    int                 charge_pwm_percentage; // 0-255 % of charger PWM
+    uint8_t             charge_pwm_percentage; // 0-255 % of charger PWM
+
+    uint8_t             load_enabled; // load connected (relay)
+
 
 } charger;
 
 typedef uint8_t bool;
 //#define bool
+
+
+static void     ch_display( charger *c );
+static void     ch_dump( charger *c );
+
+
 
 // -----------------------------------------------------------------------
 // State switches
@@ -70,17 +91,46 @@ ch_get_data( charger *c )
 
 static void ch_input_12v( struct charger *c )
 {
-    c->mains_voltage = get_float_adc( 0 );
-    c->load_voltage = get_float_adc( 1 );
-    c->acc_voltage = get_float_adc( 2 );
+    c->mains_voltage = get_float_adc( 0 ) / ADC_DIVIDER;
+    c->load_voltage  = get_float_adc( 1 ) / ADC_DIVIDER;
+    c->acc_voltage   = get_float_adc( 2 ) / ADC_DIVIDER;
 }
 
 static void ch_input_24v( struct charger *c )
 {
-    c->mains_voltage = get_float_adc( 4 );
-    c->load_voltage = get_float_adc( 5 );
-    c->acc_voltage = get_float_adc( 6 );
+    c->mains_voltage = get_float_adc( 4 ) / ADC_DIVIDER;
+    c->load_voltage  = get_float_adc( 5 ) / ADC_DIVIDER;
+    c->acc_voltage   = get_float_adc( 6 ) / ADC_DIVIDER;
 }
+
+// -----------------------------------------------------------------------
+// Control outputs
+// -----------------------------------------------------------------------
+
+
+static inline void
+ch_control_outs( charger *c )
+{
+    c->ch_output( c );
+}
+
+
+static void ch_output_12v( struct charger *c )
+{
+    set_an( 0, c->charge_pwm_percentage );
+
+    // TODO relay control - c->load_enabled
+
+}
+
+static void ch_output_24v( struct charger *c )
+{
+    set_an( 1, c->charge_pwm_percentage );
+
+    // TODO relay control - c->load_enabled
+
+}
+
 
 
 // -----------------------------------------------------------------------
@@ -113,7 +163,7 @@ void
 ch_set_charge_current( charger *c )
 {
     // Not charging at all
-    if( (c->state == ch_discharge) || (c->state == ch_low_charge) || (c->state == ch_init) )
+    if( (c->state == ch_discharge) || (c->state == ch_low_charge) || (c->state == ch_init) || (c->state == ch_failed) )
     {
         c->charge_pwm_percentage = 0;
         return;
@@ -175,7 +225,7 @@ ch_state_action( charger *c )
 {
     switch( c->state )
     {
-    case ch_init:		
+    case ch_init:
         // starting state - find out and switch to needed state
         if( ! ch_have_mains_power( c ) )
         {
@@ -199,7 +249,7 @@ ch_state_action( charger *c )
 
     case ch_charge:
         ch_set_charge_current( c );
-        ch_load_enable( 1 );
+        c->load_enabled = 1;
 
         if( ch_acc_hi( c ) )
             c->state = ch_idle;
@@ -221,7 +271,7 @@ ch_state_action( charger *c )
     case ch_idle:
         // Acc is charged, no current flow
         ch_set_charge_current( c );
-        ch_load_enable( 1 );
+        c->load_enabled = 1;
 
         if( ! ch_have_mains_power( c ) )
             c->state = ch_discharge;
@@ -230,21 +280,117 @@ ch_state_action( charger *c )
 
     case ch_low_charge:
         // Acc charge is very low, load is disconnected
-        ch_load_enable( 0 );
+        c->load_enabled = 0;
 
         if( ch_have_mains_power( c ) )
             c->state = ch_charge;
 
         break;
 
+    case ch_failed:
+        // Insane, all off
+        c->load_enabled = 0;
 
+        break;
     }
 }
 
 
+// -----------------------------------------------------------------------
+// Main loop
+// -----------------------------------------------------------------------
+
+charger c12v =
+{
+    .state = ch_init,
+
+    .low_charge_voltage = 10.8,
+    .max_charge_voltage = 13.8,
+
+    .min_charge_current = 0,
+    .max_charge_current = 400.0,
+
+    .ch_input = ch_input_12v,
+    .ch_output = ch_output_12v,
+
+};
 
 
+charger c24v =
+{
+    .state = ch_init,
 
+    .low_charge_voltage = 21.6,
+    .max_charge_voltage = 13.8*2,
+
+    .min_charge_current = 0,
+    .max_charge_current = 200.0,
+
+    .ch_input = ch_input_24v,
+    .ch_output = ch_output_24v,
+
+};
+
+void
+charger_main_loop( void )
+{
+
+    for(;;)
+    {
+        ch_get_data( &c12v );
+        ch_state_action( &c12v );
+        ch_set_charge_current( &c12v );
+        ch_control_outs( &c12v );
+
+        ch_display( &c12v );
+        ch_dump( &c12v );
+
+
+        ch_get_data( &c24v );
+        ch_state_action( &c24v );
+        ch_set_charge_current( &c24v );
+        ch_control_outs( &c24v );
+
+        ch_display( &c24v );
+        ch_dump( &c24v );
+    }
+
+}
+
+
+// -----------------------------------------------------------------------
+// Display
+// -----------------------------------------------------------------------
+
+static void
+ch_display( charger *c )
+{
+
+    // We have 2 buttons and 4 lights
+
+    // if button c->state = ch_init
+
+    // Green light - on = load is on, flash = on battery
+
+    // Red light - on = battery is empty, flash = battery is low
+
+}
+
+
+// -----------------------------------------------------------------------
+// Dump
+// -----------------------------------------------------------------------
+
+static void
+ch_dump( charger *c )
+{
+    printf(
+           "state %d, in %.2fV, load %.2fV, acc %.2fV, I %.2fA, pwm %.1f%%, load ena %d",
+           c->state,
+           (double)c->mains_voltage, (double)c->load_voltage, (double)c->acc_voltage,
+           (double)c->charge_current, (double)(c->charge_pwm_percentage / 2.55), c->load_enabled );
+
+}
 
 
 

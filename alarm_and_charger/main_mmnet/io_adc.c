@@ -30,14 +30,18 @@ unsigned volatile char current_ad_input = SERVANT_NADC-1;
 // internal reference 2.56v, AREF with external capacitor
 #define ADMUX_REFS (_BV(REFS1)|_BV(REFS0))
 
+float get_float_adc( uint8_t nAdc )
+{
+    return adc_value[ nAdc ] / 1600.0f;
+}
 
 static int8_t
 adc_to_string( struct dev_minor *sub, char *out, uint8_t out_size )
 {
     if( out_size < 20 ) return -1;
 
-    double fav = adc_value[ sub->number ] / 400.0;
-    dtostrf( fav, 5, 3, out );
+    //double fav = adc_value[ sub->number ] / 400.0;
+    dtostrf( get_float_adc( sub->number ), 5, 3, out );
 
     //return dev_uint16_to_string( sub, out, out_size, adc_value[ sub->number ] );
 
@@ -49,23 +53,10 @@ adc_to_string( struct dev_minor *sub, char *out, uint8_t out_size )
 // ADC initialize
 static int8_t adc_init( dev_major* d )
 {
-    //uint8_t i;
-
-    //if( !RT_IO_ENABLED(IO_ADC) )        return;
-
     if( init_subdev( d, SERVANT_NADC, "adc" ) )
         return -1;
 
     dev_init_subdev_getset( d, 0, adc_to_string );
-/*
-    for( i = 0; i < d->minor_count; i++ )
-    {
-        dev_minor *m = d->subdev + i;
-
-        m->to_string = adc_to_string;
-        //m->from_string = pwm_from_string;
-    }
-*/
 
     ADCSRA = 0x00; //disable adc
     ADMUX = ADMUX_REFS; //0b11100000;
