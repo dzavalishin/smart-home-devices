@@ -129,6 +129,10 @@ ch_control_outs( charger *c )
     c->ch_output( c );
 }
 
+#define GREEN_LED_12V_MASK 0xFF
+#define GREEN_LED_24V_MASK 0xFF
+#define RED_LED_12V_MASK 0xFF
+#define RED_LED_24V_MASK 0xFF
 
 static void ch_output_12v( struct charger *c )
 {
@@ -136,6 +140,11 @@ static void ch_output_12v( struct charger *c )
 
     // TODO relay control - c->load_enabled
     // TODO LEDs
+
+    if( c->green_led )
+        spi_do0 |= GREEN_LED_12V_MASK;
+    else
+        spi_do0 &= ~GREEN_LED_12V_MASK;
 }
 
 static void ch_output_24v( struct charger *c )
