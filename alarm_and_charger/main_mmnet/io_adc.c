@@ -79,8 +79,6 @@ static int8_t adc_init( dev_major* d )
 
 static int8_t adc_start( void )
 {
-    if( !RT_IO_ENABLED(IO_ADC) ) return -1; // TODO KILLME
-
     cli();
     current_ad_input++;
 

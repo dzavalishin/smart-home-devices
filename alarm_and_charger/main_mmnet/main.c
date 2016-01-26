@@ -39,6 +39,7 @@
 #endif
 
 #include <io.h>
+#include <avr/wdt.h>
 
 #include <sys/syslog.h>
 
@@ -133,6 +134,7 @@ THREAD(long_init, __arg)
  */
 int main(void)
 {
+    wdt_disable(); // net startup can take more than 2 sec
 
     NutThreadSetSleepMode(SLEEP_MODE_IDLE); // Let the CPU sleep in idle
 
@@ -211,6 +213,8 @@ int main(void)
     NutThreadCreate("MainLoop", main_loop, 0, 640);
 
     NutThreadExit();
+
+    wdt_enable( WDTO_2S );
 
     for (;;)
     {
@@ -525,6 +529,11 @@ void timer_regular_devices( HANDLE h, void *arg )
 
         if( dev->started && (0 != dev->timer) )
             dev->timer( dev );
+
+        // Reset watchdog here
+
+        wdt_reset();
+
     }
 
 }

@@ -35,10 +35,6 @@
                                 <li><b>temp</b>  - Temperature sensors (1-wire), ordered (see Config page)
                                 <li><b>utemp</b> - Temperature sensors (1-wire), unordered
                                 <li><b>pwm</b>   - Analogue outputs
-                                <li><b>dht-t</b> - DHT11/22 temperature
-                                <li><b>dht-h</b> - DHT11/22 humidity
-                                <li><b>bmp-p</b> - BMP180 pressure
-                                <li><b>bmp-t</b> - BMP180 temperature
 				</ul>
 			</td>
 		</tr><tr valign="top">      		
@@ -49,21 +45,21 @@
 				<ul>
 					<li><b>PB0</b>   - #ss for onboard serial Di/Do extension
 					<li><b>PB1-3</b> - /sck/mosi/miso
-					<li><b>PB4</b>   - DHT11
+					<li><b>PB4</b>   - 
 					<li><b>PB5</b>   - #ss internal flash
 					<li><b>PB6-7</b> - Tx Enable usart 0,1 (half duplex 485)
-					<li><b>PD0-1</b> - SCL, SDA (2wire/i2c, bmp180)/Di/Do
+					<li><b>PD0-1</b> - SCL, SDA (2wire/i2c, RTC, EEPROM)
 					<li><b>PD2-3</b> - RxD1,TxD1 (debug 232, tun1)/Di/Do
 					<li><b>PD4-7</b> - Di/Do/PWM
-					<li><b>PD2-7</b> - 1Wire multiple bus
+					<li><b>PD2-7</b> - 
 					<li><b>PE0-1</b> - RxD0,TxD0 (tun0)/Do/Di
-					<li><b>PE2-3</b> - Do/Di
+					<li><b>PE2-3</b> - 
 					<li><b>PE4</b>   - Fail LED
 					<li><b>PE5</b>   - Ethernet interrupt
-					<li><b>PE6-7</b> - Di/Do
-					<li><b>PF0-7</b> - Ai/Di/Do
+					<li><b>PE6-7</b> - 
+					<li><b>PF0-7</b> - 
 					<li><b>PG3</b>   - I/O LED
-					<li><b>PG4</b>   - 1Wire (2401, single bus 18B20, etc)
+					<li><b>PG4</b>   - 1Wire (2401, single bus 18B20)
 				</ul>
 			</td>
 		</tr><tr valign="top">      		
@@ -72,7 +68,7 @@
 			<td class="block1">
 				<h2>Modbus registers, 0 based (add 1 for modpoll)</h2>
 				<ul>
-					<li><b>0-3</b> - text id, 'DZ' 'DZ' 'MM' '00'
+					<li><b>0-3</b> - text id, 'DZ' 'DZ' 'CR' '00'
 					<li><b>4-6</b> - 6 bytes of serial number (part of MAC, usually)
 					<li><b>16-19</b>   - Di/Do: MCU ports B, D, E, F
 					<li><b>64-71</b> - Ai

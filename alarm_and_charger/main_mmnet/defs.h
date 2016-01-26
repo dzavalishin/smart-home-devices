@@ -49,7 +49,7 @@
 
 #define SERVANT_NFREQ 	0
 
-#define SERVANT_NTEMP   16       // 1-Wire temperature sensors
+#define SERVANT_NTEMP   8       // 1-Wire temperature sensors
 #define SERVANT_1WMAC   1       // Attempt to get MAC address from 1-wire 2401 chip
 #define OW_ONE_BUS      1       // 1 - have just one 1w bus, 0 - have 7: one on PG4 as usual, 6 on PD2-7
 

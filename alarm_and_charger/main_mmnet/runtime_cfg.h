@@ -74,17 +74,13 @@ struct eeprom_cfg
 };
 
 
-#define IO_ADC           (1<<0)
-#define IO_PWM           (1<<1)
-#define IO_DHT           (1<<2)
-#define IO_BMP           (1<<3)         // BMP180 pressure meter
 
-#define IO_TUN0          (1<<4)         // Serial/TCP tunnel channel 0
-#define IO_TUN1          (1<<5)         // Serial/TCP tunnel channel 1
-#define IO_1W1           (1<<6)         // 1Wire on default 1-line bus
-#define IO_1W8           (1<<7)         // 1Wire in multichannel mode
+#define IO_LOG           (1<<0)         // Serial logging on UART 1
+#define IO_TUN0          (1<<1)         // Serial/TCP tunnel channel 0
+#define IO_TUN1          (1<<2)         // Serial/TCP tunnel channel 1
 
-#define IO_LOG           (1<<8)         // Serial logging on UART 1
+
+//#define IO_BMP           (1<<3)         // BMP180 pressure meter
 
 #define RT_IO_ENABLED(__WHAT_) ((ee_cfg.io_enable & (__WHAT_)) != 0 )
 #define RT_IO_RESET(__WHAT_) ((ee_cfg.io_enable &= ~(__WHAT_)))
