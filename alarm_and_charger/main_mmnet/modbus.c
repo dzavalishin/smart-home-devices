@@ -23,7 +23,7 @@
 
 #include "io_adc.h"
 #include "io_pwm.h"
-#include "io_dig.h"
+//#include "io_dig.h"
 #include "io_temp.h"
 
 static const int modbus_debug = 0;
@@ -172,14 +172,14 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
 #endif
 
     // Digital inputs
-
+/*
     //READ_ONE( MB_REG_IO+0, (((uint16_t)dio_read_port( 3 )) << 8 ) || dio_read_port( 1 ) ); // Port D, Port B
     //READ_ONE( MB_REG_IO+1, (((uint16_t)dio_read_port( 5 )) << 8 ) || dio_read_port( 4 ) ); // Port F, Port E
     READ_ONE( MB_REG_IO+0, dio_read_port( 1 ) ); // Port B
     READ_ONE( MB_REG_IO+1, dio_read_port( 3 ) ); // Port D
     READ_ONE( MB_REG_IO+2, dio_read_port( 4 ) ); // Port E
     READ_ONE( MB_REG_IO+3, dio_read_port( 5 ) ); // Port F
-
+*/
     // + 64-79 - 16 x AI
     // 0-7 - DAC
     // 8 - DHT11 humidity
@@ -247,7 +247,7 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
 // return modbus err no or 0
 int modbus_write_register( uint16_t nReg, uint16_t value )
 {
-
+/*
     WRITE_ONE( MB_REG_IO+0, dio_write_port( 1, value ) );
     WRITE_ONE( MB_REG_IO+1, dio_write_port( 3, value ) );
     WRITE_ONE( MB_REG_IO+2, dio_write_port( 4, value ) );
@@ -263,7 +263,7 @@ int modbus_write_register( uint16_t nReg, uint16_t value )
         return 0;
     }
 #endif
-
+*/
 err:
     return MODBUS_EXCEPTION_ILLEGAL_DATA_ADDFRESS;
 }

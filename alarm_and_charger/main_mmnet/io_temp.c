@@ -29,6 +29,7 @@
 
 
 
+static dev_property temp_prop[];
 
 //#define debug_puts(c)
 
@@ -493,44 +494,6 @@ static void temp_timer( dev_major* d )
 }
 
 // ----------------------------------------------------------------------
-// Init/start
-// ----------------------------------------------------------------------
-
-
-static int8_t temp_init( dev_major* d )
-{
-//    uint8_t i;
-
-    //if( !RT_IO_ENABLED(IO_ADC) )        return;
-
-    if( init_subdev( d, SERVANT_NTEMP, "temp" ) )
-        return -1;
-/*
-    // TO DO general func
-    for( i = 0; i < d->minor_count; i++ )
-    {
-        dev_minor *m = d->subdev + i;
-
-        m->to_string = temp_to_string;
-        //m->from_string = pwm_from_string;
-    }
-*/
-    dev_init_subdev_getset( d, 0, temp_to_string );
-
-    init_temperature();
-
-    return 0;
-}
-
-
-
-static int8_t temp_start( dev_major* d )
-{
-
-    return 0;
-}
-
-// ----------------------------------------------------------------------
 // Properties
 // ----------------------------------------------------------------------
 
@@ -546,13 +509,72 @@ temp_get_sensors_count(struct dev_properties *ps, void *context, uint16_t offset
     return 0;
 }
 
+errno_t
+getf_prop_rom(struct dev_properties *ps, void *context, uint16_t offset, void *vp, char *val, uint16_t len)
+{
+    if( len < 31 ) return ENOMEM;
+
+    uint8_t *id = gTempSensorIDs[offset];
+
+    sprintf( val, "%02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X",
+             id[0], id[1], id[2], id[3],
+             id[4], id[5], id[6], id[7]
+           );
+
+    return 0;
+}
+
+// ----------------------------------------------------------------------
+// Init/start
+// ----------------------------------------------------------------------
+
+
+static int8_t temp_init( dev_major* d )
+{
+    uint8_t i;
+
+    if( init_subdev( d, SERVANT_NTEMP, "temp" ) )
+        return -1;
+
+    dev_init_subdev_getset( d, 0, temp_to_string );
+
+    // properties 1...N
+    for( i = 0; i < SERVANT_NTEMP; i++ )
+    {
+        dev_property *p = temp_prop+i+1;
+
+        p->type = pt_mstring;
+
+        p->name = calloc( 8, 1 );
+        sprintf( p->name, "rom%d", i );
+
+        p->getf = getf_prop_rom;
+
+        p->offset = i;
+    }
+
+
+    init_temperature();
+
+    return 0;
+}
+
+
+
+static int8_t temp_start( dev_major* d )
+{
+
+    return 0;
+}
+
+
 
 // ----------------------------------------------------------------------
 // General IO definition
 // ----------------------------------------------------------------------
 
 
-static dev_property temp_prop[] =
+static dev_property temp_prop[SERVANT_NTEMP+1] =
 {
     {	.type = pt_int16, .name = "sensors", .getf = temp_get_sensors_count }
 };

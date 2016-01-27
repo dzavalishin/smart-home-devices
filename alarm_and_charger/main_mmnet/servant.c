@@ -47,7 +47,7 @@ void each_second(HANDLE h, void *arg)
     // Will become 0 right now, point to trigger connection lost action
     if( network_activity == 1 )
     {
-        dio_set_default_output_state();
+        //dio_set_default_output_state();
         //pwm_set_default_output_state();
     }
 

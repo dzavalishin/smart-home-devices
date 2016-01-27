@@ -36,6 +36,7 @@
 
 static uint8_t          pwm_val[SERVANT_NPWM];
 
+static void pwm_timer_3_force_out( uint8_t port, uint8_t val );
 
 
 
@@ -48,6 +49,9 @@ void set_an(unsigned char port_num, unsigned char data)
         return;
 
     pwm_val[port_num] = data;
+
+#warning set 0 value by turning off pwm out
+    pwm_timer_3_force_out( port_num, data );
 }
 
 
@@ -108,7 +112,34 @@ static inline void pwm_set_pwm_2( uint8_t val )
 
 */
 
+static void pwm_timer_3_force_out( uint8_t port, uint8_t val )
+{
+    uint8_t force = (val == 0) || (val == 0xFF);
 
+    if( port )
+    {
+        if( force )
+        {
+            if( val )     PORTE |= _BV(PE3);
+            else          PORTE &= ~_BV(PE3);
+            TCCR3A &= 	~_BV(COM3A1); // turn off output A, let it be staedy
+        }
+        else
+            TCCR3A |= 	_BV(COM3A1); // turn on output A, let it work as PWM
+
+    }
+    else
+    {
+        if( force )
+        {
+            if( val )     PORTE |= _BV(PE4);
+            else          PORTE &= ~_BV(PE4);
+            TCCR3A &= 	~_BV(COM3B1); // turn off output B, let it be staedy
+        }
+        else
+            TCCR3A |= 	_BV(COM3B1); // turn on output B, let it work as PWM
+    }
+}
 
 
 static inline void pwm_init_timer_3(void)

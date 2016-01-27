@@ -267,7 +267,7 @@ int CgiNetIO( FILE * stream, REQUEST * req )
 //    errmsg:
         //NutHttpSendHeaderTop(stream, req, 500, "Must have ?name= or ?name=&value=, name: adc{0-7}, dig{0-63}, temp{0-7}");
         web_header_200(stream, req);
-        static prog_char h1[] = "<HTML><body> Must have ?name= or ?name=&value=, name: adc{0-7}, dig{0-63}, temp{0-7}, q='%s' </body></HTML>";
+        static prog_char h1[] = "<HTML><body> Must have ?name= or ?name=&value=, name: adc{0-7}, temp{0-7}, q='%s' </body></HTML>";
         fprintf_P( stream, h1, tmp );
         return 0;
     }

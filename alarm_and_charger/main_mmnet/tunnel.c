@@ -158,16 +158,16 @@ void init_tunnels(void)
 #if SERVANT_TUN0
     if( RT_IO_ENABLED(IO_TUN0) )
     {
-        add_exclusion_pin( UART0_EXCLPOS, UART0_TX_PIN );
-        add_exclusion_pin( UART0_EXCLPOS, UART0_RX_PIN );
+//        add_exclusion_pin( UART0_EXCLPOS, UART0_TX_PIN );
+//        add_exclusion_pin( UART0_EXCLPOS, UART0_RX_PIN );
         init_one_tunnel( &tun0 );
     }
 #endif
 #if SERVANT_TUN1
     if( RT_IO_ENABLED(IO_TUN1) )
     {
-        add_exclusion_pin( UART1_EXCLPOS, UART0_TX_PIN );
-        add_exclusion_pin( UART1_EXCLPOS, UART0_RX_PIN );
+//        add_exclusion_pin( UART1_EXCLPOS, UART0_TX_PIN );
+//        add_exclusion_pin( UART1_EXCLPOS, UART0_RX_PIN );
         init_one_tunnel( &tun1 );
     }
 #endif
@@ -604,8 +604,8 @@ static void TunUartAvrEnable(uint16_t base)
 {
     if (base)
     {
-        add_exclusion_pin( UART1_EXCLPOS, UART0_TX_PIN );
-        add_exclusion_pin( UART1_EXCLPOS, UART0_RX_PIN );
+//        add_exclusion_pin( UART1_EXCLPOS, UART0_TX_PIN );
+//        add_exclusion_pin( UART1_EXCLPOS, UART0_RX_PIN );
 
         //DDRD |= _BV(UART1_TX_PIN);
         DDRD &= ~_BV(UART1_TX_PIN);
@@ -617,8 +617,8 @@ static void TunUartAvrEnable(uint16_t base)
     }
     else
     {
-        add_exclusion_pin( UART0_EXCLPOS, UART0_TX_PIN );
-        add_exclusion_pin( UART0_EXCLPOS, UART0_RX_PIN );
+//        add_exclusion_pin( UART0_EXCLPOS, UART0_TX_PIN );
+//        add_exclusion_pin( UART0_EXCLPOS, UART0_RX_PIN );
 
         //DDRE |= _BV(UART0_TX_PIN);
         DDRE &= ~_BV(UART0_TX_PIN);

@@ -19,7 +19,7 @@
 
 
 #if SERVANT_NDIG > 0
-
+/*
 static unsigned char get_dig_in(unsigned char port_num);
 
 static unsigned char get_dig_out(unsigned char port_num);
@@ -27,7 +27,7 @@ static void set_dig_out(unsigned char port_num, unsigned char data);
 
 static unsigned char get_ddr(unsigned char port_num);
 static void set_ddr(unsigned char port_num, unsigned char data);
-
+*/
 
 
 
@@ -48,7 +48,7 @@ void add_exclusion_mask( unsigned char exclPos, unsigned char bitmask )
 void dio_init(void)
 {
     // Totally unavailable on MMNET101 ports
-
+/*
     add_exclusion_mask( 0, 0xFF ); // Port A
     add_exclusion_mask( 2, 0xFF ); // Port C
 
@@ -67,10 +67,6 @@ void dio_init(void)
     add_exclusion_pin( TWI_EXCLPOS, TWI_SCL );
 #endif
 
-#if SERVANT_DHT11
-    if(RT_IO_ENABLED(IO_DHT))
-        add_exclusion_pin( DHT_EXCLPOS, DHT_PIN );
-#endif
 
     // todo fixme
     //add_exclusion_mask( UART1_EXCL_EXCLPOS, UART1_EXCL_MASK );
@@ -124,7 +120,7 @@ void dio_init(void)
 
 
     // Now set dde for pins we use in a dedicated way
-
+*/
 
 #if ENABLE_HALF_DUPLEX_0
     if(RT_IO_ENABLED(IO_TUN0))
@@ -134,14 +130,15 @@ void dio_init(void)
     if(RT_IO_ENABLED(IO_TUN0))
         HALF_DUPLEX1_DDR |= _BV(HALF_DUPLEX1_PIN);
 #endif
-
+/*
 #if ENABLE_SPI
     DDRB |= PB_SS_PIN|(_BV(PB0))|(_BV(PB1))|(_BV(PB2));
 #endif
-
+*/
     led_ddr_init(); // again - first time was in main
 }
 
+/*
 void
 dio_set_default_output_state( void ) // Used on start and if communications are lost
 {
@@ -151,7 +148,7 @@ dio_set_default_output_state( void ) // Used on start and if communications are 
     PORTF = ee_cfg.start_f;
     PORTG = ee_cfg.start_g;
 }
-
+*/
 
 
 
@@ -175,7 +172,7 @@ void set_half_duplex1( char val )
 }
 
 
-
+/*
 
 // Direct
 unsigned char   dio_read_port( unsigned char port ) { return get_dig_in(port); }
@@ -381,7 +378,7 @@ static unsigned char get_ddr(unsigned char port_num)
 
 
 
-
+*/
 
 #endif // SERVANT_NDIG > 0
 
