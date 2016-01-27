@@ -497,7 +497,7 @@ static void temp_timer( dev_major* d )
 // Properties
 // ----------------------------------------------------------------------
 
-
+#define DYNAMIC_PROPERTIES_SHIFT 2
 
 
 errno_t
@@ -508,6 +508,21 @@ temp_get_sensors_count(struct dev_properties *ps, void *context, uint16_t offset
     sprintf( val, "%d",  nTempSensors );
     return 0;
 }
+
+errno_t
+temp_get_id_2401(struct dev_properties *ps, void *context, uint16_t offset, void *vp, char *val, uint16_t len)
+{
+    if( len < 31 ) return ENOMEM;
+
+    uint8_t *id = serialNumber;
+
+    sprintf( val, "%02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X",
+             id[0], id[1], id[2], id[3],
+             id[4], id[5], id[6], id[7]
+           );
+    return 0;
+}
+
 
 errno_t
 getf_prop_rom(struct dev_properties *ps, void *context, uint16_t offset, void *vp, char *val, uint16_t len)
@@ -541,7 +556,7 @@ static int8_t temp_init( dev_major* d )
     // properties 1...N
     for( i = 0; i < SERVANT_NTEMP; i++ )
     {
-        dev_property *p = temp_prop+i+1;
+        dev_property *p = temp_prop+i+DYNAMIC_PROPERTIES_SHIFT;
 
         p->type = pt_mstring;
 
@@ -574,9 +589,10 @@ static int8_t temp_start( dev_major* d )
 // ----------------------------------------------------------------------
 
 
-static dev_property temp_prop[SERVANT_NTEMP+1] =
+static dev_property temp_prop[SERVANT_NTEMP+DYNAMIC_PROPERTIES_SHIFT] =
 {
-    {	.type = pt_int16, .name = "sensors", .getf = temp_get_sensors_count }
+    {	.type = pt_int16, .name = "sensors", .getf = temp_get_sensors_count },
+    {	.type = pt_int16, .name = "id2401", .getf = temp_get_id_2401 }
 };
 
 static dev_properties temp_props =

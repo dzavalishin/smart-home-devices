@@ -124,20 +124,20 @@ static int CgiStatusRow( FILE * stream, int row_no )
     case 12: ShowTableRow2i( stream, "exceptions count", modbus_exceptions_cnt );break;
     case 13: ShowTableRow2i( stream, "err flags", modbus_error_flags );		break;
 
-    case 14: subhdr( stream, "1-Wire" ); break;
+    case 14: /*subhdr( stream, "1-Wire" );*/ break;
 
-    case 15: ShowTableRow2b( stream, "Devices detected", onewire_available );	break;
+    case 15: /*ShowTableRow2b( stream, "Devices detected", onewire_available ); */	break;
     case 16: /*ShowTableRow2i( stream, "Temp sensors count", nTempSensors ); */   break;
     case 17:
 #if SERVANT_1WMAC
-        {
+        /*{
             HTML("<TR><TD>&nbsp;2401 Id </TD><TD>&nbsp;");
             fprintf(stream, "%02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X",
                     serialNumber [7], serialNumber [6], serialNumber [5], serialNumber [4],
                     serialNumber [3], serialNumber [2], serialNumber [1], serialNumber [0]
                    );
             HTML(" </TD></TR>\r\n");
-        }
+        }*/
 #endif
         break;
 
