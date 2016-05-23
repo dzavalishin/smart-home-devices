@@ -1,0 +1,11 @@
+netlist is wrong, diff:
+
+(not done)
+
+pb0 is only 1w bus
+
+pb1 is (di?)
+
+pb2 is do0 (main pump on)
+pb3 is do1 (alt pump on)
+

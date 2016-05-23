@@ -1,0 +1,6 @@
+- modbus err rate is 5%, too much
++- implement DCON
++ implement read temp by persistent id
++ check if code can be built without RTU or ASCII
++ persistent mapping is broken
+
