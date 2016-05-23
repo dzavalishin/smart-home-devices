@@ -1,0 +1,32 @@
+// Incoming data goes here
+byte spiData;
+
+// Tells us if we had an SPI interrupt
+bool hadSpiInterrupt;
+
+// The interrupt handler
+ISR(USI_OVF_vect)
+{
+  spiData b = USIDR;
+  hadSpiInterrupt = true;
+}
+
+// Initialise as SPI slave
+void spiSlaveInit()
+{
+  USICR = (1<<USIWM0)  // SPI mode
+         |(1<<USIOIE)  // Enable interrupt
+         |(1<<USICS1); // Clock is external
+}
+
+// Get incoming SPI data, return -1 if none was received
+int spiReceive()
+{
+  int result = -1;
+  if (hadSpiInterrupt) {
+    result = spiData;
+    hadSpiInterrupt = false;
+  }
+  return result;
+}
+
