@@ -468,7 +468,7 @@ void menu_monitor_bus(void)
     lcd_gotoxy( 9, 1 );
 
     lcd_puts("Err:");
-    lcd_puti(ow_bus_error_cnt[bus]);
+    lcd_puti( ow_error_cnt ); //ow_bus_error_cnt[bus]);
     lcd_puts("  ");
 }
 

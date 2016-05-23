@@ -97,8 +97,6 @@ uint8_t search_sensors(uint8_t currBus)
             REPORT_ERROR(ERR_FLAG_1WIRE_SCAN_FAULT);
             //			debug_puts( "Bus Error\n" );
             debug_puts( "B" );
-            //ow_error_cnt++;
-            //ow_bus_error_cnt[currBus];
             count_1w_bus_error( currBus );
             break;
         }
@@ -207,8 +205,6 @@ static void request_temperature_measurement(void)
         {
             // Error starting temp mesaure.
             REPORT_ERROR(ERR_FLAG_1WIRE_START_FAULT);
-            //ow_error_cnt++;
-            //ow_bus_error_cnt[bus];
             count_1w_bus_error( bus );
             //led1_timed( 200 );
         }
@@ -236,8 +232,6 @@ void read_temperature_data(void)
         if ( DS18X20_read_meas_word(&gTempSensorIDs[i][0], &out) != DS18X20_OK )
         {
             REPORT_ERROR(ERR_FLAG_1WIRE_READ_FAULT);
-            //ow_error_cnt++;
-            //ow_bus_error_cnt[i]++;
             count_1w_bus_error( i );
             continue;
         }
