@@ -44,11 +44,14 @@ void lcd_put_temp( uint16_t temp )
 }
 
 // fixed *100
-void lcd_putf( uint16_t f )
+void lcd_putf( int f )
 {
-    double d = f;
+    double d = (unsigned)f;
     d /= 100;
-#err writeme
+
+    buf[6];
+    snprintf( buf, sizeof(buf), "%5.2f", d );
+    lcd_puts(buf);
 }
 
 

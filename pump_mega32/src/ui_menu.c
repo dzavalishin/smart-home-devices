@@ -479,10 +479,10 @@ void menu_monitor_bus(void)
 //
 // ---------------------------------------------------------------
 
-static char *in_L_name = "In Lo ";
-static char *in_H_name = "In Hi ";
-static char *out_L_name = "Out Lo";
-static char *out_H_name = "Out Hi";
+static char *in_L_name = "In L ";
+static char *in_H_name = "In H ";
+static char *out_L_name = "Out L";
+static char *out_H_name = "Out H";
 //static char *active_name = "Active";
 
 #define SC_LINE(__prefix_) .offset = offsetof(struct sens_save,__prefix_), .name = __prefix_##_name
@@ -534,15 +534,38 @@ static void lcd_put_sens_parm(unsigned char itemNo)
     lcd_puti(chan);
 
     lcd_gotoxy( 0, 1 );
-    lcd_puts("Ch:");
-    lcd_puti(chan);
+    //lcd_puts("Ch:");
+    //lcd_puti(chan);
     lcd_puts(" I=");
     lcd_putf(sens[chan].in_val);
     lcd_puts(" O=");
     lcd_putf(sens[chan].out_val);
     lcd_puts("   ");
-
 }
+
+void menu_display_parm(void)
+{
+    uint8_t itemNo = vr2;
+    if(itemNo >= SC_I_SZ) itemNo = SC_I_SZ-1;
+    lcd_put_sens_parm( itemNo );
+}
+
+void menu_event_parm(void)
+{
+    //uint8_t sel = vr2/4;
+
+    if( changed & KEY_OK )
+    {
+        // Save changes
+        //modbus_set_baud( rs485_speed );
+        //save_eeprom_settings();
+
+        select_menu( &menu_saved );
+    }
+}
+
+//    { "Param", 	menu_display_parm, 	menu_event_parm, menu_display_parm },
+
 
 // ---------------------------------------------------------------
 //
