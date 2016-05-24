@@ -43,6 +43,13 @@ void lcd_put_temp( uint16_t temp )
     }
 }
 
+// fixed *100
+void lcd_putf( uint16_t f )
+{
+    double d = f;
+    d /= 100;
+#err writeme
+}
 
 
 

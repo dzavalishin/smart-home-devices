@@ -29,7 +29,7 @@ void eeprom_timer_5sec(void);
 **/
 
 #define EEPROM_MAP_BASE 0
-#define N_TEMP_SENS_EEPROM_RECORDS 64
+#define N_TEMP_SENS_EEPROM_RECORDS 8
 
 #define EEPROM_MAP_REC_SZ 8
 
@@ -51,7 +51,7 @@ void eeprom_timer_5sec(void);
  *
  * EEPROM 1wire sensors id storage
  *
- * 64 records max, 8 bytes each
+ * 8 records max, 8 bytes each
  *
  * Sensor id record:
  *
@@ -60,6 +60,28 @@ void eeprom_timer_5sec(void);
  * - 1 spare byte
  *
 **/
+
+
+
+/**
+ *
+ * EEPROM pressure sensors config storage
+ *
+ * 4 records max, ? bytes each
+ *
+**/
+
+struct sens_save
+{
+    char        active;
+
+    // linear conversion
+    int         in_L;
+    int         in_H;
+    int         out_L;
+    int         out_H;
+};
+
 
 
 #define SENS_ID_BYTE 6

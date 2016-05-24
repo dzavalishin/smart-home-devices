@@ -475,6 +475,77 @@ void menu_monitor_bus(void)
 
 // ---------------------------------------------------------------
 //
+// Channel parameters config
+//
+// ---------------------------------------------------------------
+
+static char *in_L_name = "In Lo ";
+static char *in_H_name = "In Hi ";
+static char *out_L_name = "Out Lo";
+static char *out_H_name = "Out Hi";
+//static char *active_name = "Active";
+
+#define SC_LINE(__prefix_) .offset = offsetof(struct sens_save,__prefix_), .name = __prefix_##_name
+
+struct sens_conf_item_t sc_items[] =
+{
+    { .channel = 0, SC_LINE(in_L) },
+    { .channel = 0, SC_LINE(in_H) },
+    { .channel = 0, SC_LINE(out_L) },
+    { .channel = 0, SC_LINE(out_H) },
+
+    { .channel = 1, SC_LINE(in_L) },
+    { .channel = 1, SC_LINE(in_H) },
+    { .channel = 1, SC_LINE(out_L) },
+    { .channel = 1, SC_LINE(out_H) },
+
+    { .channel = 2, SC_LINE(in_L) },
+    { .channel = 2, SC_LINE(in_H) },
+    { .channel = 2, SC_LINE(out_L) },
+    { .channel = 2, SC_LINE(out_H) },
+
+    { .channel = 3, SC_LINE(in_L) },
+    { .channel = 3, SC_LINE(in_H) },
+    { .channel = 3, SC_LINE(out_L) },
+    { .channel = 3, SC_LINE(out_H) },
+};
+
+#define SC_I_SZ (sizeof(sc_items)/sizeof(sc_items[0]))
+
+static void lcd_put_sens_parm(unsigned char itemNo)
+{
+    if( itemNo > SC_I_SZ ) return;
+
+    struct sens_conf_item_t *ip = sc_items+ietmNo;
+
+    char chan = ip->channel;
+
+    struct sens_save *ssp = &sens[chan].conf;
+
+    int *item_p = (int *) ((void *)ssp) + ip->offset;
+
+    lcd_gotoxy( 0, 0 );
+
+    lcd_puts("<");
+    lcd_puts(ip->name);
+    lcd_puts("= ");
+    lcd_putf(*item_p);
+    lcd_puts(" ch ");
+    lcd_puti(chan);
+
+    lcd_gotoxy( 0, 1 );
+    lcd_puts("Ch:");
+    lcd_puti(chan);
+    lcd_puts(" I=");
+    lcd_putf(sens[chan].in_val);
+    lcd_puts(" O=");
+    lcd_putf(sens[chan].out_val);
+    lcd_puts("   ");
+
+}
+
+// ---------------------------------------------------------------
+//
 // Run menu system
 //
 // ---------------------------------------------------------------
