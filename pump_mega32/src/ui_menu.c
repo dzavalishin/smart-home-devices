@@ -9,6 +9,8 @@
 #include "eeprom.h"
 #include "uart.h"
 #include "defs.h"
+#include "errlog.h"
+#include "pump.h"
 
 
 // ---------------------------------------------------------------
@@ -335,6 +337,55 @@ void put_menu_ai(uint8_t aino )
     lcd_puts(" ");
 }
 #endif
+
+
+
+// ---------------------------------------------------------------
+
+void put_menu_pressure(uint8_t aino );
+
+void menu_display_pressure(void)
+{
+    lcd_gotoxy( 0, 0 );
+    put_menu_pressure(0);
+    put_menu_pressure(1);
+
+    lcd_gotoxy( 0, 1 );
+    put_menu_pressure(2);
+    put_menu_pressure(3);
+}
+
+
+void put_menu_pressure(uint8_t aino )
+{
+    lcd_puts("P");
+    lcd_puti( aino );
+    lcd_puts(": ");
+    lcd_puti( sens[aino].out_value );
+    lcd_puts(" ");
+}
+
+// ---------------------------------------------------------------
+
+
+void menu_display_status(void)
+{
+
+    lcd_gotoxy( 0, 0 );
+    lcd_puts( active_pump ? "Alt" : "Main");
+    lcd_puts(" pump ");
+
+    lcd_puts( pump_state ? "on " : "off");
+
+    lcd_gotoxy( 0, 1 );
+    lcd_puts( system_failed ? "Fail " : "Ok   ");
+}
+
+
+
+
+
+
 // ---------------------------------------------------------------
 
 #if SERVANT_NCNT || SERVANT_NDI
@@ -431,7 +482,6 @@ void menu_display_485_o(void)
 void menu_monitor_485_o(void)
 {
     lcd_gotoxy( 0, 1 );
-    //lcd_puthex((char *)modbus_rx_buf,MODBUS_MAX_RX_PKT);
     lcd_puthex((char *) shift_buf( modbus_tx_buf, MODBUS_MAX_TX_PKT),8);
 }
 
@@ -479,13 +529,13 @@ void menu_monitor_bus(void)
 //
 // ---------------------------------------------------------------
 
-static char *in_L_name = "In L ";
-static char *in_H_name = "In H ";
-static char *out_L_name = "Out L";
-static char *out_H_name = "Out H";
+static const char in_L_name[]  = "In L ";
+static const char in_H_name[]  = "In H ";
+static const char out_L_name[] = "Out L";
+static const char out_H_name[] = "Out H";
 //static char *active_name = "Active";
 
-#define SC_LINE(__prefix_) .offset = offsetof(struct sens_save,__prefix_), .name = __prefix_##_name
+#define SC_LINE(__prefix_) .offset = offsetof(struct sens_save,convert_##__prefix_), .name = __prefix_##_name
 
 struct sens_conf_item_t sc_items[] =
 {
@@ -516,11 +566,11 @@ static void lcd_put_sens_parm(unsigned char itemNo)
 {
     if( itemNo > SC_I_SZ ) return;
 
-    struct sens_conf_item_t *ip = sc_items+ietmNo;
+    struct sens_conf_item_t *ip = sc_items+itemNo;
 
     char chan = ip->channel;
 
-    struct sens_save *ssp = &sens[chan].conf;
+    struct sens_save *ssp = &sens[(int)chan].conf;
 
     int *item_p = (int *) ((void *)ssp) + ip->offset;
 
@@ -537,9 +587,9 @@ static void lcd_put_sens_parm(unsigned char itemNo)
     //lcd_puts("Ch:");
     //lcd_puti(chan);
     lcd_puts(" I=");
-    lcd_putf(sens[chan].in_val);
+    lcd_putf(sens[(int)chan].in_value);
     lcd_puts(" O=");
-    lcd_putf(sens[chan].out_val);
+    lcd_putf(sens[(int)chan].out_value);
     lcd_puts("   ");
 }
 
@@ -577,12 +627,19 @@ void menu_event_parm(void)
 
 struct menu_t menu[] = {
     { "Help", 	menu_display_help, 		0, 0 },
+
+    { "Status", menu_display_status, 		0, menu_display_status },
+
+    { "AIn", 	menu_display_ai, 		0, menu_display_ai },
+    { "Press", 	menu_display_pressure, 		0, menu_display_pressure },
+
     { "Addr", 	menu_display_rs485addr, 	menu_event_rs485addr, 0 },
     { "Spd", 	menu_display_rs485speed, 	menu_event_rs485speed, 0 },
     { "Temp", 	menu_monitor_temperature, 	0, menu_monitor_temperature },
     { "Map", 	menu_display_map, 		menu_event_map, 0 },
     { "Scan", 	menu_display_scan, 		0, 0 },
-    { "AIn", 	menu_display_ai, 		0, menu_display_ai },
+    
+
 #if SERVANT_NCNT || SERVANT_NDI
     { "DIn", 	menu_display_di, 		0, 0 },
 #endif

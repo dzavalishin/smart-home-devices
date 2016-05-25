@@ -1,3 +1,7 @@
+#ifndef EEPROM_H
+#define EEPROM_H
+
+
 #include <inttypes.h>
 
 
@@ -42,6 +46,10 @@ void eeprom_timer_5sec(void);
 #define EEPROM_CONF_UART_SPEED_HI      	EEPROM_CONF_BASE+3
 
 
+#define EEPROM_LOG_N_RECORS     10
+#define EEPROM_REC_SIZE         5
+#define EEPROM_LOG_BASE (EEPROM_CONF_BASE+16)
+
 
 #if ( EEPROM_MAP_BASE + (N_TEMP_SENS_EEPROM_RECORDS*EEPROM_MAP_REC_SZ) ) > EEPROM_CONF_BASE
 #       error EEPROM address conflict
@@ -70,7 +78,7 @@ void eeprom_timer_5sec(void);
  * 4 records max, ? bytes each
  *
 **/
-
+/*
 struct sens_save
 {
     char        active;
@@ -81,12 +89,43 @@ struct sens_save
     int         out_L;
     int         out_H;
 };
-
+*/
 
 
 #define SENS_ID_BYTE 6
 
 
 void temp_sens_read_record( int nRec, uint8_t record[EEPROM_MAP_REC_SZ] );
+
+
+
+
+
+
+
+
+void EEPROM_write(unsigned int uiAddress, unsigned char ucData);
+unsigned char EEPROM_read(unsigned int uiAddress);
+
+
+
+
+
+
+
+
+struct sens_conf_item_t
+{
+    char channel;
+    char offset;
+    const char *name;
+};
+
+
+
+
+#define offsetof(__type,__el) ((int)(&(((__type*)0)->__el)))
+
+#endif // EEPROM_H
 
 

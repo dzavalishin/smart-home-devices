@@ -108,7 +108,7 @@ void lcd_write_cmd(int cmd)
 void lcd_putc(char c) { lcd_write_data(c); }
 
 
-void lcd_puts(char*str)
+void lcd_puts( const char* str )
 {
     while(*str)
     {

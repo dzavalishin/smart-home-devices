@@ -6,6 +6,9 @@
 #include "delay.h"
 #include <avr/io.h>
 
+// snprintf
+#include <stdio.h>
+
 #define _delay_ms delay_ms
 
 // --------------------------------------------------------------------------
@@ -49,7 +52,7 @@ void lcd_putf( int f )
     double d = (unsigned)f;
     d /= 100;
 
-    buf[6];
+    char buf[6];
     snprintf( buf, sizeof(buf), "%5.2f", d );
     lcd_puts(buf);
 }

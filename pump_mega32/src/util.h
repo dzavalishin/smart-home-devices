@@ -47,10 +47,10 @@ void led2_timed( uint16_t msec );
 #define debug_puts lcd_puts
 #define debug_putc lcd_putc
 
-void lcd_putc(char c);
-void lcd_puts(char*str);
-void lcd_puti(int i);
-void lcd_puthex( const char *b, int len);
+void lcd_putc( char c );
+void lcd_puts( const char* str );
+void lcd_puti( int i );
+void lcd_puthex( const char *b, int len );
 
 //void lcd_set_cursor(int line,int pos);
 

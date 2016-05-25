@@ -80,6 +80,8 @@ ISR(TIMER0_OVF_vect)
 
     // each 0.5 sec
 
+    static char onesec_div;
+
     if( halfsec_count++ >= 100 )
     {
         halfsec_count = 0;
@@ -91,6 +93,12 @@ ISR(TIMER0_OVF_vect)
         temp_meter_05sec_timer();
 #endif
         menu_timer_05sec();
+
+        onesec_div++;
+
+        if( onesec_div & 1 )
+            pump_every_second();
+
     }
 
     // TODO too long with interrupts off
