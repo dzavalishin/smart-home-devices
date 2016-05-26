@@ -90,7 +90,7 @@ int modbus_write_register( uint16_t nReg, uint16_t value )
     case MB_REG_SETUP_BUS_ADDR: modbus_our_address = value; save_eeprom_settings(); 		return 0;
     case MB_REG_SETUP_BUS_SPEED_LO: modbus_set_baud( value ); save_eeprom_settings();  		return 0;
 
-    case MB_REG_FLAGS_ERROR: error_flags &= value; 						return 0;
+    case MB_REG_FLAGS_ERROR: error_flags &= value; pump_reset_all();   				return 0;
 
     }
 
@@ -194,6 +194,13 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
 
     END_RANGE()
 
+    BEGIN_RANGE( id, nReg, MB_REG_SETUP_CONV, MB_COUNT_SETUP_CONV )
+        *val = 0; //currTemperature[id];
+    END_RANGE()
+
+    BEGIN_RANGE( id, nReg, MB_REG_SETUP_TRIG, MB_COUNT_SETUP_TRIG )
+        *val = 0; //currTemperature[id];
+    END_RANGE()
 
 
     switch(nReg)
@@ -234,6 +241,8 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
     case MB_REG_COUNTER_EXC: *val = modbus_exceptions_cnt; break;
     case MB_REG_COUNTER_1WE: *val =  ow_error_cnt; break;
 
+    case MB_REG_IO+0: *val = PINB; break;       // All dig ins
+    case MB_REG_IO+1: *val = PORTB; break;      // All dig outs read
 
 
     default:

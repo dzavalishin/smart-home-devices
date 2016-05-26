@@ -8,5 +8,9 @@ void mark_halfduplex_timeout();
 // called by sender to wait for others to stop sending
 void wait_for_halfduplex_timeout();
 #endif
+void pump_every_second(void);
 
+
+// Turn on frequency output on OC0, or turn off if 0
+//void timer0_freq( int freq );
 

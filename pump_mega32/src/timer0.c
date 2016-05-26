@@ -95,7 +95,6 @@ ISR(TIMER0_OVF_vect)
         menu_timer_05sec();
 
         onesec_div++;
-
         if( onesec_div & 1 )
             pump_every_second();
 
@@ -184,7 +183,14 @@ timer0_5sec()
 
 
 
+/*
+void timer0_freq( int freq )
+{
 
+
+
+}
+*/
 
 
 

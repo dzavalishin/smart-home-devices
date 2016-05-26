@@ -29,7 +29,7 @@
  * 
 **/
 #define MB_REG_FLAGS	8
-#define MB_REG_FLAGS_ERROR (MB_REG_FLAGS+2) // +
+#define MB_REG_FLAGS_ERROR (MB_REG_FLAGS+2) // + Write 0 to reset errors
 
 // - 16-31 - assorted IO
 //   16: all digital inputs
@@ -73,7 +73,12 @@
 #define MB_REG_SETUP_BUS_MODE		(MB_REG_SETUP+4) // -
 #define MB_REG_SETUP_PROTOCOLS		(MB_REG_SETUP+5) // -
 
-#define MB_REG_SETUP_CNT_TIME		(MB_REG_SETUP+30)// - counter activity sense interval, 0.1 sec steps (value*10 = seconds)
+//#define MB_REG_SETUP_CNT_TIME		(MB_REG_SETUP+30)// - counter activity sense interval, 0.1 sec steps (value*10 = seconds)
+
+#define MB_REG_SETUP_CONV               (MB_REG_SETUP+32)// - conversions, sensor 0-3 L,H in, L,H out
+#define MB_COUNT_SETUP_CONV (4*4)
+#define MB_REG_SETUP_TRIG               (MB_REG_SETUP+32)// - trigger levels, sensor 0-3 L,H
+#define MB_COUNT_SETUP_TRIG (4*2)
 
 
 #define MB_REG_HWCONF	512
