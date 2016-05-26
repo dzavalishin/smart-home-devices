@@ -8,6 +8,9 @@
 
 /*
  TODO check rx/tx reg count limits!
+
+ TODO modbus_read_register return errno!
+
  */
 
 #include <inttypes.h>
@@ -64,8 +67,6 @@ int modbus_read_regs( unsigned char *tx_buf, uint16_t startReg, uint16_t nReg )
 int modbus_write_regs( unsigned char *rx_buf, uint16_t startReg, uint16_t nReg )
 {
     int i;
-
-    //if(nReg > MODBUS_MAX_TX_REG) return MODBUS_EXCEPTION_ILLEGAL_DATA_ADDFRESS; // TODO move to pkt code
 
     for( i = startReg; i < (startReg+nReg); i++ )
     {
@@ -241,8 +242,8 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
 
 
 
-    case MB_REG_HWCONF_DI: *val = SERVANT_NDI; break;
-    case MB_REG_HWCONF_DO: *val = 0; break;
+    case MB_REG_HWCONF_DI: *val = 8; break; // one 8 bit reg
+    case MB_REG_HWCONF_DO: *val = 8; break;
     case MB_REG_HWCONF_AI: *val = SERVANT_NADC; break;
     case MB_REG_HWCONF_AO: *val = SERVANT_NPWM; break;
     case MB_REG_HWCONF_CN: *val = SERVANT_NCNT; break;
