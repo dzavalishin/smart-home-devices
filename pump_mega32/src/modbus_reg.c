@@ -81,6 +81,19 @@ int modbus_write_regs( unsigned char *rx_buf, uint16_t startReg, uint16_t nReg )
     return 0;
 }
 
+
+
+#define INRANGE( _n, _start, _cnt ) ( ((_n) >= (_start)) && ( (_n) < ((_start)+(_cnt)) ) )
+
+#define BEGIN_RANGE( _id, _n, _start, _cnt ) \
+    if( INRANGE( _n, _start, _cnt ) ) \
+    { uint16_t _id = (_n) - (_start);
+
+#define END_R_RANGE() return 1; }
+#define END_W_RANGE() return 0; }
+
+
+
 // return modbus err no or 0
 int modbus_write_register( uint16_t nReg, uint16_t value )
 {
@@ -92,18 +105,20 @@ int modbus_write_register( uint16_t nReg, uint16_t value )
 
     case MB_REG_FLAGS_ERROR: error_flags &= value; pump_reset_all();   				return 0;
 
+    BEGIN_RANGE( id, nReg, MB_REG_SETUP_CONV, MB_COUNT_SETUP_CONV )
+    	//= value
+    END_W_RANGE()
+
+    BEGIN_RANGE( id, nReg, MB_REG_SETUP_TRIG, MB_COUNT_SETUP_TRIG )
+    	//= value
+    END_W_RANGE()
+
     }
 
     return MODBUS_EXCEPTION_ILLEGAL_DATA_ADDFRESS;
 }
 
 
-#define INRANGE( _n, _start, _cnt ) ( ((_n) >= (_start)) && ( (_n) < ((_start)+(_cnt)) ) )
-
-#define BEGIN_RANGE( _id, _n, _start, _cnt ) \
-    if( INRANGE( _n, _start, _cnt ) ) \
-    { uint16_t _id = (_n) - (_start);
-#define END_RANGE() return 1; }
 
 
 uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
@@ -173,7 +188,7 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
 
         send_descriptor( val, displ, pos, persId, record );
 
-    END_RANGE()
+    END_R_RANGE()
 
 
 
@@ -192,15 +207,15 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
 
         send_descriptor( val, displ, pos, persId, (gTempSensorIDs[pos]) + 1 );
 
-    END_RANGE()
+    END_R_RANGE()
 
     BEGIN_RANGE( id, nReg, MB_REG_SETUP_CONV, MB_COUNT_SETUP_CONV )
         *val = 0; //currTemperature[id];
-    END_RANGE()
+    END_R_RANGE()
 
     BEGIN_RANGE( id, nReg, MB_REG_SETUP_TRIG, MB_COUNT_SETUP_TRIG )
         *val = 0; //currTemperature[id];
-    END_RANGE()
+    END_R_RANGE()
 
 
     switch(nReg)
