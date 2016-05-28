@@ -130,10 +130,10 @@ static void read_and_convert( struct sensor *in )
 
     in->is_below = in->is_above = 0;
 
-    if( in->out_value >= in->H_level )
+    if( in->out_value >= in->conf.H_level )
         in->is_above = 1;
 
-    if( in->out_value <= in->L_level )
+    if( in->out_value <= in->conf.L_level )
         in->is_below = 1;
 
 }
@@ -202,12 +202,7 @@ void pump_every_second(void)
         big_retry_timer = 0;
 
         // Attemp all over again
-        system_failed = 0;
-        active_pump = 0;
-
-        pump_reset();
-
-        log_event( LOG_ID_RETRY );
+        pump_reset_all();
     }
 }
 
@@ -237,6 +232,16 @@ static void pump_reset(void)
     set_pump_state( 0 ); // for any case
 }
 
+void pump_reset_all(void)
+{
+    system_failed = 0;
+    active_pump = 0;
+
+    pump_reset();
+
+    log_event( LOG_ID_RETRY );
+}
+
 
 // -----------------------------------------------------------------------
 // Sanity checks
@@ -261,7 +266,7 @@ static void sanity_checks( void )
 
     // Suppose secondary pump is twice as bad as main, give it twice more time
     if( active_pump )
-        check_seconds /= 2; 
+        check_seconds /= 2;
 
     if( (check_seconds > SANITY_PRESSURE_TIME_SEC) && have_below && (uptime > SANITY_STARTUP_TIME) )
     {

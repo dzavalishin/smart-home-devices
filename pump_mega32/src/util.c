@@ -74,6 +74,11 @@ uint8_t fromhex( unsigned char *src )
 }
 
 
+void lcd_putx( char c )
+{
+    lcd_puthex( &c, 1 );
+}
+
 
 
 // --------------------------------------------------------------------------

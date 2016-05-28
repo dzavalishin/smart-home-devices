@@ -388,47 +388,19 @@ void menu_display_status(void)
 
 // ---------------------------------------------------------------
 
-#if SERVANT_NCNT || SERVANT_NDI
-
-void put_menu_cnt(uint8_t cno );
 
 void menu_display_di(void)
 {
     lcd_gotoxy( 0, 0 );
-#if SERVANT_NCNT > 0
-    put_menu_cnt(0);
-    put_menu_cnt(1);
-#else
-    lcd_puts("  No counters   ");
-#endif
+    lcd_puts("  DIn:  ");
+    lcd_putx( PINB );
 
     lcd_gotoxy( 0, 1 );
-#if SERVANT_NDI > 0
-    /*
-     lcd_puts("  DI:  ");
-     uint8_t i;
-     for( i = 0; i < 8; i++ )
-     {
-     lcd_putc( ((di >>i) & 1) ? '1' : '0' );
-     lcd_putc(' ');
-     */
-#else
-    lcd_puts(" No digital ins ");
-#endif
+    lcd_puts("  Dout: ");
+    lcd_putx( PORTB );
+
 }
 
-
-#if SERVANT_NCNT > 0
-void put_menu_cnt(uint8_t cno )
-{
-    lcd_puts("   Cnt");
-    lcd_puti(cno);
-    lcd_puts(":  ");
-    lcd_puti(counter[cno]);
-}
-#endif
-
-#endif
 
 // ---------------------------------------------------------------
 
@@ -522,10 +494,28 @@ void menu_monitor_bus(void)
     lcd_puts("  ");
 }
 
+// ---------------------------------------------------------------
+//
+// Error log
+//
+// ---------------------------------------------------------------
+
+
+
+void menu_display_errlog(void)
+{
+    uint8_t pos = vr2/4;
+    lcd_gotoxy( 0, 0 );
+    lcd_put_event( pos );
+    lcd_gotoxy( 0, 1 );
+    lcd_put_event( pos+1 );
+}
+
+
 
 // ---------------------------------------------------------------
 //
-// Channel parameters config
+// Sensor channels parameters config: conversion, trigger levels
 //
 // ---------------------------------------------------------------
 
@@ -562,11 +552,37 @@ struct sens_conf_item_t sc_items[] =
 
 #define SC_I_SZ (sizeof(sc_items)/sizeof(sc_items[0]))
 
-static void lcd_put_sens_parm(unsigned char itemNo)
-{
-    if( itemNo > SC_I_SZ ) return;
 
-    struct sens_conf_item_t *ip = sc_items+itemNo;
+
+static const char L_level_name[] = "L lvl";
+static const char H_level_name[] = "H lvl";
+
+
+#define TR_LINE(__prefix_) .offset = offsetof(struct sens_save,__prefix_), .name = __prefix_##_name
+
+struct sens_conf_item_t tr_items[] =
+{
+    { .channel = 0, TR_LINE(L_level) },
+    { .channel = 0, TR_LINE(H_level) },
+
+    { .channel = 1, TR_LINE(L_level) },
+    { .channel = 1, TR_LINE(H_level) },
+
+    { .channel = 2, TR_LINE(L_level) },
+    { .channel = 2, TR_LINE(H_level) },
+
+    { .channel = 3, TR_LINE(L_level) },
+    { .channel = 3, TR_LINE(H_level) },
+};
+
+#define TR_I_SZ (sizeof(tr_items)/sizeof(tr_items[0]))
+
+
+static void lcd_put_sens_parm( struct sens_conf_item_t *ip ) //unsigned char itemNo)
+{
+    //if( itemNo > SC_I_SZ ) return;
+
+    //struct sens_conf_item_t *ip = sc_items+itemNo;
 
     char chan = ip->channel;
 
@@ -593,14 +609,14 @@ static void lcd_put_sens_parm(unsigned char itemNo)
     lcd_puts("   ");
 }
 
-void menu_display_parm(void)
+void menu_display_conv(void)
 {
     uint8_t itemNo = vr2;
     if(itemNo >= SC_I_SZ) itemNo = SC_I_SZ-1;
-    lcd_put_sens_parm( itemNo );
+    lcd_put_sens_parm( sc_items+itemNo );
 }
 
-void menu_event_parm(void)
+void menu_event_conv(void)
 {
     //uint8_t sel = vr2/4;
 
@@ -614,7 +630,26 @@ void menu_event_parm(void)
     }
 }
 
-//    { "Param", 	menu_display_parm, 	menu_event_parm, menu_display_parm },
+
+void menu_display_trig(void)
+{
+    uint8_t itemNo = vr2;
+    if(itemNo >= TR_I_SZ) itemNo = TR_I_SZ-1;
+    lcd_put_sens_parm( tr_items+itemNo );
+}
+
+void menu_event_trig(void)
+{
+    //uint8_t sel = vr2/4;
+
+    if( changed & KEY_OK )
+    {
+        // Save changes
+
+        select_menu( &menu_saved );
+    }
+}
+
 
 
 // ---------------------------------------------------------------
@@ -629,9 +664,14 @@ struct menu_t menu[] = {
     { "Help", 	menu_display_help, 		0, 0 },
 
     { "Status", menu_display_status, 		0, menu_display_status },
+    { "Status", menu_display_errlog,            0, menu_display_errlog },
 
+    { "Conv", 	menu_display_conv, 		menu_event_conv, menu_display_conv },
+    { "Trig", 	menu_display_trig, 		menu_event_trig, menu_display_trig },
+
+    { "Sens", 	menu_display_pressure, 		0, menu_display_pressure },
     { "AIn", 	menu_display_ai, 		0, menu_display_ai },
-    { "Press", 	menu_display_pressure, 		0, menu_display_pressure },
+    { "DIn", 	menu_display_di, 		0, menu_display_di },
 
     { "Addr", 	menu_display_rs485addr, 	menu_event_rs485addr, 0 },
     { "Spd", 	menu_display_rs485speed, 	menu_event_rs485speed, 0 },
@@ -640,9 +680,8 @@ struct menu_t menu[] = {
     { "Scan", 	menu_display_scan, 		0, 0 },
     
 
-#if SERVANT_NCNT || SERVANT_NDI
-    { "DIn", 	menu_display_di, 		0, 0 },
-#endif
+
+
     { "485I", 	menu_display_485_i, 		0, menu_monitor_485_i },
     { "485O", 	menu_display_485_o, 		0, menu_monitor_485_o },
     { "1wBus",  menu_display_bus,               0, menu_monitor_bus },

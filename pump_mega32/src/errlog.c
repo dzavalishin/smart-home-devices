@@ -82,6 +82,7 @@ void lcd_put_event( int pos )
     u |= ((long)EEPROM_read( p+3 )) << 16;
     u |= ((long)EEPROM_read( p+4 )) << 24;
 
+    lcd_puts("Err");
     lcd_puti( pos );
     lcd_puts(": ");
 

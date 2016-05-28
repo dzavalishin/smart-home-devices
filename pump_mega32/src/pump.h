@@ -13,11 +13,14 @@ struct sens_save
 
     int         convert_in_H;
     int         convert_out_H;
+
+    int         L_level;        // Turn pump on here
+    int         H_level;        // Turn pump off here
 };
 
 struct sensor
 {
-    struct sens_save    conf;
+    struct sens_save    conf;   // MUST BE FIRST
 
     char        adc_channel;    // Which ADC channel to read to gen sensor value
 
@@ -27,9 +30,6 @@ struct sensor
     int         out_value;      // Current value converted (supposed to be atm*100)
 
     int         max;            // Max converted value we've seen - suppose that pump can't give more
-
-    int         L_level;        // Turn pump on here
-    int         H_level;        // Turn pump off here
 
     char        is_below;       // Pressure is below low mark
     char        is_above;       // Pressure is above high mark
@@ -45,5 +45,8 @@ extern long    uptime;
 extern char    system_failed;
 extern char    active_pump;
 extern char    pump_state;
+
+
+void pump_reset_all(void);
 
 

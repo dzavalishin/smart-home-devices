@@ -14,4 +14,5 @@
 void log_event( char log_id );
 
 void lcd_put_time( long time_sec );
+void lcd_put_event( int pos );
 

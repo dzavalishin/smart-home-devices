@@ -25,6 +25,8 @@
 
 #include "temperature.h"
 
+#include "pump.h"
+#include "errlog.h"
 
 
 static void send_descriptor( uint16_t *val, uint8_t displ, uint8_t pos, uint8_t persId, void *romBase );
