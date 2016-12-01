@@ -1,0 +1,41 @@
+Basic pin map for MMNET101
+
+Port B
+
+	0-3 - 
+
+	4 - 
+
+	5 - 
+
+	6,7 - 
+
+Port D
+
+    0,1 - 
+        
+    2,3 - 
+        
+    4-7 - 
+
+Port E
+
+	0-3 
+
+	4 - 
+
+	5 - Ethernet interrupt
+
+	6,7 - 
+
+Port F
+
+	0-7 LCD data bus
+
+Port G
+
+    3 - N/C
+        
+    4 - 1Wire (single, 2401 serial/MAC)
+
+

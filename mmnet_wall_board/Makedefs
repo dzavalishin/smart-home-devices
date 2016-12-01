@@ -1,0 +1,18 @@
+# Do not edit! Automatically generated on Sat Jun 21 17:27:42 2008
+
+#_N_ROOT_DIR=P:/ethernut-5.1
+_N_ROOT_DIR=P:/ethernut-5.1-mmnet01
+
+top_srcdir = $(_N_ROOT_DIR)/nut
+top_blddir = $(_N_ROOT_DIR)/nutbld
+top_appdir = $(_N_ROOT_DIR)/nutapp
+
+LIBDIR = $(_N_ROOT_DIR)-install
+INCFIRST=$(INCPRE)$(top_blddir)/include 
+
+include $(top_appdir)/NutConf.mk
+include $(top_srcdir)/app/Makedefs.avr-gcc
+include $(top_srcdir)/app/Makeburn.avr-jtagice
+
+
+

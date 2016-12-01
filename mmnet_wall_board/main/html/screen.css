@@ -1,0 +1,20 @@
+/* global */
+html, body								{height: 100%; margin: 0; padding: 0;}
+html>body #global 						{height: auto; min-height: 100%;}
+#global									{position: relative; width: 80%; margin: auto; padding: 0 20px 0 20px; height: 100%;}
+#empty									{visibility: hidden;}
+#footer 								{position: absolute; left: 0; bottom: 0; padding: 15px 20px 15px 20px; font-size: 12px;}
+#footer, #empty 						{height: 7em;}
+
+
+/* lay */
+body									{background: #5879a1 url(i/bg-main.jpg) center center; font-family: Geneva CY, Arial, Tahoma, sans-serif; color: #eee;}
+a										{color: #101010; text-decoration: underline;}
+a:hover									{text-decoration: none;}
+
+.block1									{border: 1px #bad3e6 solid; xopacity: 0.3; height: 300px; width: 33%; padding: 15px 20px; background: transparent url(i/bbg.png); color: #111; font-size: 13px;}
+
+h2										{margin: 0; padding: 0; color: #fff; font-weight: lighter; font-size: 28px; letter-spacing: -0.03em;}
+
+ul										{margin: 8px 0 0 0; padding: 0;}
+ul li									{list-style-type: none; margin: 0 0 0.5em 0; line-height: 1.25em; padding: 0 0 0 18px; background: transparent url(i/li-marker.gif) 0% 0.7em no-repeat;} 
