@@ -6,8 +6,7 @@
 #include "defs.h"
 #include "onewire.h"
 
-// Is not zero if we can use 2482 to access 1wire devices.
-//extern uint8_t		onewire_2482_available;
+
 
 extern uint8_t		onewire_available;
 extern uint8_t		sntp_available;
@@ -26,7 +25,7 @@ extern uint8_t         error_flags; // bit per error type
 
 
 //#define MAX_OW_MAP 32
-#define MAX_OW_MAP 16
+#define MAX_OW_MAP 8
 
 struct ow_map_entry
 {
@@ -43,7 +42,7 @@ struct eeprom_cfg
     signed char		timezone;       // For SNTP/time code
 
     unsigned char	mac_addr[6];    // Default MAC address
-
+/*
     // Startup port direction bits (1 = out)
     unsigned char	ddr_b;
     unsigned char	ddr_d;
@@ -57,7 +56,7 @@ struct eeprom_cfg
     unsigned char	start_e;
     unsigned char	start_f;
     unsigned char	start_g;
-
+*/
     unsigned long	ip_addr;        // Default IP address
     unsigned long	ip_mask;        // Default IP net mask
     unsigned long	ip_route;       // Default IP route
@@ -67,20 +66,20 @@ struct eeprom_cfg
 
     unsigned int        io_enable;      // Enable/disable io units
 
-    uint32_t 		tun_baud[2];    // TCP/485 tunnel baud rate
+//    uint32_t 		tun_baud[2];    // TCP/485 tunnel baud rate
     uint32_t            dbg_baud;       // Debug com port baud rate
 
     struct ow_map_entry ow_map[MAX_OW_MAP];
 };
 
 
-#define IO_ADC           (1<<0)
-#define IO_PWM           (1<<1)
-#define IO_DHT           (1<<2)
-#define IO_BMP           (1<<3)         // BMP180 pressure meter
+#define IO_XOR           (1<<0)         // Di/Do (relays) XOR style logic (internal switch -> relay connection)
+#define IO_PWM           (1<<1)         // Have LCD backlight PWM
+#define IO_DI            (1<<2)         // Have Di (switches)
+#define IO_DO            (1<<3)         // Have Do (relays)
 
-#define IO_TUN0          (1<<4)         // Serial/TCP tunnel channel 0
-#define IO_TUN1          (1<<5)         // Serial/TCP tunnel channel 1
+//#define IO_TUN0          (1<<4)         // Serial/TCP tunnel channel 0
+//#define IO_TUN1          (1<<5)         // Serial/TCP tunnel channel 1
 #define IO_1W1           (1<<6)         // 1Wire on default 1-line bus
 #define IO_1W8           (1<<7)         // 1Wire in multichannel mode
 

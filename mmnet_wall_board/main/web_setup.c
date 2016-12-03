@@ -1,6 +1,6 @@
 /**
  *
- * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ * DZ-MMNET-WALL: Wall control panel based on MMNet01.
  *
  * HTTPD/CGI code for web configuration.
  *
@@ -17,14 +17,15 @@
 #include "io_temp.h"
 
 
-const unsigned char *enableBitNames = (unsigned char *)"\1ADC analogue inputs\2PWM analogue outputs\3DHT11 humidity sensor\4BMP180 pressure sensor\5TUN0 TCP-485 tunnel\6TUN1 TCP-485 tunnel\7B1W1 - single bus 1Wire\10B1W8 - multibus 1Wire\11Serial debug (UART1)";
+//const unsigned char *enableBitNames = (unsigned char *)"\1ADC analogue inputs\2PWM analogue outputs\3DHT11 humidity sensor\4BMP180 pressure sensor\5TUN0 TCP-485 tunnel\6TUN1 TCP-485 tunnel\7B1W1 - single bus 1Wire\10B1W8 - multibus 1Wire\11Serial debug (UART1)";
+const unsigned char *enableBitNames = (unsigned char *)"\1Internal XOR switch logic\2LCD backlight PWM\3Di\4Do (relays)\7B1W1 - single bus 1Wire\11Serial debug (UART1)";
 
 static void subheader( FILE * stream, char *title );
 static void form_element( FILE * stream, char *title, char *field_name, char *curr_value );
 static void bit_form_elements( FILE * stream, unsigned int *data, const unsigned char *bitNames );
 static void decode_bit( const char *pname, const char *pval, unsigned int *data );
 
-
+/*
 static char * itox( int i )
 {
     static char x[4];
@@ -38,7 +39,7 @@ static int htoi( const char *v )
     sscanf( v, "%x", &i );
     return i;
 }
-
+*/
 #define DEC_X( __name_, __dest_ ) do { if( 0 == strcmp( pname, (__name_) ) ) ee_cfg.__dest_ = htoi( pvalue ); } while(0)
 #define DEC_I( __name_, __dest_ ) do { if( 0 == strcmp( pname, (__name_) ) ) ee_cfg.__dest_ = atoi( pvalue ); } while(0)
 
@@ -75,8 +76,7 @@ int ShowForm(FILE * stream, REQUEST * req)
             modified = 1;
 
             /* Send the parameters back to the client. */
-            //fprintf_P(stream, PSTR("%s: %s<BR>\r\n"), pname, pvalue);
-
+/*
             DEC_X( "ddrb", ddr_b );
             DEC_X( "ddrd", ddr_d );
             DEC_X( "ddre", ddr_e );
@@ -89,10 +89,10 @@ int ShowForm(FILE * stream, REQUEST * req)
             DEC_X( "inite", start_e );
             DEC_X( "initf", start_f );
             DEC_X( "initg", start_g );
-
+*/
             DEC_I( "dbg_baud", dbg_baud );
-            DEC_I( "tun0_baud", tun_baud[0] );
-            DEC_I( "tun1_baud", tun_baud[1] );
+//            DEC_I( "tun0_baud", tun_baud[0] );
+//            DEC_I( "tun1_baud", tun_baud[1] );
 
 
 
@@ -211,7 +211,7 @@ int ShowForm(FILE * stream, REQUEST * req)
 
     form_element( stream, "Syslog server", "ip_syslog", inet_ntoa(ee_cfg.ip_syslog) );
     form_element( stream, "NNTP server", "ip_nntp", inet_ntoa(ee_cfg.ip_nntp) );
-
+/*
     subheader( stream, "Data direction" );
 
     form_element( stream, "DDR B", "ddrb", itox(ee_cfg.ddr_b) );
@@ -227,13 +227,14 @@ int ShowForm(FILE * stream, REQUEST * req)
     form_element( stream, "Init E", "inite", itox(ee_cfg.start_e) );
     form_element( stream, "Init F", "initf", itox(ee_cfg.start_f) );
     form_element( stream, "Init G", "initg", itox(ee_cfg.start_g) );
-
+*/
     subheader( stream, "Serial ports" );
 
     {
         char buf[32];
         sprintf(buf, "%ld", ee_cfg.dbg_baud );
-        form_element( stream, "Debuf port baud rate", "dbg_baud", buf );
+        form_element( stream, "Debug port baud rate", "dbg_baud", buf );
+/*
 #if SERVANT_TUN0
         sprintf(buf, "%ld", ee_cfg.tun_baud[0] );
         form_element( stream, "Tunnel 0 baud rate", "tun0_baud", buf );
@@ -242,6 +243,7 @@ int ShowForm(FILE * stream, REQUEST * req)
         sprintf(buf, "%ld", ee_cfg.tun_baud[1] );
         form_element( stream, "Tunnel 1 baud rate", "tun1_baud", buf );
 #endif
+*/
     }
 
     HTML("</table>");

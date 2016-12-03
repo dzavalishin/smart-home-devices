@@ -1,6 +1,6 @@
 /**
  *
- * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ * DZ-MMNET-WALL: Wall control panel based on MMNet01.
  *
  * HTTPD/CGI code for web configuration.
  *
@@ -101,17 +101,14 @@ static int CgiStatusRow( FILE * stream, int row_no )
         }
         break;
 
-    //case 4: ShowTableRow2b( stream, "DST", _daylight  );			break;
     case 4: ShowTableRow2b( stream, "Used SNTP", sntp_available );		break;
 
-    //case 6: HTML("<th colspan=\"2\">FirmWare</th>"); break;
     case 5: subhdr( stream, "FirmWare" ); break;
 
     case 6: ShowTableRow2( stream, "Build", makeDate );                		break;
     case 7: ShowTableRow2( stream, "Name", DEVICE_NAME );                	break;
     case 8: ShowTableRow2( stream, "ModBus Id", modbus_device_id );		break;
 
-    //case 9: HTML("<th colspan=\"2\">ModBus</th>"); break;
     case 9: subhdr( stream, "ModBus" ); break;
 
     case 10: ShowTableRow2i( stream, "IO count", modbus_event_cnt );		break;
@@ -142,28 +139,12 @@ static int CgiStatusRow( FILE * stream, int row_no )
         
     case 21:
         {
-            uint32_t tx_total, rx_total;
-            uint8_t active;
-#if SERVANT_TUN0 || SERVANT_TUN1
-            subhdr( stream, "Tunnels" );
-#if SERVANT_TUN0
-            get_tunnel_stats( 0, &tx_total, &rx_total, &active );
-            ShowTableRow2b( stream, "Tun0 active", active );
-            ShowTableRow2i( stream, "Tun0 RX, K", rx_total/1024 );
-            ShowTableRow2i( stream, "Tun0 TX, K", tx_total/1024 );
-#endif
-#if SERVANT_TUN1
-            get_tunnel_stats( 1, &tx_total, &rx_total, &active );
-            ShowTableRow2b( stream, "Tun1 active", active );
-            ShowTableRow2i( stream, "Tun1 RX, K", rx_total/1024 );
-            ShowTableRow2i( stream, "Tun1 TX, K", tx_total/1024 );
-#endif
-#endif
+            // empty
             break;
         }
 
-    case 22: subhdr( stream, "DHT11" ); break;
-    case 23: ShowTableRow2i( stream, "Errors count", dht11_errorCnt );	break;
+//    case 22: subhdr( stream, "DHT11" ); break;
+//    case 23: ShowTableRow2i( stream, "Errors count", dht11_errorCnt );	break;
         
 
     default:

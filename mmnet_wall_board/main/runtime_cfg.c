@@ -1,6 +1,6 @@
 /**
  *
- * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ * DZ-MMNET-WALL: Wall control panel based on MMNet01.
  *
  * Runtime-configurable data. EEPROM config save/restore.
  *
@@ -25,7 +25,7 @@ struct eeprom_cfg        ee_cfg =
     .timezone = DEFAULT_TZ,
 
     .mac_addr = { DEFAULT_MAC },
-
+/*
     .ddr_b = 0,
     .ddr_d = 0,
     .ddr_e = 0x0F, // low 4 bits are default outputs
@@ -38,9 +38,9 @@ struct eeprom_cfg        ee_cfg =
     .start_e = 0,
     .start_f = 0,
     .start_g = 0,
-
+*/
     .dbg_baud = DEFAULT_BAUD,
-    .tun_baud = {DEFAULT_BAUD, DEFAULT_BAUD},
+//    .tun_baud = {DEFAULT_BAUD, DEFAULT_BAUD},
 };
 
 
@@ -63,8 +63,7 @@ init_runtime_cfg()
     unsigned char def_mac[] = { DEFAULT_MAC };
     memcpy( ee_cfg.mac_addr, def_mac, sizeof(ee_cfg.mac_addr) );
 
-    // TODO temp?
-    ee_cfg.io_enable = -1; // all ones, enable all by default?
+    ee_cfg.io_enable = IO_LOG; // disable all by default, enable serial debug
 }
 
 #define EESZ (sizeof(struct eeprom_cfg))

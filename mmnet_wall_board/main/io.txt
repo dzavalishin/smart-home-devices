@@ -2,40 +2,44 @@ Basic pin map for MMNET101
 
 Port B
 
-	0-3 - 
+    0-3 - front panel LEDs
 
-	4 - 
+    4,5 - relays (move to 4,6)
 
-	5 - 
+    6   - 
 
-	6,7 - 
+    7   - LCD backlight PWM
 
 Port D
 
-    0,1 - 
-        
+    0-3 - Front panel buttons
+
     2,3 - 
         
-    4-7 - 
+    6-7 - Di
 
 Port E
 
-	0-3 
+    0   - LCD E
 
-	4 - 
+    1   - LCD R/W
 
-	5 - Ethernet interrupt
+    2   - LCD R/S
 
-	6,7 - 
+    3   - 
+
+    4   - Encoder button
+
+    6,7 - Encoder rotation
 
 Port F
 
-	0-7 LCD data bus
+    0-7 - LCD data bus
 
 Port G
 
-    3 - N/C
-        
-    4 - 1Wire (single, 2401 serial/MAC)
+    3   - 
+
+    4   - 1Wire (single, 2401 serial/MAC)
 
 

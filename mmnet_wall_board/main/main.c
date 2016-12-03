@@ -1,6 +1,6 @@
 /**
  *
- * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ * DZ-MMNET-WALL: Wall control panel based on MMNet01.
  *
  * Main: startup code.
  *
@@ -57,14 +57,13 @@
 
 
 #include "io_dig.h"
-#include "io_adc.h"
 #include "io_pwm.h"
 #include "io_temp.h"
-#include "io_bmp180.h"
-
-#include "spi.h"
 
 #include "onewire.h"
+
+#include "ui_lcd.h"
+
 
 // NB - contains var def and init
 #include "makedate.h"
@@ -92,7 +91,7 @@ void each_second(HANDLE h, void *arg);
 dev_major *alldev[] =
 {
 //    &io_dig,
-    &io_adc,
+//    &io_adc,
     &io_pwm,
 };
 
@@ -448,19 +447,6 @@ static int tryToFillMac(unsigned char *mac, unsigned char *oneWireId)
 
 void init_devices(void)
 {
-#if ENABLE_TWI
-    {
-        unsigned long busspeed = 10000;	// 10kHz
-        //unsigned long busspeed = 25;	// 50 Hz
-
-        printf("I2C init...");
-
-        TwInit(0);
-        TwIOCtl(TWI_SETSPEED, &busspeed);
-        TwIOCtl(TWI_GETSPEED, &busspeed);
-        printf(" done, speed is %ld\n", busspeed);
-    }
-#endif // ENABLE_TWI
 
 
 
@@ -469,10 +455,9 @@ void init_devices(void)
 
 
     dio_init();
-#if SERVANT_NADC > 0
-    printf(" adc init...");
-    adc_init();
-#endif
+
+
+while(1)    lcd_init();
 
 
 #if SERVANT_NPWM > 0
@@ -481,10 +466,6 @@ void init_devices(void)
 #endif
 
 
-#if SERVANT_NFREQ > 0
-    //freq_meter_init();
-    icp_init();
-#endif
 
     sei(); //re-enable interrupts
 
@@ -495,48 +476,6 @@ void init_devices(void)
 #endif
 
 
-#if 0
-    DEBUG_PUTS("sending temperature from init... ");
-    temp_meter_sec_timer();
-    NutSleep(1000);
-    DEBUG_PUTS("sending temperature from init... ");
-    temp_meter_sec_timer();
-#endif
-
-    set_half_duplex0(0);
-    set_half_duplex1(0);
-
-#if ENABLE_SPI
-    printf(" spi init...");
-    spi_init();
-    //printf("SPI = 0x%02X\n", spi_send( 0x80, 0 )); // read reg 0, whoami
-/*
-    spi_send( 0x01, 0xFF );
-    spi_send( 0x07, 0xAA );
-
-    spi_send( 0x33, 0xFF );
-    spi_send( 0x77, 0xAA );
-
-    spi_send( 0xFF, 0x55 );
-    spi_send( 0xEE, 0x0A );
-*/
-    //test_spi();
-#endif
-
-    //set_half_duplex0(1);
-    //set_half_duplex1(1);
-
-#if SERVANT_BMP180
-    printf(" bmp180 init...");
-    bmp180_calibration();
-#endif // SERVANT_BMP180
-
-    //all peripherals are now initialized
-
-#if SERVANT_NADC > 0
-    printf(" adc start...");
-    adc_start();
-#endif
 
 #if SERVANT_NPWM > 0
     printf(" timer1 start...");

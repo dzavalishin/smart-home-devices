@@ -1,6 +1,6 @@
 /**
  *
- * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ * DZ-MMNET-WALL: Wall control panel based on MMNet01.
  *
  * Modbus/TCP interface to general Modbus library.
  *
@@ -21,12 +21,9 @@
 #include "modbus_reg.h"
 #include <modbus.h>
 
-#include "io_adc.h"
 #include "io_pwm.h"
 #include "io_dig.h"
 #include "io_temp.h"
-#include "io_dht.h"
-#include "io_bmp180.h"
 
 static const int modbus_debug = 0;
 
@@ -149,7 +146,7 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
 
     READ_ONE( MB_REG_HWCONF_DI, 32 ); // Max DI, bits
     READ_ONE( MB_REG_HWCONF_DO, 32 ); // Max DO, bits
-    READ_ONE( MB_REG_HWCONF_AI, SERVANT_NADC + (SERVANT_DHT11 ? 2 : 0) + (SERVANT_BMP180 ? 2 : 0));
+    //READ_ONE( MB_REG_HWCONF_AI, SERVANT_NADC + (SERVANT_DHT11 ? 2 : 0) + (SERVANT_BMP180 ? 2 : 0));
     READ_ONE( MB_REG_HWCONF_AO, SERVANT_NPWM ); // Max AO
     READ_ONE( MB_REG_HWCONF_CN, 0 ); // Max counters
     READ_ONE( MB_REG_HWCONF_TS, SERVANT_NTEMP ); // Actual temp sensorts count
@@ -175,8 +172,6 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
 
     // Digital inputs
 
-    //READ_ONE( MB_REG_IO+0, (((uint16_t)dio_read_port( 3 )) << 8 ) || dio_read_port( 1 ) ); // Port D, Port B
-    //READ_ONE( MB_REG_IO+1, (((uint16_t)dio_read_port( 5 )) << 8 ) || dio_read_port( 4 ) ); // Port F, Port E
     READ_ONE( MB_REG_IO+0, dio_read_port( 1 ) ); // Port B
     READ_ONE( MB_REG_IO+1, dio_read_port( 3 ) ); // Port D
     READ_ONE( MB_REG_IO+2, dio_read_port( 4 ) ); // Port E
@@ -206,8 +201,8 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
         *val = adc_value[id];
 //        if(modbus_debug) printf("Modbus replied with %u\n", *val );
         return 1;
-    }
 #endif
+    }
 
 #if SERVANT_NTEMP > 0
     // unmapped - returns temp in unknown order
@@ -249,12 +244,12 @@ uint8_t modbus_read_register( uint16_t nReg, uint16_t *val )
 // return modbus err no or 0
 int modbus_write_register( uint16_t nReg, uint16_t value )
 {
-
+/*
     WRITE_ONE( MB_REG_IO+0, dio_write_port( 1, value ) );
     WRITE_ONE( MB_REG_IO+1, dio_write_port( 3, value ) );
     WRITE_ONE( MB_REG_IO+2, dio_write_port( 4, value ) );
     WRITE_ONE( MB_REG_IO+3, dio_write_port( 5, value ) );
-
+*/
 #if SERVANT_NPWM > 0
     if( INRANGE( nReg, MB_REG_AO, MB_COUNT_AO ) )
     {

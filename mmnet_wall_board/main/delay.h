@@ -27,6 +27,12 @@ static inline void delayloop16(uint16_t count)
 #define DELAY_US_CONV(us) ((uint16_t)(((((us)*1000L)/(1000000000/F_OSC))-1)/4))
 #define delay_us(us)	  delayloop16(DELAY_US_CONV(us))
 
+#include <sys/timer.h>
+
+#define delay_ms(__ms) NutSleep(__ms)
+
+
+
 #if 0
 /* delay function for millisec
   (6 cycles per x + 20(?) overhead) */

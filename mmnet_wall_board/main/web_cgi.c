@@ -1,6 +1,6 @@
 /**
  *
- * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ * DZ-MMNET-WALL: Wall control panel based on MMNet01.
  *
  * HTTPD/CGI code for program-specific (not OS) data.
  *
@@ -15,11 +15,9 @@
 #include "cgi.h"
 
 #include "io_dig.h"
-#include "io_adc.h"
 #include "io_pwm.h"
-#include "io_dht.h"
 #include "io_temp.h"
-#include "io_bmp180.h"
+
 
 #include "ds18x20.h"
 
@@ -536,6 +534,7 @@ static int setNamedParameter( const char *name, const char *value )
     }
 #endif
 
+/*
 #if SERVANT_NDIG > 0
     {
         unsigned char port = nout / 8;
@@ -561,7 +560,7 @@ static int setNamedParameter( const char *name, const char *value )
 
     }
 #endif
-
+*/
     return MODBUS_EXCEPTION_ILLEGAL_DATA_ADDFRESS;
 }
 

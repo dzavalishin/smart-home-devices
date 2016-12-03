@@ -1,6 +1,6 @@
 /**
  *
- * DZ-MMNET-MODBUS: Modbus/TCP I/O module based on MMNet101.
+ * DZ-MMNET-WALL: Wall control panel based on MMNet01.
  *
  * Digital ports I/O.
  *
@@ -29,7 +29,7 @@ static unsigned char get_ddr(unsigned char port_num);
 static void set_ddr(unsigned char port_num, unsigned char data);
 
 
-
+/*
 
 // Contains reverse bitmask for each port.
 // bit == 1 means do not trigger data send on bit value changed
@@ -41,12 +41,13 @@ void add_exclusion_mask( unsigned char exclPos, unsigned char bitmask )
     if( exclPos >= SERVANT_NDIG ) return;
     exclude_port_bits[exclPos] |= bitmask;
 }
-
+*/
 
 
 // TODO support dynamic io conf here
 void dio_init(void)
 {
+/*
     // Totally unavailable on MMNET101 ports
 
     add_exclusion_mask( 0, 0xFF ); // Port A
@@ -100,7 +101,7 @@ void dio_init(void)
 #ifdef FAIL_LED_EXCLPOS
     add_exclusion_pin( FAIL_LED_EXCLPOS, FAIL_LED );
 #endif
-
+*/
 
     unsigned char i;
     for( i = 0; i < SERVANT_NDIG; i++ )
@@ -114,30 +115,17 @@ void dio_init(void)
     // Set port values BEFORE enabling DDE
     dio_set_default_output_state();
 
-    DDRB = ee_cfg.ddr_b;
-    DDRD = ee_cfg.ddr_d;
-#ifdef __AVR_ATmega128__
-    DDRE = ee_cfg.ddr_e;
-    DDRF = ee_cfg.ddr_f;
-    DDRG = ee_cfg.ddr_g;
-#endif
+    DDRB = 0; // ee_cfg.ddr_b;
+    DDRD = 0; // ee_cfg.ddr_d;
+    DDRE = 0; // ee_cfg.ddr_e;
+    DDRF = 0; // ee_cfg.ddr_f;
+    DDRG = 0; // ee_cfg.ddr_g;
+
 
 
     // Now set dde for pins we use in a dedicated way
 
 
-#if ENABLE_HALF_DUPLEX_0
-    if(RT_IO_ENABLED(IO_TUN0))
-        HALF_DUPLEX0_DDR |= _BV(HALF_DUPLEX0_PIN);
-#endif
-#if ENABLE_HALF_DUPLEX_1
-    if(RT_IO_ENABLED(IO_TUN0))
-        HALF_DUPLEX1_DDR |= _BV(HALF_DUPLEX1_PIN);
-#endif
-
-#if ENABLE_SPI
-    DDRB |= PB_SS_PIN|(_BV(PB0))|(_BV(PB1))|(_BV(PB2));
-#endif
 
     led_ddr_init(); // again - first time was in main
 }
@@ -145,34 +133,17 @@ void dio_init(void)
 void
 dio_set_default_output_state( void ) // Used on start and if communications are lost
 {
-    PORTB = ee_cfg.start_b;
-    PORTD = ee_cfg.start_d;
-    PORTE = ee_cfg.start_e;
-    PORTF = ee_cfg.start_f;
-    PORTG = ee_cfg.start_g;
+    PORTB = 0; // ee_cfg.start_b;
+    PORTD = 0; // ee_cfg.start_d;
+    PORTE = 0; // ee_cfg.start_e;
+    PORTF = 0; // ee_cfg.start_f;
+    PORTG = 0; // ee_cfg.start_g;
 }
 
 
 
 
 
-void set_half_duplex0( char val )
-{
-#if ENABLE_HALF_DUPLEX_0
-    if( val )     HALF_DUPLEX0_PORT |= _BV(HALF_DUPLEX0_PIN);
-    else          HALF_DUPLEX0_PORT &= ~_BV(HALF_DUPLEX0_PIN);
-    HALF_DUPLEX0_DDR |= _BV(HALF_DUPLEX0_PIN);
-#endif
-}
-
-void set_half_duplex1( char val )
-{
-#if ENABLE_HALF_DUPLEX_1
-    if( val )     HALF_DUPLEX1_PORT |= _BV(HALF_DUPLEX1_PIN);
-    else          HALF_DUPLEX1_PORT &= ~_BV(HALF_DUPLEX1_PIN);
-    HALF_DUPLEX1_DDR |= _BV(HALF_DUPLEX1_PIN);
-#endif
-}
 
 
 
@@ -183,6 +154,7 @@ unsigned char   dio_read_port( unsigned char port ) { return get_dig_in(port); }
 void
 dio_write_port( unsigned char port, unsigned char new_bits )
 {
+    /*
     if( port >= SERVANT_NDIG ) return;
     cli();
 
@@ -196,11 +168,13 @@ dio_write_port( unsigned char port, unsigned char new_bits )
     set_dig_out( port, prev );
 
     sei();
+    */
 }
 
 
 unsigned char   dio_get_port_ouput_mask( unsigned char port ) { return get_ddr(port); }
 
+    /*
 void
 dio_set_port_ouput_mask( unsigned char port, unsigned char new_mask )
 {
@@ -218,6 +192,7 @@ dio_set_port_ouput_mask( unsigned char port, unsigned char new_mask )
 
     sei();
 }
+    */
 
 
 
@@ -228,6 +203,7 @@ dio_read_port_bit( unsigned char port, unsigned char nBit )
     return 0x1 & (dio_read_port(port) >> nBit );
 }
 
+/*
 void
 dio_write_port_bit( unsigned char port, unsigned char nBit, unsigned char value )
 {
@@ -240,6 +216,7 @@ dio_write_port_bit( unsigned char port, unsigned char nBit, unsigned char value 
     dio_write_port( port, prev );
     sei();
 }
+*/
 
 unsigned char
 dio_get_port_ouput_mask_bit( unsigned char port, unsigned char nBit )
@@ -247,7 +224,7 @@ dio_get_port_ouput_mask_bit( unsigned char port, unsigned char nBit )
     return 0x1 & (get_ddr(port) >> nBit);
 }
 
-
+/*
 void
 dio_set_port_ouput_mask_bit( unsigned char port, unsigned char nBit, unsigned char value )
 {
@@ -260,7 +237,7 @@ dio_set_port_ouput_mask_bit( unsigned char port, unsigned char nBit, unsigned ch
     dio_set_port_ouput_mask( port, prev );
     sei();
 }
-
+*/
 
 
 
@@ -284,17 +261,13 @@ static unsigned char get_dig_in(unsigned char port_num)
 {
     if( port_num >= SERVANT_NDIG ) return 0;
     switch (port_num) {
-#ifdef __AVR_ATmega128__
     case 0:		return PINA;
-#endif
     case 1:		return PINB;
     case 2:		return PINC;
     case 3:		return PIND;
-#ifdef __AVR_ATmega128__
     case 4:		return PINE;
     case 5:		return PINF;
     case 6:		return PING;
-#endif
     }
     return 0;
 }
@@ -307,17 +280,13 @@ static void set_dig_out(unsigned char port_num, unsigned char data)
 {
     if( port_num >= SERVANT_NDIG ) return;
     switch (port_num) {
-#ifdef __AVR_ATmega128__
     case 0:		PORTA=data;		break;
-#endif
     case 1:		PORTB=data;		break;
     case 2:		PORTC=data;		break;
     case 3:		PORTD=data;		break;
-#ifdef __AVR_ATmega128__
     case 4:		PORTE=data;		break;
     case 5:		PORTF=data;		break;
     case 6:		PORTG=data;		break;
-#endif
     }
 }
 
@@ -326,17 +295,13 @@ static unsigned char get_dig_out(unsigned char port_num)
 {
     if( port_num >= SERVANT_NDIG ) return 0;
     switch (port_num) {
-#ifdef __AVR_ATmega128__
     case 0:		return PORTA;
-#endif
     case 1:		return PORTB;
     case 2:		return PORTC;
     case 3:		return PORTD;
-#ifdef __AVR_ATmega128__
     case 4:		return PORTE;
     case 5:		return PORTF;
     case 6:		return PORTG;
-#endif
     }
     return 0;
 }
@@ -346,17 +311,13 @@ static void set_ddr(unsigned char port_num, unsigned char data)
 {
     if( port_num >= SERVANT_NDIG ) return;
     switch (port_num) {
-#ifdef __AVR_ATmega128__
     case 0:		DDRA=data;		break;
-#endif
     case 1:		DDRB=data;		break;
     case 2:		DDRC=data;		break;
     case 3:		DDRD=data;		break;
-#ifdef __AVR_ATmega128__
     case 4:		DDRE=data;		break;
     case 5:		DDRF=data;		break;
     case 6:		DDRG=data;		break;
-#endif
     }
 }
 
@@ -364,17 +325,13 @@ static unsigned char get_ddr(unsigned char port_num)
 {
     if( port_num >= SERVANT_NDIG ) return 0;
     switch (port_num) {
-#ifdef __AVR_ATmega128__
     case 0:		return DDRA;
-#endif
     case 1:		return DDRB;
     case 2:		return DDRC;
     case 3:		return DDRD;
-#ifdef __AVR_ATmega128__
     case 4:		return DDRE;
     case 5:		return DDRF;
     case 6:		return DDRG;
-#endif
     }
     return 0;
 }
