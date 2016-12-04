@@ -69,6 +69,8 @@
 #include "makedate.h"
 
 
+
+
 static int tryToFillMac(unsigned char *mac, unsigned char *oneWireId);
 
 static void init_devices(void);
@@ -88,10 +90,9 @@ void each_second(HANDLE h, void *arg);
 
 
 
-dev_major *alldev[] =
+dev_major *devices[] =
 {
-//    &io_dig,
-//    &io_adc,
+    &io_dig,
     &io_pwm,
 };
 
@@ -443,80 +444,38 @@ static int tryToFillMac(unsigned char *mac, unsigned char *oneWireId)
 
 
 
-// Initialize all peripherals
 
-void init_devices(void)
-{
+#if 1
 
+#define NMAJOR ( sizeof(devices) / sizeof(dev_major) )
 
-
-    //stop errant interrupts until set up
-    cli(); //disable all interrupts
-
-
-    dio_init();
-
-
-while(1)    lcd_init();
-
-
-#if SERVANT_NPWM > 0
-    printf(" pwm init...");
-    timer1_init();
-#endif
-
-
-
-    sei(); //re-enable interrupts
-
-
-#if SERVANT_NTEMP > 0
-    printf(" 1w init...");
-    init_temperature();
-#endif
-
-
-
-#if SERVANT_NPWM > 0
-    printf(" timer1 start...");
-    timer1_start();
-#endif
-
-
-
-    printf(" DONE\n");
-
-
-}
-
-#if 0
-
-#define NMAJOR ( sizeof(devices) / sizeof(dev_major) ) )
-
-void init_regular_devices(void)
+static void init_regular_devices(void)
 {
     dev_major *	dev;
     uint8_t	i;
 
-
     // Init
     for( i = 0; i < NMAJOR; i++ )
     {
-        dev = devices+i;
+        dev = devices[i];
 
         dev->init( dev );
     }
+}
+
+static void start_regular_devices(void)
+{
+    dev_major *	dev;
+    uint8_t	i;
 
     // Start
     for( i = 0; i < NMAJOR; i++ )
     {
-        dev = devices+i;
-
+        dev = devices[i];
         dev->started = ! dev->start( dev );
-
     }
-
 }
+
 
 void timer_regular_devices(void)
 {
@@ -525,7 +484,7 @@ void timer_regular_devices(void)
 
     for( i = 0; i < NMAJOR; i++ )
     {
-        dev = devices+i;
+        dev = devices[i];
 
         if( dev->started )
             dev->timer( dev );
@@ -541,7 +500,7 @@ void stop_regular_devices(void)
 
     for( i = 0; i < NMAJOR; i++ )
     {
-        dev = devices+i;
+        dev = devices[i];
 
         if( dev->started )
             dev->stop( dev );
@@ -553,6 +512,70 @@ void stop_regular_devices(void)
 
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Initialize all peripherals
+
+void init_devices(void)
+{
+
+
+
+    //stop errant interrupts until set up
+    cli(); //disable all interrupts
+
+
+    dio_init();
+
+
+    //lcd_init();
+    //encoder_init(); menu_init();
+
+
+#if SERVANT_NPWM > 0
+    //printf(" pwm init...");
+    //timer1_init();
+#endif
+
+
+
+    sei(); //re-enable interrupts
+
+
+#if SERVANT_NTEMP > 0
+    printf(" 1w init...");
+    init_temperature();
+#endif
+
+
+
+#if SERVANT_NPWM > 0
+    //printf(" timer1 start...");
+    //timer1_start();
+#endif
+
+    init_regular_devices();
+    start_regular_devices();
+
+    printf(" DONE\n");
+
+
+}
+
+
+
+
 
 
 

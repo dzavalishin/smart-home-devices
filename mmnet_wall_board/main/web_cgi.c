@@ -297,7 +297,7 @@ static int CgiOutputsRow( FILE * stream, int row_no )
     if( row_no  < SERVANT_NPWM )
     {
         static prog_char tfmt[] = "<TR><TD> PWM </TD><TD> %u </TD><TD> 0x%03X </TD></TR>\r\n";
-        fprintf_P(stream, tfmt, row_no, pwm[row_no] );
+        //fprintf_P(stream, tfmt, row_no, pwm[row_no] );
         return 1;
     }
 
@@ -528,7 +528,7 @@ static int setNamedParameter( const char *name, const char *value )
 
         if( nout < 0 ) return MODBUS_EXCEPTION_ILLEGAL_DATA_ADDFRESS;
 
-        set_an( (unsigned char)nout, (unsigned char) atoi(value) );
+        //set_an( (unsigned char)nout, (unsigned char) atoi(value) );
 
         return 0;
     }

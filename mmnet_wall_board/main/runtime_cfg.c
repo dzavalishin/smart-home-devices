@@ -15,7 +15,7 @@
 #include <crc8.h>
 #include <string.h>
 
-//uint8_t		onewire_2482_available = 0;
+
 uint8_t		onewire_available = 0;
 uint8_t		sntp_available = 0;
 uint8_t		error_flags; // bit per error type
@@ -63,7 +63,8 @@ init_runtime_cfg()
     unsigned char def_mac[] = { DEFAULT_MAC };
     memcpy( ee_cfg.mac_addr, def_mac, sizeof(ee_cfg.mac_addr) );
 
-    ee_cfg.io_enable = IO_LOG; // disable all by default, enable serial debug
+    //ee_cfg.io_enable = IO_LOG|IO_LCD4; // disable all by default, enable serial debug and 4-bit LCD IO
+    ee_cfg.io_enable = IO_LOG; // disable all by default, enable serial debug 
 }
 
 #define EESZ (sizeof(struct eeprom_cfg))

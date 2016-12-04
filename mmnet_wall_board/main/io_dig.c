@@ -29,91 +29,19 @@ static unsigned char get_ddr(unsigned char port_num);
 static void set_ddr(unsigned char port_num, unsigned char data);
 
 
-/*
-
-// Contains reverse bitmask for each port.
-// bit == 1 means do not trigger data send on bit value changed
-static unsigned char exclude_port_bits[SERVANT_NDIG];
-
-// exclPos is 0 for port A and so on
-void add_exclusion_mask( unsigned char exclPos, unsigned char bitmask )
-{
-    if( exclPos >= SERVANT_NDIG ) return;
-    exclude_port_bits[exclPos] |= bitmask;
-}
-*/
 
 
 // TODO support dynamic io conf here
 void dio_init(void)
 {
-/*
-    // Totally unavailable on MMNET101 ports
-
-    add_exclusion_mask( 0, 0xFF ); // Port A
-    add_exclusion_mask( 2, 0xFF ); // Port C
-
-
-    add_exclusion_pin( ETHERNET_INTERRUPT_EXCLPOS, ETHERNET_INTERRUPT_PIN );
-
-    add_exclusion_pin( DATAFLASH_EXCLPOS, DATAFLASH_SCK_PIN );
-    add_exclusion_pin( DATAFLASH_EXCLPOS, DATAFLASH_MOSI_PIN );
-    add_exclusion_pin( DATAFLASH_EXCLPOS, DATAFLASH_MISO_PIN );
-    add_exclusion_pin( DATAFLASH_EXCLPOS, DATAFLASH_CS_PIN );
-
-    add_exclusion_pin( OW_EXCLPOS, OW_DEFAULT_PIN ); // TODO exclude multibus pins too!
-
-#if ENABLE_TWI
-    add_exclusion_pin( TWI_EXCLPOS, TWI_SDA );
-    add_exclusion_pin( TWI_EXCLPOS, TWI_SCL );
-#endif
-
-#if SERVANT_DHT11
-    if(RT_IO_ENABLED(IO_DHT))
-        add_exclusion_pin( DHT_EXCLPOS, DHT_PIN );
-#endif
-
-    // todo fixme
-    //add_exclusion_mask( UART1_EXCL_EXCLPOS, UART1_EXCL_MASK );
-    //add_exclusion_mask( UART2_EXCL_EXCLPOS, UART2_EXCL_MASK );
-#if 0 // gone to tunnel code
-#if SERVANT_TUN0
-    add_exclusion_pin( UART0_EXCLPOS, UART0_TX_PIN );
-    add_exclusion_pin( UART0_EXCLPOS, UART0_RX_PIN );
-#endif
-#if SERVANT_TUN1
-    add_exclusion_pin( UART1_EXCLPOS, UART0_TX_PIN );
-    add_exclusion_pin( UART1_EXCLPOS, UART0_RX_PIN );
-#endif
-#endif
-
-#if ENABLE_HALF_DUPLEX_0
-    if(RT_IO_ENABLED(IO_TUN0))
-        add_exclusion_pin( HALF_DUPLEX0_EXCLPOS, HALF_DUPLEX0_PIN );
-#endif
-#if ENABLE_HALF_DUPLEX_1
-    if(RT_IO_ENABLED(IO_TUN1))
-        add_exclusion_pin( HALF_DUPLEX1_EXCLPOS, HALF_DUPLEX1_PIN );
-#endif
-
-    add_exclusion_pin( LED_EXCLPOS, LED );
-
-#ifdef FAIL_LED_EXCLPOS
-    add_exclusion_pin( FAIL_LED_EXCLPOS, FAIL_LED );
-#endif
-*/
-
-    unsigned char i;
-    for( i = 0; i < SERVANT_NDIG; i++ )
-    {
-        set_ddr( i, 0 );
-        //set_dig( i, 0xFF );
-    }
-
-    // TODO fixme read DDR mask from EEPROM
 
     // Set port values BEFORE enabling DDE
-    dio_set_default_output_state();
+    PORTB = 0; // ee_cfg.start_b;
+    PORTD = 0; // ee_cfg.start_d;
+    PORTE = 0; // ee_cfg.start_e;
+    PORTF = 0; // ee_cfg.start_f;
+    PORTG = 0; // ee_cfg.start_g;
+
 
     DDRB = 0; // ee_cfg.ddr_b;
     DDRD = 0; // ee_cfg.ddr_d;
@@ -122,23 +50,79 @@ void dio_init(void)
     DDRG = 0; // ee_cfg.ddr_g;
 
 
-
     // Now set dde for pins we use in a dedicated way
 
-
-
     led_ddr_init(); // again - first time was in main
+
+    DI_DDR  &= ~0b11001111; // set as input
+    DI_PORT |=  0b11001111; // pull up
+
+    DO_DDR  |=  0b01011111; // set as out
+    //DO_PORT |=  0b00001111; // LEDs are low level activated, turn off
+    DO_PORT &=  0b11110000; // LEDs are low level activated, turn on
 }
 
-void
-dio_set_default_output_state( void ) // Used on start and if communications are lost
+
+
+
+uint8_t         dio_front_buttons_changed = 0;          // Front panel button in non-menu mode pressed
+uint8_t         dio_remote_state_changed = 0;           // We've got remote (MQTT broker) state changeg
+uint8_t         dio_remote_state = 0;                   // Remote state as we got from MQTT
+uint8_t         dio_state = 0;                   	// Our state as we know
+
+
+void dio_timer( dev_major* d )
 {
-    PORTB = 0; // ee_cfg.start_b;
-    PORTD = 0; // ee_cfg.start_d;
-    PORTE = 0; // ee_cfg.start_e;
-    PORTF = 0; // ee_cfg.start_f;
-    PORTG = 0; // ee_cfg.start_g;
+    (void) d;
+
+    uint8_t fb_ch = dio_front_buttons_changed;
+    uint8_t re_ch = dio_remote_state_changed;
+
+    // Process state changes from MQTT or front buttons
+
+    // Nothing changed? no work.
+    if( (!fb_ch) && (!re_ch) )
+        return;
+
+    if( re_ch )
+    {
+        dio_state &= ~re_ch; // clear those which changed remotely
+        dio_state |= re_ch & dio_remote_state; // set those which changed to 1 remotely
+    }
+
+    dio_state ^= fb_ch;
+
+    DO_PORT &= ~DO_LED_MASK;
+    DO_PORT |= DO_LED_MASK & (~dio_state);
+
+    if( fb_ch )
+    {
+        // Send to remote what we changed localy
+        uint8_t mask, ch = 0;
+        for( mask = 1; mask < 0x10; mask <<= 1, ch++ )
+        {
+            if( fb_ch & mask )
+                mqtt_send_channel( dio_state & mask, ch );
+        }
+    }
+
+    dio_front_buttons_changed &= ~fb_ch;
+    dio_remote_state_changed &= ~re_ch;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -151,48 +135,10 @@ dio_set_default_output_state( void ) // Used on start and if communications are 
 // Direct
 unsigned char   dio_read_port( unsigned char port ) { return get_dig_in(port); }
 
-void
-dio_write_port( unsigned char port, unsigned char new_bits )
-{
-    /*
-    if( port >= SERVANT_NDIG ) return;
-    cli();
-
-    unsigned char prev = get_dig_out(port);
-
-    new_bits &= ~exclude_port_bits[port]; // reset bits that we can NOT change
-
-    prev &= exclude_port_bits[port]; // reset bits that we can change
-    prev |= new_bits;
-
-    set_dig_out( port, prev );
-
-    sei();
-    */
-}
 
 
 unsigned char   dio_get_port_ouput_mask( unsigned char port ) { return get_ddr(port); }
 
-    /*
-void
-dio_set_port_ouput_mask( unsigned char port, unsigned char new_mask )
-{
-    if( port >= SERVANT_NDIG ) return;
-    cli();
-
-    unsigned char prev = get_ddr(port);
-
-    new_mask &= ~exclude_port_bits[port]; // reset bits that we can NOT change
-
-    prev &= exclude_port_bits[port]; // reset bits that we can change
-    prev |= new_mask;
-
-    set_ddr( port, prev );
-
-    sei();
-}
-    */
 
 
 
@@ -203,56 +149,12 @@ dio_read_port_bit( unsigned char port, unsigned char nBit )
     return 0x1 & (dio_read_port(port) >> nBit );
 }
 
-/*
-void
-dio_write_port_bit( unsigned char port, unsigned char nBit, unsigned char value )
-{
-    cli();
-    unsigned char prev = get_dig_out( port );
-
-    if( value )         prev |= _BV(nBit);
-    else         	prev &= ~(_BV(nBit));
-
-    dio_write_port( port, prev );
-    sei();
-}
-*/
 
 unsigned char
 dio_get_port_ouput_mask_bit( unsigned char port, unsigned char nBit )
 {
     return 0x1 & (get_ddr(port) >> nBit);
 }
-
-/*
-void
-dio_set_port_ouput_mask_bit( unsigned char port, unsigned char nBit, unsigned char value )
-{
-    cli();
-    unsigned char prev = get_ddr( port );
-
-    if( value )         prev |= _BV(nBit);
-    else         	prev &= ~(_BV(nBit));
-
-    dio_set_port_ouput_mask( port, prev );
-    sei();
-}
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -273,9 +175,7 @@ static unsigned char get_dig_in(unsigned char port_num)
 }
 
 
-
-
-
+/*
 static void set_dig_out(unsigned char port_num, unsigned char data)
 {
     if( port_num >= SERVANT_NDIG ) return;
@@ -289,7 +189,7 @@ static void set_dig_out(unsigned char port_num, unsigned char data)
     case 6:		PORTG=data;		break;
     }
 }
-
+*/
 
 static unsigned char get_dig_out(unsigned char port_num)
 {
@@ -306,7 +206,7 @@ static unsigned char get_dig_out(unsigned char port_num)
     return 0;
 }
 
-
+/*
 static void set_ddr(unsigned char port_num, unsigned char data)
 {
     if( port_num >= SERVANT_NDIG ) return;
@@ -320,7 +220,7 @@ static void set_ddr(unsigned char port_num, unsigned char data)
     case 6:		DDRG=data;		break;
     }
 }
-
+*/
 static unsigned char get_ddr(unsigned char port_num)
 {
     if( port_num >= SERVANT_NDIG ) return 0;
@@ -335,6 +235,46 @@ static unsigned char get_ddr(unsigned char port_num)
     }
     return 0;
 }
+
+
+
+
+static void dio_init_dev( dev_major* d )
+{
+    (void) d;
+    printf("dio_init_dev\n");
+    //timer1_init();
+
+
+}
+static void dio_start_dev( dev_major* d )
+{
+    (void) d;
+    printf("dio_start_dev\n");
+    //timer1_start();
+}
+
+//static void dio_stop_dev( dev_major* d ) { (void) d;  } // TODO
+
+
+dev_major io_dig =
+{
+    .name = "dio",
+
+    .init = dio_init_dev,
+    .start = dio_start_dev,
+    .stop = 0, // TODO
+    .timer = dio_timer,
+
+    .to_string = 0,
+    .from_string = 0,
+
+    .minor_count = 0,
+    .subdev = 0,
+};
+
+
+
 
 
 

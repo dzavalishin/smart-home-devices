@@ -256,7 +256,7 @@ int modbus_write_register( uint16_t nReg, uint16_t value )
         unsigned int id = nReg-MB_REG_AO;
 
         if( id >= SERVANT_NPWM ) goto err;
-        set_an( (unsigned char)id, (unsigned char) value);
+        //set_an( (unsigned char)id, (unsigned char) value);
         return 0;
     }
 #endif

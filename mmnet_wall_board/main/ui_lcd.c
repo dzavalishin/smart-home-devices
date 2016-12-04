@@ -6,6 +6,11 @@
 #include <avr/io.h>
 #include <stdlib.h>
 
+#include "runtime_cfg.h"
+
+
+//#define LCD_4_BIT ( RT_IO_ENABLED( IO_LCD4 ) )
+#define LCD_4_BIT 1
 
 // ------------------------------------------------------------------
 // 
@@ -13,21 +18,29 @@
 // 
 // ------------------------------------------------------------------
 
+#define LCD_IO_DELAY 1
+
 // TODO turn cursor off
 // TODO read LCD ready bit, speedup io
 
-#define RS_ENABLE 	sbi(PORTE,2)
-#define RS_DISABLE	cbi(PORTE,2)
+#define RS_ENABLE 	do { sbi(PORTE,2); delay_us(LCD_IO_DELAY); } while(0)
+#define RS_DISABLE	do { cbi(PORTE,2); delay_us(LCD_IO_DELAY); } while(0)
 
-#define E_ENABLE 	sbi(PORTE,0)
-#define E_DISABLE 	cbi(PORTE,0)
+//#define RS_ENABLE 	do { cbi(PORTE,2); delay_us(LCD_IO_DELAY); } while(0)
+//#define RS_DISABLE	do { sbi(PORTE,2); delay_us(LCD_IO_DELAY); } while(0)
 
-#define RW_READ 	sbi(PORTE,1)
-#define RW_WRITE 	cbi(PORTE,1)
+#define E_ENABLE 	do { sbi(PORTE,0); delay_us(LCD_IO_DELAY); } while(0)
+#define E_DISABLE 	do { cbi(PORTE,0); delay_us(LCD_IO_DELAY); } while(0)
 
-#define SET_DDR_OUT     (DDRF  = 0xFF)
-#define SET_DDR_IN      (DDRF  = 0x00)
+#define RW_READ 	do { sbi(PORTE,1); delay_us(LCD_IO_DELAY); } while(0)
+#define RW_WRITE 	do { cbi(PORTE,1); delay_us(LCD_IO_DELAY); } while(0)
 
+#define SET_DDR_OUT     do { (DDRF  = 0xFF); delay_us(LCD_IO_DELAY); } while(0)
+#define SET_DDR_IN      do { (DDRF  = 0x00); delay_us(LCD_IO_DELAY); } while(0)
+
+static void lcd_out(uint8_t data);
+
+static void lcd_write( uint8_t data );
 
 static void lcd_write_data( uint8_t data );
 static void lcd_write_cmd(  uint8_t cmd  );
@@ -56,60 +69,103 @@ void lcd_init(void)
     RS_DISABLE;
     delay_ms(20);
 
-    lcd_write_data(0x30);
-    //    delay_ms(50);
+#if 0
+    lcd_write_cmd(0x30);
+       //delay_ms(50);
 
-    lcd_write_data(0x30);
-    //    delay_ms(50);
+    lcd_write_cmd(0x30);
+        //delay_ms(50);
 
-    lcd_write_data(0x38);
+    if( !LCD_4_BIT )
+        lcd_write_cmd(0x38);
+        //delay_ms(20);
+#else
+    if( LCD_4_BIT )
+    {
+        lcd_out(0x3);
+        delay_ms(5);
+        lcd_out(0x3);
+        delay_ms(5);
+        lcd_out(0x3);
+        delay_ms(5);
+        lcd_out(0x2); // 4 bit mode
+        delay_ms(5);
+        lcd_write_cmd(0x28);   // full set mode
+    }
+    {
+        lcd_out(0x30);
+        delay_ms(5);
+        lcd_out(0x30);
+        delay_ms(5);
+        lcd_out(0x38);
+        delay_ms(5);
+    }
+#endif
+
+    //    lcd_write_cmd(0x08);   // полное выключение дисплея
     //    delay_ms(20);
 
+    lcd_write_cmd(0x01);   // clear display
+        delay_ms(20);
 
-    //    lcd_write_data(0x08);   // полное выключение дисплея
+    lcd_write_cmd(0x06);   // set automatic cursor move to the right
+        delay_ms(20);
+
+    //lcd_write_cmd(0x0D);   // включение дисплея
     //    delay_ms(20);
 
-    lcd_write_data(0x01);   // clear display
-    //    delay_ms(20);
+    lcd_write_cmd(0x0F);   // turn display, cursor blink & cursor on
+        delay_ms(20);
 
-    lcd_write_data(0x06);   // set automatic cursor move to the right
-    //    delay_ms(20);
-
-    lcd_write_data(0x0D);   // включение дисплея
-    //    delay_ms(20);
-
-    lcd_write_data(0x0F);   // turn display, cursor blink & cursor on
-    //    delay_ms(20);
-
-    //    lcd_write_data(0x07);   // scroll
+    //    lcd_write_cmd(0x07);   // scroll
 
     RS_ENABLE;
+        delay_ms(20);
 
-    puts(" done");
+    printf("LCD init done ddre=%x f=%x\n", DDRE, DDRF );
 
     // Now clear and write some test
 
     //lcd_clear();
+    lcd_gotoxy( 1, 0 );
     lcd_puts("Init ...");
-    delay_ms(150);
+    delay_ms(1500);
 }
 
 
 // ------------------------------------------------------------------
-// Internal
+// Read
 // ------------------------------------------------------------------
 
 static uint8_t lcd_read( void )
 {
     uint8_t data;
 
+    PORTF = 0; // assure no pullup
+
     SET_DDR_IN;
     RW_READ;
 
-    E_ENABLE;
-    delay_ms(1);
-    data = PINF;
-    E_DISABLE;
+    if( LCD_4_BIT )
+    {
+        E_ENABLE;
+        delay_ms(1);
+        data = (PINF << 4) & 0xF0u;
+        E_DISABLE;
+        delay_ms(1);
+
+        E_ENABLE;
+        delay_ms(1);
+        data |= PINF & 0x0F;
+        E_DISABLE;
+    }
+    else
+    {
+        E_ENABLE;
+        delay_ms(1);
+        data = PINF;
+        E_DISABLE;
+    }
 
     RW_WRITE;
     SET_DDR_OUT;
@@ -130,35 +186,68 @@ static uint8_t lcd_read_cmd( void )
 }
 
 
+// ------------------------------------------------------------------
+// Write
+// ------------------------------------------------------------------
+
+static void lcd_out(uint8_t data)
+{
+        PORTF = data;
+//delay_ms(2);
+        E_ENABLE;
+        delay_ms(2);
+//printf("w portf=%x, pinf=%x, ddrf=%x\n", PORTF, PINF, DDRF );
+        E_DISABLE;
+}
+
 
 static void lcd_write(uint8_t data)
 {
+    //E_DISABLE; delay_ms(1);
+
     RW_WRITE;
+    PORTF = 0;
     SET_DDR_OUT;
 
-    PORTF = data;
-delay_ms(2);
-    E_ENABLE;
-    delay_ms(2); 
-    E_DISABLE;
-    printf( "LCD cmd In=%d\n", lcd_read_cmd() );
-    delay_ms(2);
-    //printf( "LCD cmd In=%d\n", lcd_read_cmd() );
+    if( LCD_4_BIT )
+    {
+        lcd_out(data >> 4);     // NB! First we send upper 4 bits, but on lower 4 bits of port
+        delay_ms(1);
+        lcd_out(data);     	// Now lower 4 bits
+    }
+    else
+    {
+        lcd_out(data);
+    }
 
-delay_ms(50);
 }
 
 static void lcd_write_data(uint8_t data)
 {
     RS_ENABLE;
+//delay_ms(2);
     lcd_write(data);
+//delay_ms(50);
+    //printf( "LCD data cmd In=%d\n", lcd_read_cmd() );
+//    delay_ms(2);
+    //printf( "LCD cmd In=%d\n", lcd_read_cmd() );
+
+
 }
 
 static void lcd_write_cmd(uint8_t cmd)
 {
     RS_DISABLE;
+//delay_ms(2);
     lcd_write(cmd); 
-    RS_ENABLE;
+//delay_ms(50);
+    //printf( "LCD cmd cmd In=%d\n", lcd_read_cmd() );
+//    delay_ms(2);
+    //printf( "LCD cmd In=%d\n", lcd_read_cmd() );
+
+
+
+    //RS_ENABLE;
 }
 
 // ------------------------------------------------------------------

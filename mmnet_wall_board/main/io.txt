@@ -34,7 +34,7 @@ Port E
 
 Port F
 
-    0-7 - LCD data bus
+    0-7 - LCD data bus (0-3 in 4 bit mode as LCD DB4-7 )
 
 Port G
 

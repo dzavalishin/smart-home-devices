@@ -37,8 +37,8 @@ struct dev_major
     const char *name;
 
     void        (*init)(struct dev_major *dev);     // Called on system init
-    void        (*start)(struct dev_major *dev);    // Called after all inits if dev is enabled
-    void        (*stop)(struct dev_major *dev);    	// Called if dev is disabled runtime
+    uint8_t     (*start)(struct dev_major *dev);    // Called after all inits if dev is enabled, returns 0 if ok
+    void        (*stop)(struct dev_major *dev);     // Called if dev is disabled runtime
     void        (*timer)(struct dev_major *dev);    // Called once a second
 
     char *      (*to_string)( struct dev_major *dev );
@@ -47,6 +47,7 @@ struct dev_major
     uint16_t    minor_count; // Number of sub-devices found
     struct dev_minor *subdev;
 
+    uint8_t     started;
 };
 
 typedef struct dev_major dev_major;

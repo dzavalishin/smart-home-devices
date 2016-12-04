@@ -78,7 +78,7 @@ struct eeprom_cfg
 #define IO_DI            (1<<2)         // Have Di (switches)
 #define IO_DO            (1<<3)         // Have Do (relays)
 
-//#define IO_TUN0          (1<<4)         // Serial/TCP tunnel channel 0
+#define IO_LCD4          (1<<4)         // LCD in 4 bit mode (low 4 bits of PF are high 4 bits of LCD)
 //#define IO_TUN1          (1<<5)         // Serial/TCP tunnel channel 1
 #define IO_1W1           (1<<6)         // 1Wire on default 1-line bus
 #define IO_1W8           (1<<7)         // 1Wire in multichannel mode
