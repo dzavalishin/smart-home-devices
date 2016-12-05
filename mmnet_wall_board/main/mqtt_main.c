@@ -11,6 +11,7 @@
 #include "runtime_cfg.h"
 
 #include "io_dig.h"
+#include "mqtt.h"
 
 #include <inttypes.h>
 #include <string.h>
@@ -24,16 +25,19 @@
 #include <sys/thread.h>
 #include <sys/timer.h>
 #include <sys/mutex.h>
+
 #include <netdb.h>
+#include <arpa/inet.h>
 
 
-#define MQTT_READ_TIMEOUT 10
+#define MQTT_READ_TIMEOUT 60
 
 
 THREAD(mqtt_recv, __arg);
 
 static MUTEX mqttSend;
 
+uint8_t  mqtt_keepalive_timer = 0;
 
 static int need_restart = 0;
 
@@ -46,7 +50,8 @@ static int init_socket(mqtt_broker_handle_t* broker, const char* hostname, short
 
 
 #warning hardcode IP
-static char *mqtt_host = "192.168.1.141";
+//static char *mqtt_host = "192.168.1.141";
+static char *mqtt_host = "smart.";
 static int mqtt_port = 1883;
 
 
@@ -56,10 +61,9 @@ static int mqtt_port = 1883;
 
 
 
-static void mqtt_init_dev( dev_major* d )
+void mqtt_start( void )
 {
-    (void) d;
-    printf("mqtt_init_dev\n");
+    printf("mqtt_init\n");
 
     NutMutexInit( &mqttSend );
 
@@ -76,41 +80,16 @@ static void mqtt_init_dev( dev_major* d )
            );
 
     mqtt_init(&broker, clientName );
+    printf("mqtt_init ok\n");
     mqtt_init_auth(&broker, DEVICE_NAME, "test-test");
-
-}
-
-
-static uint8_t mqtt_start_dev( dev_major* d )
-{
-    (void) d;
-    printf("mqtt_start_dev\n");
+    printf("mqtt_init auth\n");
 
     //init_socket(&broker, mqtt_host, mqtt_port );
 
     NutThreadCreate("MqttRecv", mqtt_recv, 0, 1024);
-
-    return 0;
+    printf("mqtt_init thread started\n");
 }
 
-//static void mqtt_stop_dev( dev_major* d ) { (void) d;  } // TODO
-
-
-dev_major io_mqtt =
-{
-    .name = "mqtt",
-
-    .init = mqtt_init_dev,
-    .start = mqtt_start_dev,
-    .stop = 0, // TODO
-    .timer = 0, //mqtt_timer,
-
-    .to_string = 0,
-    .from_string = 0,
-
-    .minor_count = 0,
-    .subdev = 0,
-};
 
 
 // -----------------------------------------------------------------------
@@ -133,15 +112,21 @@ int send_packet(void* socket_info, const void* buf, unsigned int count)
 
 static int init_socket(mqtt_broker_handle_t* broker, const char* hostname, short port)
 {
-    int flag = 1;
+    //int flag = 1;
     int keepalive = 3; // Seconds
 
+#if 0
     uint32_t server_ip = NutDnsGetHostByName( (const unsigned char*)hostname );
     if( server_ip == 0 )
     {
         if(mqtt_debug) printf("[%s] Host not found\n", hostname );
         return -1;
     }
+#else
+    uint32_t server_ip = inet_addr( "192.168.1.141" );
+#endif
+
+    printf("mqtt_init gethost=%s\n", inet_ntoa(server_ip));
 
     if ((mqtt_sock = NutTcpCreateSocket()) == 0)
     {
@@ -149,7 +134,7 @@ static int init_socket(mqtt_broker_handle_t* broker, const char* hostname, short
         return -1;
     }
 
-
+printf("mqtt_init sock=%p\n", mqtt_sock );
 #warning sock opt
     /*
      // Disable Nagle Algorithm
@@ -161,8 +146,18 @@ static int init_socket(mqtt_broker_handle_t* broker, const char* hostname, short
     if( rc ) return -1;
 
 
-    if(NutTcpConnect( mqtt_sock, server_ip, port) < 0)
+    rc = NutTcpSetSockOpt( mqtt_sock, SO_RCVTIMEO, &to, sizeof(to) );
+
+printf("mqtt_init sock opt, connecting TCP socket\n" );
+
+    rc = NutTcpConnect( mqtt_sock, server_ip, port);
+    if(rc < 0)
+    {
+        printf("mqtt_init error NutTcpConnect  = %d\n", rc );
         return -1;
+    }
+
+printf("mqtt_init sock connect\n" );
 
     // MQTT stuffs
     mqtt_set_alive(broker, keepalive);
@@ -220,7 +215,7 @@ uint8_t expect_packet( uint8_t type )
 
     if( len < 0)
     {
-        printf( "MQTT: Error(%d) on read packet!\n", len);
+        if(mqtt_debug) printf( "MQTT: Error(%d) on read packet!\n", len);
         need_restart = 1;
         return -1;
     }
@@ -242,7 +237,7 @@ static uint8_t subscribe( const char *topic )
     uint8_t rc = expect_packet( MQTT_MSG_SUBACK );
     if(rc)
     {
-        printf( "MQTT sub: got no reply %d\n", rc  );
+        if(mqtt_debug) printf( "MQTT sub: got no reply %d\n", rc  );
         return -1;
     }
 
@@ -250,10 +245,12 @@ static uint8_t subscribe( const char *topic )
 
     if(msg_id != msg_id_rcv)
     {
-        printf( "MQTT sub: %d message id was expected, but %d message id was found!\n", msg_id, msg_id_rcv);
+        if(mqtt_debug) printf( "MQTT sub: %d message id was expected, but %d message id was found!\n", msg_id, msg_id_rcv);
         need_restart = 1;
         return -3;
     }
+
+    printf("subscribe %s done\n", topic );
 
     return 0;
 }
@@ -270,14 +267,14 @@ static uint8_t publish( const char *mqtt_name, const char *data )
     uint8_t rc = expect_packet( MQTT_MSG_PUBACK );
     if(rc)
     {
-        printf( "MQTT sub: got no reply %d\n", rc  );
+        if(mqtt_debug) printf( "MQTT sub: got no reply %d\n", rc  );
         return -1;
     }
 
     msg_id_rcv = mqtt_parse_msg_id(packet_buffer);
     if(msg_id != msg_id_rcv)
     {
-        fprintf(stderr, "MQTT pub %d message id was expected, but %d message id was found!\n", msg_id, msg_id_rcv);
+        if(mqtt_debug) printf( "MQTT pub %d message id was expected, but %d message id was found!\n", msg_id, msg_id_rcv );
         need_restart = 1;
         return -3;
     }
@@ -295,6 +292,7 @@ THREAD(mqtt_recv, __arg)
 {
     (void) __arg;
     int rc;
+    int read_err_cnt = 0;
 
     need_restart = 1;
 
@@ -306,17 +304,26 @@ THREAD(mqtt_recv, __arg)
         if( need_restart )
         {
             NutSleep( 1000 );
+printf("mqtt_init thread close socket\n");
 
-            rc = NutTcpCloseSocket( mqtt_sock );
-            if( rc < 0)
-                printf( "MQTT: Error(%d) on close!\n", rc );
-
-            rc = init_socket(&broker, mqtt_host, mqtt_port );
+            if( mqtt_sock != 0 )
+            {
+                rc = NutTcpCloseSocket( mqtt_sock );
+                if( rc < 0 )
+                {
+                    if(mqtt_debug) printf( "MQTT: Error(%d) on close!\n", rc );
+                }
+                mqtt_sock = 0;
+            }
+printf("mqtt_init thread init socket\n");
+            rc = init_socket( &broker, mqtt_host, mqtt_port );
             if( rc < 0)
             {
-                printf( "MQTT: Error(%d) on reconnect!\n", rc );
+                if(mqtt_debug) printf( "MQTT: Error(%d) on reconnect!\n", rc );
                 continue;
             }
+
+            if(mqtt_debug) printf("Connected socket, proto connect\n" );
 
             mqtt_connect(&broker);
             rc = expect_packet( MQTT_MSG_CONNACK );
@@ -326,28 +333,24 @@ THREAD(mqtt_recv, __arg)
                 continue;
             }
 
+            if(mqtt_debug) printf("Got reply\n" );
+
             if(packet_buffer[3] != 0x00)
             {
-                printf("CONNACK failed: %d!\n", packet_buffer[3] );
+                if(mqtt_debug) printf("CONNACK failed: %d!\n", packet_buffer[3] );
                 continue;
             }
 
+            printf("Connected, subscribe\n" );
+
 #warning todo subscribe list
-            if( subscribe( "/test" ) ) continue;
+            if( subscribe( "/aa" ) ) continue;
 
             need_restart = 0;
         }
 
-        int len = read_packet(MQTT_READ_TIMEOUT);
 
-        if( len < 0)
-	{
-            printf( "MQTT: Error(%d) on read packet!\n", len);
-            need_restart = 1;
-            continue;
-        }
-
-
+        // Process send
         NutMutexLock( &mqttSend );
         if( mqtt_send_flag )
         {
@@ -357,7 +360,31 @@ THREAD(mqtt_recv, __arg)
         NutMutexUnlock( &mqttSend );
         if( need_restart ) continue;
 
+
+        if( mqtt_keepalive_timer-- <= 0 )
+        {
+            mqtt_keepalive_timer = 2;
+            mqtt_ping( &broker );
+        }
+
+        // Process recv
+
+        int len = read_packet(MQTT_READ_TIMEOUT);
+
+        if( len < 0)
+	{
+            read_err_cnt++;
+
+            if(read_err_cnt > 10)
+            {
+                printf( "MQTT: too many read errors (%d), reconnect\n", read_err_cnt );
+                need_restart = 1;
+            }
+            continue;
+        }
+
         uint16_t type = MQTTParseMessageType( packet_buffer );
+        printf( "MQTT: got pkt type=%d\n", type );
 
         if( type == MQTT_MSG_PUBLISH)
         {
@@ -371,7 +398,7 @@ THREAD(mqtt_recv, __arg)
             len = mqtt_parse_publish_msg(packet_buffer, msg);
             msg[len] = '\0'; // for printf
 
-            printf("%s %s\n", topic, msg);
+            if(mqtt_debug) printf("%s %s\n", topic, msg);
 
 
             mqtt_recv_item( (const char *)topic, (const char *)msg );

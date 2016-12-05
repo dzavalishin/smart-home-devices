@@ -95,7 +95,6 @@ dev_major *devices[] =
 {
     &io_dig,
     &io_pwm,
-    &io_mqtt,
 };
 
 
@@ -103,39 +102,20 @@ THREAD(long_init, __arg)
 {
     while(1) // to satisfy no return
     {
-        // SNTP kills us :(
 #if ENABLE_SNTP
         init_sntp();
 #endif
 
-//        _timezone = -((long)ee_cfg.timezone) * 60L * 60L;
-//        _daylight = 0; // No DST in Russia now
 #if ENABLE_SYSLOG
         init_syslog();
 #endif
 
-#if SERVANT_TUN0 || SERVANT_TUN1
-        init_tunnels();
-#endif
 
 #if SERVANT_LUA
         lua_init();
 #endif
 
-#if ENABLE_SPI && 0
-        char a = 0xEF, b = 0x01;
-        while( 1 )
-        {
-            a += 1;
-            b += 2;
-
-            spi_send( a, b );
-
-            test_spi();
-
-            NutSleep(1000); // remove
-        }
-#endif
+        mqtt_start();
 
         NutThreadExit();
     }
@@ -246,11 +226,13 @@ int main(void)
 }
 
 
+#define DEV1 1
+
 static void init_net(void)
 {
 //    char tries = 250; // make sure we are really have DHCP address
 
-#if 0
+#if DEV1
     // Register Ethernet controller
     if (NutRegisterDevice(&DEV_ETHER, 0xFF00, 5))
     {
@@ -264,23 +246,15 @@ static void init_net(void)
     // TODO fixme
 #if SERVANT_1WMAC
     tryToFillMac( ee_cfg.mac_addr, serialNumber ); // do not try to use 18b20 as MAC addr
-#if 0
-    if( !tryToFillMac( ee_cfg.mac_addr, serialNumber ) )
-    {
-        int tno;
-        for( tno = 0; tno < SERVANT_NTEMP; tno++ )
-            if( tryToFillMac( ee_cfg.mac_addr, gTempSensorIDs[tno] ) )
-                break;
-    }
 #endif
-#endif
+
     // RTL needs this?
     memcpy(confnet.cdn_mac, ee_cfg.mac_addr, 6);
 
     //confnet.cdn_ip_addr = inet_addr( DEFAULT_IP );
     //confnet.cdn_ip_mask = inet_addr( DEFAULT_MASK );
     //confnet.cdn_cip_addr = confnet.cdn_ip_addr;
-
+#if !DEV1
     // Register Ethernet controller -- RTL needs mac before?
     if (NutRegisterDevice(&DEV_ETHER, 0xFF00, 5))
     {
@@ -288,35 +262,36 @@ static void init_net(void)
         fail_led();
         return;
     }
-
+#endif
     // LAN configuration using EEPROM values or DHCP/ARP method.
     // If it fails, use fixed values.
 
+    const char *netdev = "eth0"; //confnet.cd_name
 
-    printf("Configure LAN %s... ", confnet.cd_name);
+    printf("Configure LAN %s... ", netdev );
 
     // No. Prevents DHCP.
     //confnet.cdn_cip_addr = ee_cfg.ip_addr; // OS will use it as default if no DHCP - do we need NutNetIfConfig?
-#if 1
+
     confnet.cdn_ip_addr = confnet.cdn_cip_addr = 0;
     // We do not work if no DHCP
     //while( tries-- > 0 )
     while( 1 )
     {
-        if( 0 == NutDhcpIfConfig( confnet.cd_name, ee_cfg.mac_addr, 60000) )
+        int rc = NutDhcpIfConfig( netdev, ee_cfg.mac_addr, 60000);
+        if( 0 == rc )
         //if( 0 == NutDhcpIfConfig("eth0", ee_cfg.mac_addr, 60000) )
             goto dhcp_ok;
 
-        puts("EEPROM/DHCP/ARP config failed");
+        printf("'%s' DHCP config failed, rc = %d\n", netdev, rc );
 
         LED_OFF;
         NutSleep(3020);
         LED_ON;
-        //flash_led_once();
     }
-#endif
+
     // Use static ip address
-    NutNetIfConfig("eth0", ee_cfg.mac_addr, ee_cfg.ip_addr, ee_cfg.ip_mask);
+    NutNetIfConfig( netdev, ee_cfg.mac_addr, ee_cfg.ip_addr, ee_cfg.ip_mask);
 
 
 
@@ -328,11 +303,7 @@ dhcp_ok:
 
 static void init_cgi(void)
 {
-
-    // Register our CGI sample. This will be called  by http://host/cgi-bin/test.cgi?anyparams
-    //NutRegisterCgi("test.cgi", ShowQuery );
-
-    // Register some CGI samples, which display interesting system informations.
+    // Register OS statistics/debug CGI 
     NutRegisterCgi("threads.cgi", ShowThreads);
     NutRegisterCgi("timers.cgi", ShowTimers);
     NutRegisterCgi("sockets.cgi", ShowSockets);
@@ -447,9 +418,9 @@ static int tryToFillMac(unsigned char *mac, unsigned char *oneWireId)
 
 
 
-#if 1
 
-#define NMAJOR ( sizeof(devices) / sizeof(dev_major) )
+
+#define NMAJOR ( sizeof(devices) / sizeof(dev_major *) )
 
 static void init_regular_devices(void)
 {
@@ -460,7 +431,7 @@ static void init_regular_devices(void)
     for( i = 0; i < NMAJOR; i++ )
     {
         dev = devices[i];
-
+        printf("Init %s... ", dev->name );
         dev->init( dev );
     }
 }
@@ -474,6 +445,7 @@ static void start_regular_devices(void)
     for( i = 0; i < NMAJOR; i++ )
     {
         dev = devices[i];
+        printf("Start %s... ", dev->name );
         dev->started = ! dev->start( dev );
     }
 }
@@ -513,10 +485,6 @@ void stop_regular_devices(void)
 }
 
 
-#endif
-
-
-
 
 
 
@@ -532,40 +500,22 @@ void stop_regular_devices(void)
 void init_devices(void)
 {
 
-
-
     //stop errant interrupts until set up
     cli(); //disable all interrupts
-
-
     dio_init();
-
+    sei(); //re-enable interrupts
 
     //lcd_init();
     //encoder_init(); menu_init();
 
 
-#if SERVANT_NPWM > 0
-    //printf(" pwm init...");
-    //timer1_init();
-#endif
-
-
-
-    sei(); //re-enable interrupts
-
-
 #if SERVANT_NTEMP > 0
-    printf(" 1w init...");
+    printf("1w init...");
     init_temperature();
+    printf(" DONE\n");
 #endif
 
-
-
-#if SERVANT_NPWM > 0
-    //printf(" timer1 start...");
-    //timer1_start();
-#endif
+    printf("Init %d regular devs\n", NMAJOR );
 
     init_regular_devices();
     start_regular_devices();

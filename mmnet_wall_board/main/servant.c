@@ -25,6 +25,9 @@
 #include "io_pwm.h"
 #include "io_temp.h"
 
+#include "mqtt.h"
+
+
 #define TEMPERATURE_RESCAN_SEC 240
 
 static uint8_t 		second_counter = 0; // general per second counter, used by fail led
@@ -33,14 +36,13 @@ static uint8_t 		network_activity = 60; // Will wait 1 min before initial networ
 static volatile uint8_t temperatureMeterCnt = 0;
 static volatile uint8_t temperatureRescanCnt = 0;
 
-static volatile uint8_t dht11meterCnt = -2; // Give sensor 2 seconds to become working
-uint8_t 		dht11_errorCnt = 0;
+
 
 void each_second(HANDLE h, void *arg)
 {
     second_counter++;
     temperatureMeterCnt++;
-    dht11meterCnt++;
+    mqtt_keepalive_timer++;
 
     // Will become 0 right now, point to trigger connection lost action
     if( network_activity == 1 )

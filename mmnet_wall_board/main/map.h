@@ -57,5 +57,12 @@ dev_major *new_dev( uint8_t n_minor, const char *name );
 int8_t init_dev( dev_major *dev, uint8_t n_minor, const char *name );
 int8_t init_subdev( dev_major *dev, uint8_t n_minor, const char *name );
 
+
+void timer_regular_devices(void); // Must be called once a second, calls *timer for all devs
+
+// TODO call on manual reboot
+void stop_regular_devices(void);
+
+
 #endif // MAP_H
 

@@ -11,6 +11,7 @@
 #include "runtime_cfg.h"
 
 #include "io_dig.h"
+#include "mqtt.h"
 
 
 #include <inttypes.h>
@@ -22,11 +23,11 @@
 
 static unsigned char get_dig_in(unsigned char port_num);
 
-static unsigned char get_dig_out(unsigned char port_num);
-static void set_dig_out(unsigned char port_num, unsigned char data);
+//static unsigned char get_dig_out(unsigned char port_num);
+//static void set_dig_out(unsigned char port_num, unsigned char data);
 
 static unsigned char get_ddr(unsigned char port_num);
-static void set_ddr(unsigned char port_num, unsigned char data);
+//static void set_ddr(unsigned char port_num, unsigned char data);
 
 
 
@@ -189,7 +190,7 @@ static void set_dig_out(unsigned char port_num, unsigned char data)
     case 6:		PORTG=data;		break;
     }
 }
-*/
+* /
 
 static unsigned char get_dig_out(unsigned char port_num)
 {
@@ -205,7 +206,7 @@ static unsigned char get_dig_out(unsigned char port_num)
     }
     return 0;
 }
-
+*/
 /*
 static void set_ddr(unsigned char port_num, unsigned char data)
 {
@@ -247,11 +248,14 @@ static void dio_init_dev( dev_major* d )
 
 
 }
-static void dio_start_dev( dev_major* d )
+
+
+static uint8_t dio_start_dev( dev_major* d )
 {
     (void) d;
     printf("dio_start_dev\n");
-    //timer1_start();
+
+    return 0;
 }
 
 //static void dio_stop_dev( dev_major* d ) { (void) d;  } // TODO
