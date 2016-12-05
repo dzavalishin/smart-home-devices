@@ -186,7 +186,10 @@ static int read_packet(int timeout)
          bytes_rcvd = NutTcpReceive(  mqtt_sock, packet_buffer+total_bytes, RCVBUFSIZE-total_bytes );
 
          if( bytes_rcvd <= 0)
-             return -1;
+         {
+             printf( " re %d ", bytes_rcvd );
+             return bytes_rcvd;
+         }
 
         total_bytes += bytes_rcvd; // Keep tally of total bytes
     }
@@ -371,14 +374,18 @@ printf("mqtt_init thread init socket\n");
 
         int len = read_packet(MQTT_READ_TIMEOUT);
 
-        if( len < 0)
+        if( len <= 0 )
 	{
             read_err_cnt++;
 
-            if(read_err_cnt > 10)
+            if( len == 0 ) // seems like no data recvd/timeout
+                NutSleep(50);
+
+            if( (read_err_cnt > 1000) || (len < 0) )
             {
                 printf( "MQTT: too many read errors (%d), reconnect\n", read_err_cnt );
                 need_restart = 1;
+                read_err_cnt = 0;
             }
             continue;
         }
