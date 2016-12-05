@@ -304,9 +304,7 @@ dhcp_ok:
 static void init_cgi(void)
 {
     // Register OS statistics/debug CGI 
-    NutRegisterCgi("threads.cgi", ShowThreads);
-    NutRegisterCgi("timers.cgi", ShowTimers);
-    NutRegisterCgi("sockets.cgi", ShowSockets);
+    NutRegisterCgi("osdata.cgi", ShowOsData);
 
     // Register our app CGI - i/o/net reports
     NutRegisterCgi("inputs.cgi", CgiInputs);

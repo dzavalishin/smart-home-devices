@@ -38,12 +38,13 @@ THREAD(mqtt_recv, __arg);
 static MUTEX mqttSend;
 
 uint8_t  mqtt_keepalive_timer = 0;
+uint8_t  mqtt_io_count = 0;
 
 static int need_restart = 0;
 
 #define mqtt_debug 1
 
-static mqtt_broker_handle_t broker;
+mqtt_broker_handle_t broker;
 
 
 static int init_socket(mqtt_broker_handle_t* broker, const char* hostname, short port);
@@ -86,7 +87,7 @@ void mqtt_start( void )
 
     //init_socket(&broker, mqtt_host, mqtt_port );
 
-    NutThreadCreate("MqttRecv", mqtt_recv, 0, 1024);
+    NutThreadCreate("MqttRecv", mqtt_recv, 0, 2048);
     printf("mqtt_init thread started\n");
 }
 
@@ -103,6 +104,7 @@ static uint8_t packet_buffer[RCVBUFSIZE];
 
 int send_packet(void* socket_info, const void* buf, unsigned int count)
 {
+    mqtt_io_count++;
     //int fd = *((int*)socket_info);
     //return send(fd, buf, count, 0);
     return NutTcpSend( mqtt_sock, buf, count );
@@ -187,7 +189,7 @@ static int read_packet(int timeout)
 
          if( bytes_rcvd <= 0)
          {
-             printf( " re %d ", bytes_rcvd );
+             //printf( " re %d ", bytes_rcvd );
              return bytes_rcvd;
          }
 
@@ -206,6 +208,8 @@ static int read_packet(int timeout)
 
         total_bytes += bytes_rcvd; // Keep tally of total bytes
     }
+
+    mqtt_io_count++;
 
     return packet_length;
 }
@@ -231,32 +235,6 @@ uint8_t expect_packet( uint8_t type )
 }
 
 
-static uint8_t subscribe( const char *topic )
-{
-    uint16_t msg_id, msg_id_rcv;
-
-    mqtt_subscribe(&broker, topic, &msg_id);
-
-    uint8_t rc = expect_packet( MQTT_MSG_SUBACK );
-    if(rc)
-    {
-        if(mqtt_debug) printf( "MQTT sub: got no reply %d\n", rc  );
-        return -1;
-    }
-
-    msg_id_rcv = mqtt_parse_msg_id(packet_buffer);
-
-    if(msg_id != msg_id_rcv)
-    {
-        if(mqtt_debug) printf( "MQTT sub: %d message id was expected, but %d message id was found!\n", msg_id, msg_id_rcv);
-        need_restart = 1;
-        return -3;
-    }
-
-    printf("subscribe %s done\n", topic );
-
-    return 0;
-}
 
 static uint8_t publish( const char *mqtt_name, const char *data )
 {
@@ -284,6 +262,44 @@ static uint8_t publish( const char *mqtt_name, const char *data )
 
     return 0;
 }
+
+
+
+
+uint8_t subscribe( const char *topic )
+{
+    uint16_t msg_id, msg_id_rcv;
+
+    mqtt_subscribe(&broker, topic, &msg_id);
+
+    uint8_t rc = expect_packet( MQTT_MSG_SUBACK );
+    if(rc)
+    {
+        if(mqtt_debug) printf( "MQTT sub: got no reply %d\n", rc  );
+        return -1;
+    }
+
+    msg_id_rcv = mqtt_parse_msg_id(packet_buffer);
+
+    if(msg_id != msg_id_rcv)
+    {
+        if(mqtt_debug) printf( "MQTT sub: %d message id was expected, but %d message id was found!\n", msg_id, msg_id_rcv);
+        need_restart = 1;
+        return -3;
+    }
+
+    printf("subscribe %s done\n", topic );
+
+    return 0;
+}
+
+
+
+
+
+
+
+
 
 
 static volatile int mqtt_send_flag = 0;
@@ -346,8 +362,10 @@ printf("mqtt_init thread init socket\n");
 
             printf("Connected, subscribe\n" );
 
-#warning todo subscribe list
-            if( subscribe( "/aa" ) ) continue;
+	    //#warning todo subscribe list
+            //if( subscribe( "/aa" ) ) continue;
+            subscribe_all();
+
 
             need_restart = 0;
         }
@@ -391,7 +409,10 @@ printf("mqtt_init thread init socket\n");
         }
 
         uint16_t type = MQTTParseMessageType( packet_buffer );
-        printf( "MQTT: got pkt type=%d\n", type );
+        printf( "MQTT: got pkt len=%d type=%d\n", len, type>>4 );
+
+        if( type == MQTT_MSG_PINGRESP)
+            continue; // Just ignore? TODO
 
         if( type == MQTT_MSG_PUBLISH)
         {
@@ -409,7 +430,7 @@ printf("mqtt_init thread init socket\n");
 
 
             mqtt_recv_item( (const char *)topic, (const char *)msg );
-
+            continue;
         }
     }
 }

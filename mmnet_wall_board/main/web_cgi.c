@@ -181,7 +181,8 @@ static int CgiAnalogueInputsRow( FILE * stream, int row_no )
 
 int CgiInputs( FILE * stream, REQUEST * req )
 {
-    return ShowTableCgi( stream, req, "Inputs", CgiAnalogueInputsRow );
+    ShowTableCgi( stream, req, "Inputs", CgiAnalogueInputsRow );
+    return 0;
 }
 
 
@@ -341,11 +342,13 @@ static int CgiOutputsRow( FILE * stream, int row_no )
     return 0;
 }
 
-
 int CgiOutputs( FILE * stream, REQUEST * req )
 {
-    return ShowTableCgi( stream, req, "Outputs", CgiOutputsRow );
+    ShowTableCgi( stream, req, "Outputs", CgiOutputsRow );
+    return 0;
 }
+
+
 
 
 static char * getNamedParameter( const char *name );

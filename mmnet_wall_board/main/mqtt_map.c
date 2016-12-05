@@ -12,6 +12,8 @@
 
 #include "io_dig.h"
 
+#include "mqtt.h"
+
 #include <inttypes.h>
 #include <string.h>
 
@@ -76,7 +78,7 @@ void mqtt_send_channel( uint8_t state, uint8_t ch )
     char data[20];
     sprintf( data, "%d", state );
 
-    //mqtt_send_item( mp->mqtt_name, data );
+    mqtt_send_item( mp->mqtt_name, data );
 }
 
 
@@ -112,4 +114,24 @@ void mqtt_recv_item( const char *mqtt_name, const char *data )
     if( state )
         dio_remote_state |= mask;
 }
+
+
+// -----------------------------------------------------------------------
+// Subscription
+// -----------------------------------------------------------------------
+
+
+
+
+uint8_t subscribe_all( void )
+{
+    uint8_t i;
+    for( i = 0; i < N_MQM; i++ )
+    {
+        subscribe( mqm[i].mqtt_name );
+    }
+
+    return 0;
+}
+
 

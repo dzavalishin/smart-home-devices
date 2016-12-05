@@ -1,11 +1,9 @@
 //#include <io.h>
 #include <pro/httpd.h>
 
-//int ShowQuery(FILE * stream, REQUEST * req);
-int ShowThreads(FILE * stream, REQUEST * req);
-int ShowTimers(FILE * stream, REQUEST * req);
-int ShowSockets(FILE * stream, REQUEST * req);
 int ShowForm(FILE * stream, REQUEST * req);
+
+int ShowOsData(FILE * stream, REQUEST * req);
 
 
 int CgiNetIO( FILE * stream, REQUEST * req );

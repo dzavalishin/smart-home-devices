@@ -22,6 +22,7 @@
 #include <modbus.h>
 
 #include "io_temp.h"
+#include "mqtt.h"
 
 
 static void printTime( FILE * stream, struct _tm *stm )
@@ -46,9 +47,6 @@ static int CgiStatusRow( FILE * stream, int row_no )
     {
 
     case -1:
-        //HTML("<TR><TH> Type </TH><TH> Value </TH><TH> Comment </TH></TR>\r\n");    break;
-        //HTML("<TR><TH align=left> &nbsp; </TH><TH align=left> &nbsp; </TH></TR>\r\n");    break;
-        //HTML("<th colspan=\"2\" align=left>Time</th>"); break;
         subhdr( stream, "Time" ); break;
 
     case 0:
@@ -113,8 +111,15 @@ static int CgiStatusRow( FILE * stream, int row_no )
 
     case 10: ShowTableRow2i( stream, "IO count", modbus_event_cnt );		break;
     case 11: ShowTableRow2i( stream, "CRC count", modbus_crc_cnt );		break;
-    case 12: ShowTableRow2i( stream, "exceptions count", modbus_exceptions_cnt );break;
-    case 13: ShowTableRow2i( stream, "err flags", modbus_error_flags );		break;
+    case 12:
+        ShowTableRow2i( stream, "exceptions count", modbus_exceptions_cnt );
+        ShowTableRow2i( stream, "err flags", modbus_error_flags );
+        break;
+
+    case 13:
+        subhdr( stream, "MQTT" ); 
+        ShowTableRow2i( stream, "IO count", mqtt_io_count );
+        break;
 
     case 14: subhdr( stream, "1-Wire" ); break;
 
