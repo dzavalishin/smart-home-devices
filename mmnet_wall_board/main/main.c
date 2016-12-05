@@ -64,6 +64,7 @@
 
 #include "ui_lcd.h"
 
+#include "mqtt.h"
 
 // NB - contains var def and init
 #include "makedate.h"
@@ -94,6 +95,7 @@ dev_major *devices[] =
 {
     &io_dig,
     &io_pwm,
+    &io_mqtt,
 };
 
 

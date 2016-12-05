@@ -62,7 +62,6 @@ extern uint8_t         dio_state;			// Our state as we know
 
 
 
-void mqtt_send_channel( uint8_t state, uint8_t ch );
 
 
 

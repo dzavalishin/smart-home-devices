@@ -19,8 +19,9 @@ SRCS += io_dig.c io_pwm.c io_temp.c
 SRCS += onewire.c ds18x20.c 
 SRCS += $(WEBFILE) web_cgi.c web_cgi_os.c web_setup.c web.c web_status.c httpd.c lua.c syslog.c
 # i2c.c net_io.c icp.c freq_send.c ds18x20.c onewire.c ds2482.c dallas_ds2482.c  child-1wire.c 
-SRCS += ui_lcd.c ui_encoder.c mqtt_map.c
+SRCS += ui_lcd.c ui_encoder.c
 #ui_menu.c
+SRCS += mqtt_map.c libemqtt.c mqtt_main.c
 
 OBJS =  $(SRCS:.c=.o)
 

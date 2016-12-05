@@ -58,10 +58,6 @@ static int8_t pos_by_name( const char *name )
 }
 
 
-#warning /mqtt_send_item
-// Must call MQTT sender
-void mqtt_send_item( const char *mqtt_name, const char *data ) {}
-
 
 
 
