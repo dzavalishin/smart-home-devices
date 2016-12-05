@@ -79,7 +79,7 @@ void mqtt_send_channel( uint8_t state, uint8_t ch )
     //mqtt_send_item( mp->mqtt_name, data );
 }
 
-#warning call from mqtt
+
 // Called from MQTT receiver
 void mqtt_recv_item( const char *mqtt_name, const char *data )
 {

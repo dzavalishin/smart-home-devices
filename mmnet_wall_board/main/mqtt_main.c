@@ -4,7 +4,7 @@
  *
  * MQTT glue code.
  *
-**/
+ **/
 
 #include "defs.h"
 #include "util.h"
@@ -21,10 +21,21 @@
 #include <string.h>
 
 #include <sys/socket.h>
+#include <sys/thread.h>
+#include <sys/timer.h>
+#include <sys/mutex.h>
+#include <netdb.h>
 
 
+#define MQTT_READ_TIMEOUT 10
 
 
+THREAD(mqtt_recv, __arg);
+
+static MUTEX mqttSend;
+
+
+static int need_restart = 0;
 
 #define mqtt_debug 1
 
@@ -34,11 +45,11 @@ static mqtt_broker_handle_t broker;
 static int init_socket(mqtt_broker_handle_t* broker, const char* hostname, short port);
 
 
+#warning hardcode IP
+static char *mqtt_host = "192.168.1.141";
+static int mqtt_port = 1883;
 
-void mqtt_send_item( const char *mqtt_name, const char *data )
-{
 
-}
 
 
 
@@ -49,7 +60,9 @@ static void mqtt_init_dev( dev_major* d )
 {
     (void) d;
     printf("mqtt_init_dev\n");
-    //timer1_init();
+
+    NutMutexInit( &mqttSend );
+
 
     char clientName[64];
 
@@ -64,15 +77,20 @@ static void mqtt_init_dev( dev_major* d )
 
     mqtt_init(&broker, clientName );
     mqtt_init_auth(&broker, DEVICE_NAME, "test-test");
-#warning hardcode IP
-    init_socket(&broker, "192.168.1.141", 1883);
 
 }
-static void mqtt_start_dev( dev_major* d )
+
+
+static uint8_t mqtt_start_dev( dev_major* d )
 {
     (void) d;
     printf("mqtt_start_dev\n");
-    //timer1_start();
+
+    //init_socket(&broker, mqtt_host, mqtt_port );
+
+    NutThreadCreate("MqttRecv", mqtt_recv, 0, 1024);
+
+    return 0;
 }
 
 //static void mqtt_stop_dev( dev_major* d ) { (void) d;  } // TODO
@@ -101,6 +119,8 @@ dev_major io_mqtt =
 
 static TCPSOCKET *mqtt_sock;
 
+#define RCVBUFSIZE 1024
+static uint8_t packet_buffer[RCVBUFSIZE];
 
 int send_packet(void* socket_info, const void* buf, unsigned int count)
 {
@@ -109,42 +129,284 @@ int send_packet(void* socket_info, const void* buf, unsigned int count)
     return NutTcpSend( mqtt_sock, buf, count );
 }
 
+
+
 static int init_socket(mqtt_broker_handle_t* broker, const char* hostname, short port)
 {
-	int flag = 1;
-	int keepalive = 3; // Seconds
+    int flag = 1;
+    int keepalive = 3; // Seconds
 
-        uint32_t server_ip = NutDnsGetHostByName( hostname );
-        if( server_ip == 0 )
-        {
-            if(mqtt_debug) printf("[%s] Host not found\n", hostname );
-            return -1;
-        }
+    uint32_t server_ip = NutDnsGetHostByName( (const unsigned char*)hostname );
+    if( server_ip == 0 )
+    {
+        if(mqtt_debug) printf("[%s] Host not found\n", hostname );
+        return -1;
+    }
 
-        if ((mqtt_sock = NutTcpCreateSocket()) == 0)
-        {
-            if(mqtt_debug) printf( "Creating socket failed\n" );
-            return -1;
-        }
+    if ((mqtt_sock = NutTcpCreateSocket()) == 0)
+    {
+        if(mqtt_debug) printf( "Creating socket failed\n" );
+        return -1;
+    }
 
 
 #warning sock opt
-/*
-	// Disable Nagle Algorithm
-	if (setsockopt(socket_id, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(flag)) < 0)
-		return -2;
-*/
+    /*
+     // Disable Nagle Algorithm
+     if (setsockopt(socket_id, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(flag)) < 0)
+     return -2;
+     */
+    uint32_t to = 20; // sec timeout on send
+    int rc = NutTcpSetSockOpt( mqtt_sock, SO_SNDTIMEO, &to, sizeof(to) );
+    if( rc ) return -1;
 
 
-        if(NutTcpConnect( mqtt_sock, server_ip, port) < 0)
-            return -1;
+    if(NutTcpConnect( mqtt_sock, server_ip, port) < 0)
+        return -1;
 
-	// MQTT stuffs
-	mqtt_set_alive(broker, keepalive);
-	broker->socket_info = (void*)&mqtt_sock;
-	broker->send = send_packet;
+    // MQTT stuffs
+    mqtt_set_alive(broker, keepalive);
+    broker->socket_info = (void*)&mqtt_sock;
+    broker->send = send_packet;
 
-	return 0;
+    return 0;
 }
+
+
+
+
+static int read_packet(int timeout)
+{
+    uint32_t to = timeout;
+
+    int rc = NutTcpSetSockOpt( mqtt_sock, SO_RCVTIMEO, &to, sizeof(to) );
+    if( rc ) return -1;
+
+    int total_bytes = 0, bytes_rcvd, packet_length;
+
+    memset(packet_buffer, 0, sizeof(packet_buffer));
+
+    while(total_bytes < 2) // Reading fixed header
+    {
+         bytes_rcvd = NutTcpReceive(  mqtt_sock, packet_buffer+total_bytes, RCVBUFSIZE-total_bytes );
+
+         if( bytes_rcvd <= 0)
+             return -1;
+
+        total_bytes += bytes_rcvd; // Keep tally of total bytes
+    }
+
+    // TODO var length
+    packet_length = packet_buffer[1] + 2; // Remaining length + fixed header length
+
+    while(total_bytes < packet_length) // Reading the packet
+    {
+         bytes_rcvd = NutTcpReceive(  mqtt_sock, packet_buffer+total_bytes, RCVBUFSIZE-total_bytes );
+
+         if( bytes_rcvd <= 0)
+             return -1;
+
+        total_bytes += bytes_rcvd; // Keep tally of total bytes
+    }
+
+    return packet_length;
+}
+
+
+
+uint8_t expect_packet( uint8_t type )
+{
+    int len = read_packet(MQTT_READ_TIMEOUT);
+
+    if( len < 0)
+    {
+        printf( "MQTT: Error(%d) on read packet!\n", len);
+        need_restart = 1;
+        return -1;
+    }
+
+    uint16_t rtype = MQTTParseMessageType( packet_buffer );
+    if( rtype == type )
+        return 0;
+
+    return -1;
+}
+
+
+static uint8_t subscribe( const char *topic )
+{
+    uint16_t msg_id, msg_id_rcv;
+
+    mqtt_subscribe(&broker, topic, &msg_id);
+
+    uint8_t rc = expect_packet( MQTT_MSG_SUBACK );
+    if(rc)
+    {
+        printf( "MQTT sub: got no reply %d\n", rc  );
+        return -1;
+    }
+
+    msg_id_rcv = mqtt_parse_msg_id(packet_buffer);
+
+    if(msg_id != msg_id_rcv)
+    {
+        printf( "MQTT sub: %d message id was expected, but %d message id was found!\n", msg_id, msg_id_rcv);
+        need_restart = 1;
+        return -3;
+    }
+
+    return 0;
+}
+
+static uint8_t publish( const char *mqtt_name, const char *data )
+{
+    uint16_t msg_id, msg_id_rcv;
+    // >>>>> PUBLISH QoS 1
+
+    mqtt_publish_with_qos(&broker, mqtt_name, data, 0, 1, &msg_id);
+
+    // <<<<< PUBACK
+
+    uint8_t rc = expect_packet( MQTT_MSG_PUBACK );
+    if(rc)
+    {
+        printf( "MQTT sub: got no reply %d\n", rc  );
+        return -1;
+    }
+
+    msg_id_rcv = mqtt_parse_msg_id(packet_buffer);
+    if(msg_id != msg_id_rcv)
+    {
+        fprintf(stderr, "MQTT pub %d message id was expected, but %d message id was found!\n", msg_id, msg_id_rcv);
+        need_restart = 1;
+        return -3;
+    }
+
+    return 0;
+}
+
+
+static volatile int mqtt_send_flag = 0;
+static volatile const char *mqtt_send_mqtt_name;
+static volatile const char *mqtt_send_data;
+
+
+THREAD(mqtt_recv, __arg)
+{
+    (void) __arg;
+    int rc;
+
+    need_restart = 1;
+
+    while(1) // to satisfy no return
+    {
+        NutSleep( 1 ); // Protect from DOS attack :)
+
+        // TODO reconnect
+        if( need_restart )
+        {
+            NutSleep( 1000 );
+
+            rc = NutTcpCloseSocket( mqtt_sock );
+            if( rc < 0)
+                printf( "MQTT: Error(%d) on close!\n", rc );
+
+            rc = init_socket(&broker, mqtt_host, mqtt_port );
+            if( rc < 0)
+            {
+                printf( "MQTT: Error(%d) on reconnect!\n", rc );
+                continue;
+            }
+
+            mqtt_connect(&broker);
+            rc = expect_packet( MQTT_MSG_CONNACK );
+            if( rc < 0)
+            {
+                printf( "MQTT: Connect failure (%d) on reconnect!\n", rc );
+                continue;
+            }
+
+            if(packet_buffer[3] != 0x00)
+            {
+                printf("CONNACK failed: %d!\n", packet_buffer[3] );
+                continue;
+            }
+
+#warning todo subscribe list
+            if( subscribe( "/test" ) ) continue;
+
+            need_restart = 0;
+        }
+
+        int len = read_packet(MQTT_READ_TIMEOUT);
+
+        if( len < 0)
+	{
+            printf( "MQTT: Error(%d) on read packet!\n", len);
+            need_restart = 1;
+            continue;
+        }
+
+
+        NutMutexLock( &mqttSend );
+        if( mqtt_send_flag )
+        {
+            publish( (const char *)mqtt_send_mqtt_name, (const char *)mqtt_send_data );
+            mqtt_send_flag = 0;
+        }
+        NutMutexUnlock( &mqttSend );
+        if( need_restart ) continue;
+
+        uint16_t type = MQTTParseMessageType( packet_buffer );
+
+        if( type == MQTT_MSG_PUBLISH)
+        {
+#warning overrun?
+            uint8_t topic[255], msg[1000];
+            uint16_t len;
+
+            len = mqtt_parse_pub_topic(packet_buffer, topic);
+            topic[len] = '\0'; // for printf
+
+            len = mqtt_parse_publish_msg(packet_buffer, msg);
+            msg[len] = '\0'; // for printf
+
+            printf("%s %s\n", topic, msg);
+
+
+            mqtt_recv_item( (const char *)topic, (const char *)msg );
+
+        }
+    }
+}
+
+
+
+// Done in main mqtt thread
+void mqtt_send_item( const char *mqtt_name, const char *data )
+{
+    while(1)
+    {
+        NutMutexLock( &mqttSend );
+        if( !mqtt_send_flag )
+        {
+            mqtt_send_flag = 1;
+            mqtt_send_mqtt_name = mqtt_name;
+            mqtt_send_data = data;
+            NutMutexUnlock( &mqttSend );
+            break;
+        }
+        NutMutexUnlock( &mqttSend );
+    }
+
+    // Other thread uses our args, wait for it to finish using
+
+    while( mqtt_send_flag )
+    {
+        NutSleep(2);
+    }
+
+}
+
 
 
