@@ -10,6 +10,8 @@
 #include "defs.h"
 #include "map.h"
 
+
+extern uint8_t pwm_lcd_brightness;
 /*
 void timer1_init(void);
 void timer1_start(void);

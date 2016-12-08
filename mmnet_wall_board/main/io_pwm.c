@@ -40,10 +40,13 @@ ISR(TIMER1_OVF_vect)
 }
 */
 
+uint8_t pwm_lcd_brightness = 0;
+
 
 void set_lcd_brightness( unsigned char level )
 {
     OCR2 = level;
+    pwm_lcd_brightness = level;
     printf("set_an %d\n", level );
 }
 
@@ -59,17 +62,19 @@ static void pwm_init_dev( dev_major* d )
 {
     (void) d;
     printf("pwm_init_dev\n");
-    //timer1_init();
+
+    OCR2 = 0xFF; // Full brightness on boot
 
     //TCCR2 = (1 << COM21) | (1 << PWM2) | (1 << CS20);
     TCCR2 = (1 << COM21) | (1 << WGM20) | (1 << CS20);
 
 }
-static void pwm_start_dev( dev_major* d )
+static uint8_t pwm_start_dev( dev_major* d )
 {
     (void) d;
     printf("pwm_start_dev\n");
-    //timer1_start();
+
+    return 0;
 }
 
 //static void pwd_stop_dev( dev_major* d ) { (void) d;  } // TODO

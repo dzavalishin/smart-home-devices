@@ -37,7 +37,7 @@ uint8_t subscribe( const char *topic );
 
 
 extern uint8_t  mqtt_keepalive_timer; // updated from each_second()
-extern uint8_t  mqtt_io_count;
+extern uint32_t  mqtt_io_count;
 
 
 

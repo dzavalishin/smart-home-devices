@@ -41,37 +41,59 @@ struct eeprom_cfg
 {
     signed char		timezone;       // For SNTP/time code
 
-    unsigned char	mac_addr[6];    // Default MAC address
-/*
-    // Startup port direction bits (1 = out)
-    unsigned char	ddr_b;
-    unsigned char	ddr_d;
-    unsigned char	ddr_e;
-    unsigned char	ddr_f;
-    unsigned char	ddr_g;
+    // ---------------  Net
 
-    // Startup port data
-    unsigned char	start_b;
-    unsigned char	start_d;
-    unsigned char	start_e;
-    unsigned char	start_f;
-    unsigned char	start_g;
-*/
+    unsigned char	mac_addr[6];    // Default MAC address
+
     unsigned long	ip_addr;        // Default IP address
     unsigned long	ip_mask;        // Default IP net mask
     unsigned long	ip_route;       // Default IP route
 
     unsigned long	ip_nntp;       	// IP address of SNTP (time) server
     unsigned long	ip_syslog;     	// IP address of Syslog server
+    unsigned long       ip_mqtt;        // IP address of MQTT broker, but see host name below
+
+
+    // ---------------  Etc
 
     unsigned int        io_enable;      // Enable/disable io units
 
-//    uint32_t 		tun_baud[2];    // TCP/485 tunnel baud rate
     uint32_t            dbg_baud;       // Debug com port baud rate
 
+
+    // ---------------  1Wire
+
     struct ow_map_entry ow_map[MAX_OW_MAP];
+
+    // ---------------  MQTT
+
+    // MQTT topics
+    char                topics[EEPROM_CFG_N_TOPICS][EEPROM_CFG_MAX_TOPIC_LEN];
+
+    // MQTT topic prefix
+    char                topic_prefix[EEPROM_CFG_MAX_TOPIC_LEN];
+
+    // MQTT topic wildcard
+    //char                topic_wildcard[EEPROM_CFG_MAX_TOPIC_LEN]; // subscription wildcard to get topic names in runtime for menu
+
+    char                mqtt_host[EEPROM_CFG_MAX_TOPIC_LEN];
+    uint16_t            mqtt_port;
+
+    char                openhab_url[EEPROM_CFG_MAX_TOPIC_LEN]; // to get topic names? - unused yet
+
+    // ---------------  DI/DO
+
+    uint8_t             di_channel[SERVANT_N_DI];  // Numer of channel for Di, if 0-4, then parallelled with front panel button
+    uint8_t             di_mode[SERVANT_N_DI];  	// Di modem lower bit 1=button, 0 = switch
+    uint8_t             do_channel[SERVANT_N_DO];  // Numer of channel for Do (relay), if 0-4, then parallelled with front panel LED
+
 };
 
+// di_mode bits
+
+#define DI_IS_BUTTON    (1<<0)
+
+// io_enable bits
 
 #define IO_XOR           (1<<0)         // Di/Do (relays) XOR style logic (internal switch -> relay connection)
 #define IO_PWM           (1<<1)         // Have LCD backlight PWM

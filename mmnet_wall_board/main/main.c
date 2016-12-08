@@ -134,9 +134,6 @@ THREAD(long_init, __arg)
  */
 int main(void)
 {
-
-    //u_long baud = DEFAULT_BAUD;
-
     NutThreadSetSleepMode(SLEEP_MODE_IDLE); // Let the CPU sleep in idle
 
     // DO VERY EARLY!
@@ -503,7 +500,7 @@ void init_devices(void)
     dio_init();
     sei(); //re-enable interrupts
 
-    //lcd_init();
+    lcd_init();
     //encoder_init(); menu_init();
 
 

@@ -18,8 +18,15 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#include <sys/thread.h>
+#include <sys/timer.h>
 
-#if SERVANT_NDIG > 0
+
+
+
+static void dio_process( void );
+static void dio_input( void );
+
 
 static unsigned char get_dig_in(unsigned char port_num);
 
@@ -29,6 +36,16 @@ static unsigned char get_dig_in(unsigned char port_num);
 static unsigned char get_ddr(unsigned char port_num);
 //static void set_ddr(unsigned char port_num, unsigned char data);
 
+
+
+THREAD(dio_proc, __arg)
+{
+    while(1)
+    {
+        NutSleep(2);
+        dio_process();
+    }
+}
 
 
 
@@ -72,18 +89,24 @@ uint8_t         dio_remote_state = 0;                   // Remote state as we go
 uint8_t         dio_state = 0;                   	// Our state as we know
 
 
-void dio_timer( dev_major* d )
-{
-    (void) d;
 
+
+
+
+static uint8_t  dio_start = 1;
+
+static void dio_process( void )
+{
     uint8_t fb_ch = dio_front_buttons_changed;
     uint8_t re_ch = dio_remote_state_changed;
 
     // Process state changes from MQTT or front buttons
 
     // Nothing changed? no work.
-    if( (!fb_ch) && (!re_ch) )
+    if( (!fb_ch) && (!re_ch) && (!dio_start) )
         return;
+
+    dio_start = 0;
 
     if( re_ch )
     {
@@ -112,9 +135,34 @@ void dio_timer( dev_major* d )
 }
 
 
+static void dio_in_channel( uint8_t ch, uint8_t *prev_state, uint8_t new_state, uint8_t is_button )
+{
+    new_state = new_state ? 1 : 0; // not -1
+
+    // If switch, we react on any change, for button we react to 1->0 only (press, not release)
+    if( is_button && new_state )
+        return;
+
+    if( new_state == *prev_state )
+        return;
+
+    *prev_state = new_state;
+
+    dio_front_buttons_changed |= _BV(ch);
+}
 
 
+uint8_t di0_prev = -1; // undefined
+uint8_t di1_prev = -1;
 
+static void dio_input( void )
+{
+    uint8_t di0 = DI_PIN & _BV(DI_1_BIT);
+    uint8_t di1 = DI_PIN & _BV(DI_2_BIT);
+
+    dio_in_channel( ee_cfg.di_channel[0], &di0_prev, di0, ee_cfg.di_mode[0] & DI_IS_BUTTON );
+    dio_in_channel( ee_cfg.di_channel[1], &di1_prev, di1, ee_cfg.di_mode[1] & DI_IS_BUTTON );
+}
 
 
 
@@ -162,7 +210,7 @@ dio_get_port_ouput_mask_bit( unsigned char port, unsigned char nBit )
 
 static unsigned char get_dig_in(unsigned char port_num)
 {
-    if( port_num >= SERVANT_NDIG ) return 0;
+    if( port_num > 6 ) return 0;
     switch (port_num) {
     case 0:		return PINA;
     case 1:		return PINB;
@@ -224,7 +272,7 @@ static void set_ddr(unsigned char port_num, unsigned char data)
 */
 static unsigned char get_ddr(unsigned char port_num)
 {
-    if( port_num >= SERVANT_NDIG ) return 0;
+    if( port_num > 6 ) return 0;
     switch (port_num) {
     case 0:		return DDRA;
     case 1:		return DDRB;
@@ -244,7 +292,7 @@ static void dio_init_dev( dev_major* d )
 {
     (void) d;
     printf("dio_init_dev\n");
-    //timer1_init();
+
 
 
 }
@@ -254,6 +302,8 @@ static uint8_t dio_start_dev( dev_major* d )
 {
     (void) d;
     printf("dio_start_dev\n");
+
+    NutThreadCreate("IO", dio_proc, 0, 1024 );
 
     return 0;
 }
@@ -268,7 +318,7 @@ dev_major io_dig =
     .init = dio_init_dev,
     .start = dio_start_dev,
     .stop = 0, // TODO
-    .timer = dio_timer,
+    .timer = 0, //dio_timer,
 
     .to_string = 0,
     .from_string = 0,
@@ -283,8 +333,6 @@ dev_major io_dig =
 
 
 
-
-#endif // SERVANT_NDIG > 0
 
 
 

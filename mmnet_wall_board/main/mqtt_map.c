@@ -78,13 +78,32 @@ void mqtt_send_channel( uint8_t state, uint8_t ch )
     char data[20];
     sprintf( data, "%d", state );
 
-    mqtt_send_item( mp->mqtt_name, data );
+    char buf[80];
+
+    strlcpy( buf, ee_cfg.topic_prefix, sizeof(buf) );
+    strlcat( buf, "/", sizeof(buf) );
+    strlcat( buf, mp->mqtt_name, sizeof(buf) );
+
+    mqtt_send_item( buf, data );
 }
 
 
 // Called from MQTT receiver
 void mqtt_recv_item( const char *mqtt_name, const char *data )
 {
+    int plen = strlen( ee_cfg.topic_prefix );
+
+    if( strncmp( mqtt_name, ee_cfg.topic_prefix, plen ) )
+    {
+        printf("No prefix (%s) on incoming item (%s)", ee_cfg.topic_prefix, mqtt_name );
+        return;
+    }
+
+    mqtt_name += plen;
+
+    while( *mqtt_name == '/' )
+        mqtt_name++;
+
     int8_t pos = pos_by_name( mqtt_name );
 
     if( pos < 0 )
@@ -128,7 +147,13 @@ uint8_t subscribe_all( void )
     uint8_t i;
     for( i = 0; i < N_MQM; i++ )
     {
-        subscribe( mqm[i].mqtt_name );
+        char buf[80];
+
+        strlcpy( buf, ee_cfg.topic_prefix, sizeof(buf) );
+        strlcat( buf, "/", sizeof(buf) );
+        strlcat( buf, mqm[i].mqtt_name, sizeof(buf) );
+
+        subscribe( buf );
     }
 
     return 0;

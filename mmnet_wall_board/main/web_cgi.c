@@ -25,6 +25,7 @@
 
 #include <sys/confnet.h>
 #include <arpa/inet.h>
+#include <netdb.h>
 
 #include <string.h>
 
@@ -258,6 +259,23 @@ static int CgiNetworkRow( FILE * stream, int row_no )
     case 7: put_addr_row( stream, 0, "EEPROM NNTP server", ee_cfg.ip_nntp );	break;
     case 8: put_addr_row( stream, 0, "EEPROM Syslog server", ee_cfg.ip_syslog );break;
 
+    case 9:
+        {
+            char *hostname, *domain;
+            uint32_t pdnsip, sdnsip;
+
+            NutDnsGetConfig2( &hostname, &domain, &pdnsip, &sdnsip );
+
+            static prog_char tfmt[] = "<TR><TD>&nbsp;Name&nbsp;</TD><TD>&nbsp;%s&nbsp;</TD><TD>&nbsp;%s&nbsp;</TD></TR>\r\n";
+
+            fprintf_P( stream, tfmt, "Host", hostname );
+            fprintf_P( stream, tfmt, "Domain", domain );
+
+            put_addr_row( stream, 0, "DNS server 1", pdnsip );
+            put_addr_row( stream, 0, "DNS server 2", sdnsip );
+        }
+        break;
+
     default:
         return 0;
     }
@@ -294,50 +312,26 @@ static int CgiOutputsRow( FILE * stream, int row_no )
         return 1;
     }
 
-
-    if( row_no  < SERVANT_NPWM )
+#if SERVANT_NPWM
+    if( row_no  < 1 )
     {
-        static prog_char tfmt[] = "<TR><TD> PWM </TD><TD> %u </TD><TD> 0x%03X </TD></TR>\r\n";
-        //fprintf_P(stream, tfmt, row_no, pwm[row_no] );
+        static prog_char tfmt[] = "<TR><TD> LCD brightness </TD><TD>  </TD><TD> %d </TD></TR>\r\n";
+        fprintf_P(stream, tfmt, (int)pwm_lcd_brightness );
         return 1;
     }
-
-    row_no -= SERVANT_NPWM;
-
-#if SERVANT_NFREQ > 0
-    if( row_no  < SERVANT_NFREQ )
-    {
-        static prog_char tfmt[] = "<TR><TD> %s </TD><TD> %u </TD><TD> 0x%02X </TD></TR>\r\n";
-        fprintf_P(stream, tfmt,  row_no&1 ? "Duty" : "Freq", row_no, freq_outs[row_no] );
-
-        return 1;
-    }
-
-    row_no -= SERVANT_NFREQ;
+    row_no -= 1;
 #endif
 
-#if 0 // inputs shows actual walue
-    if( row_no  < SERVANT_NDIGOUT )
+    if( row_no  < 8 )
     {
-        static prog_char tfmt[] = "<TR><TD> Dig </TD><TD> %u </TD><TD> 0x%02X (";
-        static prog_char te[] = " ) </TD></TR>\r\n";
-        fprintf_P(stream, tfmt,  row_no, get_dig_out(row_no) );
-
-        char bit, c = get_dig_out(row_no);
-        for( bit = 7; bit >=0; bit-- )
-        {
-            fputs(" ", stream);
-            fputs( c & 0x80 ? "1" : "0", stream);
-            c <<= 1;
-        }
-
-        fputs_P(te, stream);
+        static prog_char tfmt[] = "<TR><TD> Channel </TD><TD> %u </TD><TD> %s </TD></TR>\r\n";
+        fprintf_P(stream, tfmt,  row_no, (dio_state & (1 << row_no)) ? "on" : "off" );
 
         return 1;
     }
+    row_no -= 8;
 
-    row_no -= SERVANT_NDIGOUT;
-#endif
+
 
     return 0;
 }
@@ -372,14 +366,11 @@ int CgiNetIO( FILE * stream, REQUEST * req )
         strncpy( tmp, req->req_query, sizeof(tmp)-1 );
 
         count = NutHttpGetParameterCount(req);
-        /* Extract count parameters. */
+
         for (i = 0; i < count; i++)
         {
             pname = NutHttpGetParameterName(req, i);
             pvalue = NutHttpGetParameterValue(req, i);
-
-            /* Send the parameters back to the client. */
-//            fprintf_P(stream, PSTR("%s: %s<BR>\r\n"), pname, pvalue);
 
             if( 0 == strcmp( pname, "name" ) )		name = pvalue;
             if( 0 == strcmp( pname, "item" ) )		name = pvalue;
@@ -391,9 +382,6 @@ int CgiNetIO( FILE * stream, REQUEST * req )
 
     if( name == 0 )
     {
-        //httpSendString( stream, "Error: must be 'name' and, possibly, 'value' parameters" );
-//    errmsg:
-        //NutHttpSendHeaderTop(stream, req, 500, "Must have ?name= or ?name=&value=, name: adc{0-7}, dig{0-63}, temp{0-7}");
         web_header_200(stream, req);
         static prog_char h1[] = "<HTML><body> Must have ?name= or ?name=&value=, name: adc{0-7}, dig{0-63}, temp{0-7}, q='%s' </body></HTML>";
         fprintf_P( stream, h1, tmp );

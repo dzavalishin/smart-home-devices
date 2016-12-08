@@ -38,7 +38,7 @@ THREAD(mqtt_recv, __arg);
 static MUTEX mqttSend;
 
 uint8_t  mqtt_keepalive_timer = 0;
-uint8_t  mqtt_io_count = 0;
+uint32_t  mqtt_io_count = 0;
 
 static int need_restart = 0;
 
@@ -50,10 +50,9 @@ mqtt_broker_handle_t broker;
 static int init_socket(mqtt_broker_handle_t* broker, const char* hostname, short port);
 
 
-#warning hardcode IP
-//static char *mqtt_host = "192.168.1.141";
-static char *mqtt_host = "smart.";
-static int mqtt_port = 1883;
+//#warning hardcode IP
+//static char *mqtt_host = "smart.";
+//static int mqtt_port = 1883;
 
 
 
@@ -117,16 +116,16 @@ static int init_socket(mqtt_broker_handle_t* broker, const char* hostname, short
     //int flag = 1;
     int keepalive = 3; // Seconds
 
-#if 0
+
+    printf("mqtt_init NutDnsGetHostByName(%s)\n", hostname );
+
     uint32_t server_ip = NutDnsGetHostByName( (const unsigned char*)hostname );
     if( server_ip == 0 )
     {
         if(mqtt_debug) printf("[%s] Host not found\n", hostname );
-        return -1;
+        server_ip = ee_cfg.ip_mqtt; // last resort - TODO put to config?
+        //return -1;
     }
-#else
-    uint32_t server_ip = inet_addr( "192.168.1.141" );
-#endif
 
     printf("mqtt_init gethost=%s\n", inet_ntoa(server_ip));
 
@@ -335,7 +334,7 @@ printf("mqtt_init thread close socket\n");
                 mqtt_sock = 0;
             }
 printf("mqtt_init thread init socket\n");
-            rc = init_socket( &broker, mqtt_host, mqtt_port );
+            rc = init_socket( &broker, ee_cfg.mqtt_host, ee_cfg.mqtt_port );
             if( rc < 0)
             {
                 if(mqtt_debug) printf( "MQTT: Error(%d) on reconnect!\n", rc );
@@ -409,10 +408,12 @@ printf("mqtt_init thread init socket\n");
         }
 
         uint16_t type = MQTTParseMessageType( packet_buffer );
-        printf( "MQTT: got pkt len=%d type=%d\n", len, type>>4 );
 
         if( type == MQTT_MSG_PINGRESP)
             continue; // Just ignore? TODO
+
+        // Don't report ping replys
+        printf( "MQTT: got pkt len=%d type=%d\n", len, type>>4 );
 
         if( type == MQTT_MSG_PUBLISH)
         {
@@ -426,8 +427,7 @@ printf("mqtt_init thread init socket\n");
             len = mqtt_parse_publish_msg(packet_buffer, msg);
             msg[len] = '\0'; // for printf
 
-            if(mqtt_debug) printf("%s %s\n", topic, msg);
-
+            if(mqtt_debug) printf("publish %s=%s\n", topic, msg);
 
             mqtt_recv_item( (const char *)topic, (const char *)msg );
             continue;

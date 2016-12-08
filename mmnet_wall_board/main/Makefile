@@ -54,7 +54,14 @@ date_now := $(shell date)
 makedate.h: *.c *.h
 	echo char *makeDate = \"$(date_now)\"\; > makedate.h
 
+#makedate.h:
+#	echo Make Date = $(date_now)
+#	echo char *makeDate = \"$(date_now)\"\; > makedate.h
+
+
 include ../Makerules
+
+-include *.d
 
 clean:
 	-rm -f $(OBJS)

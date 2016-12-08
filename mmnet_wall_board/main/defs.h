@@ -11,6 +11,16 @@
 // General definitions
 // ------------------------------------------------------------------------
 
+#define MODBUS_DEVICE_ID "DZWA00"
+extern char modbus_device_id[];
+
+#define DEVICE_NAME "DZ-MMNET-WALL"
+//#define DEVICE_REV "$Revision: 0 $"
+//#define DEVICE_DATE "$Date: $"
+
+
+extern char *makeDate; // filled in by makefile
+
 
 #define DEFAULT_BAUD 38400
 // Value we return if measurement fails - max negative val
@@ -25,8 +35,12 @@
 
 #define	SERVANT_NPWM	4	// Analogue outputs (PWM) count
 
-#define	SERVANT_NDIG	7	// количество цифровых портов (входы)  - bytes
-#define	SERVANT_NDIGOUT	0	// количество цифровых портов (выходы) - bytes
+//#define	SERVANT_NDIG	7	// количество цифровых портов (входы)  - bytes
+//#define	SERVANT_NDIGOUT	0	// количество цифровых портов (выходы) - bytes
+
+#define	SERVANT_N_DI	2	// number of dig ins (bits)
+#define	SERVANT_N_DO	2	// number of dig outs (bits)
+
 
 // FREQ/PWM duty inputs
 // pos 0 is freq for first channel, 1 is duty cycle for first channel
@@ -74,16 +88,16 @@
 
 /* These values are used if there is no valid configuration in EEPROM. */
 
-#define DEFAULT_MAC   0x02, 0x06, 0x98, 0x00, 0x00, 0x00
-#define DEFAULT_IP    "192.168.88.147"
-#define DEFAULT_MASK  "255.255.0.0"
+#define DEFAULT_MAC   		0x02, 0x06, 0x98, 0x01, 0x00, 0x00
+#define DEFAULT_IP    		"192.168.88.147"
+#define DEFAULT_MASK  		"255.255.0.0"
 
 // For sntp time setup
 #define DEFAULT_TZ    -3
 
-#define DEFAULT_SYSLOGD  "192.168.1.130"
+#define DEFAULT_SYSLOGD		"192.168.1.130"
 //#define MYSYSLOGD  "syslog."
-
+#define DEFAULT_MQTT 		"192.168.1.141"
 
 // ------------------------------------------------------------------------
 // Hardware connections
@@ -105,17 +119,6 @@
 
 #endif
 
-/*
-#define HALF_DUPLEX0_EXCLPOS 1 // Port B
-#define HALF_DUPLEX0_DDR DDRB
-#define HALF_DUPLEX0_PORT PORTB
-#define HALF_DUPLEX0_PIN PINB6
-
-#define HALF_DUPLEX1_EXCLPOS 1 // Port B
-#define HALF_DUPLEX1_DDR DDRB
-#define HALF_DUPLEX1_PORT PORTB
-#define HALF_DUPLEX1_PIN PINB7
-*/
 
 // OneWire - TODO port is hardcoded! def below is unused
 //#define OW_EXCLPOS  6 // Port G
@@ -155,27 +158,29 @@
 // количество машинных циклов на один интервал PWM
 // период модуляции разделяется на 256 интервалов
 // частота PWM: 4.0000Mhz/256/PWM_SPEED = 1.5 Кгц.
-#define	SERVANT_PWM_SPEED	128
-#define	SERVANT_PWM_PORT        PORTD
+//#define	SERVANT_PWM_SPEED	128
+//#define	SERVANT_PWM_PORT        PORTD
 // PWM bits start at this bit, so now it's PD4..7
-#define SERVANT_PWM_BIT         4
+//#define SERVANT_PWM_BIT         4
 
-#define MODBUS_DEVICE_ID "DZWA00"
-extern char modbus_device_id[];
-
-#define DEVICE_NAME "DZ-MMNET-WALL"
-//#define DEVICE_REV "$Revision: 0 $"
-//#define DEVICE_DATE "$Date: $"
-
-
-extern char *makeDate; // filled in by makefile
 
 //#define HALF_DUPLEX 0
 
+
+
+// ------------------------------------------------------------------------
+// EEPROM Config macros
+// ------------------------------------------------------------------------
+
+
 // On 0 we conflict with OS?
-#define EEPROM_CFG_BASE 1024
+#define EEPROM_CFG_BASE 		1024
 
+// Number of MQTT topics we save in config
+#define EEPROM_CFG_N_TOPICS 		16
 
+// Max length of topic name in EEPROM
+#define EEPROM_CFG_MAX_TOPIC_LEN        32
 
 
 

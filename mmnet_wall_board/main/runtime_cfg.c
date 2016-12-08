@@ -49,6 +49,8 @@ struct eeprom_cfg        ee_cfg =
 void
 init_runtime_cfg()
 {
+    int i;
+
     ee_cfg.timezone = DEFAULT_TZ;
 
     ee_cfg.ip_addr	= inet_addr( DEFAULT_IP );
@@ -56,7 +58,9 @@ init_runtime_cfg()
     // ee_cfg.ip_route;
 
     ee_cfg.ip_nntp	= 0; // Will use default route instead
-    ee_cfg.ip_syslog = inet_addr( DEFAULT_SYSLOGD );
+    ee_cfg.ip_syslog	= inet_addr( DEFAULT_SYSLOGD );
+    ee_cfg.ip_mqtt	= inet_addr( "192.168.1.141" ); // last resort - TODO put to config?
+
 
     //ee_cfg.ddr_e = 0x0F; // low 4 bits are default outputs
 
@@ -65,7 +69,27 @@ init_runtime_cfg()
 
     //ee_cfg.io_enable = IO_LOG|IO_LCD4; // disable all by default, enable serial debug and 4-bit LCD IO
     ee_cfg.io_enable = IO_LOG; // disable all by default, enable serial debug 
+
+    strlcpy( ee_cfg.topic_prefix, "/openhab", sizeof(ee_cfg.topic_prefix) );
+
+    strlcpy( ee_cfg.mqtt_host, "smart", sizeof(ee_cfg.mqtt_host) );
+    ee_cfg.mqtt_port = 1883;
+
+    for( i = 0; i < SERVANT_N_DI; i++ )
+    {
+        ee_cfg.di_channel[i] = 4+i;
+        ee_cfg.di_mode[i] = 0;
+    }
+
+    for( i = 0; i < SERVANT_N_DO; i++ )
+        ee_cfg.do_channel[i] = 4+i;
+
+    //for( i = 0; (i < SERVANT_N_DI) && (i < SERVANT_N_DO); i++ )
+    //    do_channel[i] = di_channel[i];
+
 }
+
+
 
 #define EESZ (sizeof(struct eeprom_cfg))
 
