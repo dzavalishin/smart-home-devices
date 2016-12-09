@@ -34,6 +34,15 @@ void get_tunnel_stats( uint8_t nTunnel, uint32_t *tx_total, uint32_t *rx_total, 
 
 void notice_activity(void); // Called by network code to mark that something uses us as IO. If not - we will light fail LED.
 
-extern uint8_t dht11_errorCnt;
+
+// -----------------------------------------------------------------------
+// Watchdog
+// -----------------------------------------------------------------------
+
+
+extern uint8_t watch_mqtt;
+extern uint8_t watch_main_loop;
+extern uint8_t watch_ui_loop;
+
 
 

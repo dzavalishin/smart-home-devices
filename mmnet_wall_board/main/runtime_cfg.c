@@ -59,7 +59,7 @@ init_runtime_cfg()
 
     ee_cfg.ip_nntp	= 0; // Will use default route instead
     ee_cfg.ip_syslog	= inet_addr( DEFAULT_SYSLOGD );
-    ee_cfg.ip_mqtt	= inet_addr( "192.168.1.141" ); // last resort - TODO put to config?
+    ee_cfg.ip_mqtt	= inet_addr( DEFAULT_MQTT );
 
 
     //ee_cfg.ddr_e = 0x0F; // low 4 bits are default outputs

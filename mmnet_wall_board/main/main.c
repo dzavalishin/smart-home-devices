@@ -201,8 +201,6 @@ int main(void)
 
     printf("httpd ready\n");
 
-
-
     modbus_init( 9600, 1 ); // we don't need both parameters, actually
     NutThreadCreate( "ModBusTCP", ModbusService, (void *) 0, 640);
     NutThreadSetPriority(254);
@@ -212,11 +210,15 @@ int main(void)
 
     NutThreadCreate("MainLoop", main_loop, 0, 640);
 
-    NutThreadExit();
-    //for(;;) ; // make compiler happy
+    //NutThreadExit();
+
     for (;;)
     {
-        NutSleep(1000);
+        NutSleep(1);
+#if SERVANT_LCD
+        menu_run();
+#endif
+        watch_ui_loop++;
     }
 
     return 33;
@@ -501,8 +503,10 @@ void init_devices(void)
     sei(); //re-enable interrupts
 
     lcd_init();
-    //encoder_init(); menu_init();
-
+#if SERVANT_LCD
+    encoder_init();
+    menu_init();
+#endif
 
 #if SERVANT_NTEMP > 0
     printf("1w init...");

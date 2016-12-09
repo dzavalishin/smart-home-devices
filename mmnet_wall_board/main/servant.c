@@ -14,6 +14,8 @@
 #include <string.h>
 #include <io.h>
 
+#include <avr/wdt.h>
+
 #include <modbus.h>
 
 #include <sys/nutconfig.h>
@@ -36,6 +38,9 @@ static uint8_t 		network_activity = 60; // Will wait 1 min before initial networ
 static volatile uint8_t temperatureMeterCnt = 0;
 static volatile uint8_t temperatureRescanCnt = 0;
 
+uint8_t watch_mqtt = 0;
+uint8_t watch_main_loop = 0;
+uint8_t watch_ui_loop = 0;
 
 
 void each_second(HANDLE h, void *arg)
@@ -65,6 +70,12 @@ void each_second(HANDLE h, void *arg)
         FAIL_LED_OFF;
 
 
+    if( watch_mqtt && watch_main_loop && watch_ui_loop )
+    {
+        watch_mqtt = watch_main_loop = watch_ui_loop = 0;
+        wdt_reset();
+    }
+
 }
 
 
@@ -90,7 +101,7 @@ THREAD(main_loop, arg)
 
 
         // Give other threads some chance to work
-        NutSleep(90);
+        //NutSleep(90);
         LED_OFF; // at least 10 msec of LED off
 
         //NutEventWait(&sendOutEvent, 100); // Once in 100 msec try sending anyway
@@ -104,8 +115,6 @@ THREAD(main_loop, arg)
         }
 
         //if(!had_io )            LED_OFF;
-
-
 
 #if SERVANT_NTEMP
         if( temperatureRescanCnt <= 0 )
@@ -122,7 +131,7 @@ THREAD(main_loop, arg)
         }
 #endif
 
-
+        watch_main_loop++;
     }
 
 }

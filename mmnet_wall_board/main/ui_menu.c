@@ -11,6 +11,7 @@
 //#include "errlog.h"
 
 #include "io_temp.h"
+#include "io_dig.h"
 
 
 // ---------------------------------------------------------------
@@ -667,23 +668,35 @@ void menu_init(void)
 
     // Input
     BUTTONS_DDR &= ~(BUTTON_F1_BIT | BUTTON_F2_BIT | BUTTON_F3_BIT | BUTTON_F4_BIT);
-    ENCODER_DDR |= ~(ENCODER_PRESS_BIT | ENCODER_A_BIT | ENCODER_B_BIT);
+    ENCODER_DDR &= ~(ENCODER_PRESS_BIT | ENCODER_A_BIT | ENCODER_B_BIT);
 
 #warning TODO enc interrupts
 }
 
+static uint8_t new_keys_0 = 0;
+static uint8_t new_keys_1 = 0;
 static uint8_t keys_old = 0;
 static void menu_read_input(void)
 {
-    keys &= REPAINT; // clear all key bits
 
-    if(!BUTTON_F1) 	keys |= KEY_F1;
-    if(!BUTTON_F2) 	keys |= KEY_F2;
-    if(!BUTTON_F3) 	keys |= KEY_F3;
-    if(!BUTTON_F4) 	keys |= KEY_F4;
+    uint8_t new_keys = 0;
 
-    if(!ENCODER_PRESS)	keys |= KEY_OK;
+    if(!BUTTON_F1) 	new_keys |= KEY_F1;
+    if(!BUTTON_F2) 	new_keys |= KEY_F2;
+    if(!BUTTON_F3) 	new_keys |= KEY_F3;
+    if(!BUTTON_F4) 	new_keys |= KEY_F4;
 
+    if(!ENCODER_PRESS)	new_keys |= KEY_OK;
+
+    // kill jitter
+    if( (new_keys == new_keys_0) && (new_keys == new_keys_1) )
+    {
+        keys &= REPAINT; // clear all key bits
+        keys |= new_keys;
+    }
+
+    new_keys_1 = new_keys_0;
+    new_keys_0 = new_keys;
 
     //if( (keys & KEY_OK) && !(keys_old & KEY_OK) ) changed |= KEY_OK;
     //if( (keys & KEY_NO) && !(keys_old & KEY_NO) ) changed |= KEY_NO;
@@ -695,6 +708,16 @@ static void menu_read_input(void)
         changed |= KEY_ENC;
 
     keys_old = keys;
+
+    if( (curr_menu == &menu_main) && (changed & KEY_MASK_F1_F4) )
+    {
+        printf( "menu_read_input 0x%x\n", changed );
+        // In main menu F1-F4 are not used in menu system, but translated to dio subsystem as light switches
+
+        dio_front_buttons_changed |= changed & KEY_MASK_F1_F4;
+        changed &= ~KEY_MASK_F1_F4; // kill 'em, we transferred 'em
+    }
+
 
 }
 

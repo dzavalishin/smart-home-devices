@@ -9,15 +9,19 @@
 **/
 
 
-#define KEY_OK  0x01    // Encoder press
-#define KEY_ENC 0x02    // Encoder value changed
+// NB! Must be low 4 bits, used as bit field in transferring to dio
 
-#define KEY_NO  0x04     // == F1
+#define KEY_NO  0x01     // == F1
 
-#define KEY_F1 0x04
-#define KEY_F2 0x08
-#define KEY_F3 0x10
-#define KEY_F4 0x20
+#define KEY_F1 0x01
+#define KEY_F2 0x02
+#define KEY_F3 0x04
+#define KEY_F4 0x08
+
+#define KEY_MASK_F1_F4 0x0F
+
+#define KEY_OK  0x10    // Encoder press
+#define KEY_ENC 0x20    // Encoder value changed
 
 
 #define REPAINT 0x80

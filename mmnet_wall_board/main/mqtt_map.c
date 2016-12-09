@@ -84,6 +84,8 @@ void mqtt_send_channel( uint8_t state, uint8_t ch )
     strlcat( buf, "/", sizeof(buf) );
     strlcat( buf, mp->mqtt_name, sizeof(buf) );
 
+    printf( "channel %d send %d item %s\n", ch, state, buf );
+
     mqtt_send_item( buf, data );
 }
 

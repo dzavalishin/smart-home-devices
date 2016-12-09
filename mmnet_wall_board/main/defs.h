@@ -55,6 +55,7 @@ extern char *makeDate; // filled in by makefile
 // Does not fit to code flash mem :(
 #define SERVANT_LUA     0       // Have Lua scripting
 
+#define SERVANT_LCD     1       // Have LCD
 
 // ------------------------------------------------------------------------
 // Configuration (on/off/number) of components

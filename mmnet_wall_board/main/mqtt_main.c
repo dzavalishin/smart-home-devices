@@ -9,6 +9,7 @@
 #include "defs.h"
 #include "util.h"
 #include "runtime_cfg.h"
+#include "servant.h"
 
 #include "io_dig.h"
 #include "mqtt.h"
@@ -20,6 +21,8 @@
 
 #include <stdio.h>
 #include <string.h>
+
+#include <avr/wdt.h>
 
 #include <sys/socket.h>
 #include <sys/thread.h>
@@ -314,6 +317,9 @@ THREAD(mqtt_recv, __arg)
 
     need_restart = 1;
 
+    // NB! Enable watchdog only after mqtt init
+    //wdt_enable( WDTO_2S );
+
     while(1) // to satisfy no return
     {
         NutSleep( 1 ); // Protect from DOS attack :)
@@ -386,6 +392,8 @@ printf("mqtt_init thread init socket\n");
             mqtt_keepalive_timer = 2;
             mqtt_ping( &broker );
         }
+
+        watch_mqtt++; // reset watchdog
 
         // Process recv
 

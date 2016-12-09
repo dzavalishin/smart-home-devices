@@ -289,6 +289,26 @@ void lcd_puthex(const char *bp, int cnt )
     }
 }
 
+void lcd_putx( char c )
+{
+    lcd_puthex( &c, 1 );
+}
+
+
+void lcd_put_temp( uint16_t temp )
+{
+    if( (temp >> 4) < 10 ) lcd_putc(' ');
+    lcd_puti( temp >> 4 );
+    lcd_putc( '.' );
+    switch( (temp >> 2) & 3 )
+    {
+    case 0:        lcd_puts("0 "); break;
+    case 1:        lcd_puts("25"); break;
+    case 2:        lcd_puts("5 "); break;
+    case 3:        lcd_puts("75"); break;
+    }
+}
+
 
 // ------------------------------------------------------------------
 // Control

@@ -121,12 +121,13 @@ static void dio_process( void )
 
     if( fb_ch )
     {
+        //printf("fb_ch 0x%x", fb_ch);
         // Send to remote what we changed localy
         uint8_t mask, ch = 0;
         for( mask = 1; mask < 0x10; mask <<= 1, ch++ )
         {
             if( fb_ch & mask )
-                mqtt_send_channel( dio_state & mask, ch );
+                mqtt_send_channel( (dio_state & mask) ? 1 : 0, ch );
         }
     }
 
