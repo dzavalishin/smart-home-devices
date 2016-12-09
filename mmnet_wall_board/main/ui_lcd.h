@@ -18,3 +18,6 @@ void lcd_gotoxy(int x, int y);
 void lcd_clear( void );
 
 void lcd_put_temp( uint16_t temp );
+
+void lcd_clear_line( uint8_t line );
+

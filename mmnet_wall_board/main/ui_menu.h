@@ -52,6 +52,7 @@ void encoder_init( void );
 
 
 
+void menu_read_encoder( void );
 extern uint8_t encoder;            // Encoder value
 
 

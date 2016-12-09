@@ -63,6 +63,7 @@
 #include "onewire.h"
 
 #include "ui_lcd.h"
+#include "ui_menu.h"
 
 #include "mqtt.h"
 
@@ -103,18 +104,22 @@ THREAD(long_init, __arg)
     while(1) // to satisfy no return
     {
 #if ENABLE_SNTP
+        lcd_status_line("SNTP");
         init_sntp();
 #endif
 
 #if ENABLE_SYSLOG
+        lcd_status_line("Syslog");
         init_syslog();
 #endif
 
 
 #if SERVANT_LUA
+        lcd_status_line("Lua");
         lua_init();
 #endif
 
+        lcd_status_line("MQTT");
         mqtt_start();
 
         NutThreadExit();
@@ -183,6 +188,7 @@ int main(void)
     led_ddr_init(); // Before using LED!
     LED_ON;
 
+    lcd_status_line("Network");
     init_net();
 
 
@@ -200,6 +206,8 @@ int main(void)
     init_httpd();
 
     printf("httpd ready\n");
+
+    lcd_status_line("Modbus");
 
     modbus_init( 9600, 1 ); // we don't need both parameters, actually
     NutThreadCreate( "ModBusTCP", ModbusService, (void *) 0, 640);
@@ -503,17 +511,23 @@ void init_devices(void)
     sei(); //re-enable interrupts
 
     lcd_init();
+
+
 #if SERVANT_LCD
+    lcd_status_line("Encoder");
     encoder_init();
+    lcd_status_line("Menu");
     menu_init();
 #endif
 
 #if SERVANT_NTEMP > 0
     printf("1w init...");
+    lcd_status_line("1Wire");
     init_temperature();
     printf(" DONE\n");
 #endif
 
+    lcd_status_line("IO devices");
     printf("Init %d regular devs\n", NMAJOR );
 
     init_regular_devices();

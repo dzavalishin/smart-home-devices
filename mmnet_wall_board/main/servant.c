@@ -76,6 +76,7 @@ void each_second(HANDLE h, void *arg)
         wdt_reset();
     }
 
+    menu_timer_05sec(); // TODO 0.5 sec, not 1
 }
 
 

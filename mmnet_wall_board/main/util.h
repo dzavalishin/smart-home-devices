@@ -4,6 +4,9 @@
 
 #include "defs.h"
 
+void lcd_status_line(const char *msg);
+
+
 char hexdigit( unsigned char d );
 
 

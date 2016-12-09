@@ -10,7 +10,7 @@
 
 
 //#define LCD_4_BIT ( RT_IO_ENABLED( IO_LCD4 ) )
-#define LCD_4_BIT 1
+#define LCD_4_BIT 0
 
 // ------------------------------------------------------------------
 // 
@@ -64,7 +64,7 @@ void lcd_init(void)
     PORTF = 0x00;
     DDRF  = 0xFF;
 
-    printf("LCD Init ddre=%x...", DDRE );
+    //printf("LCD Init ddre=%x...", DDRE );
 
     RS_DISABLE;
     delay_ms(20);
@@ -122,14 +122,13 @@ void lcd_init(void)
     RS_ENABLE;
         delay_ms(20);
 
-    printf("LCD init done ddre=%x f=%x\n", DDRE, DDRF );
+    //printf("LCD init done ddre=%x f=%x\n", DDRE, DDRF );
 
     // Now clear and write some test
 
     //lcd_clear();
-    lcd_gotoxy( 1, 0 );
-    lcd_puts("Init ...");
-    delay_ms(1500);
+    //lcd_gotoxy( 0, 0 );    lcd_puts("Init ...");
+    //delay_ms(1500);
 }
 
 
@@ -338,5 +337,14 @@ void lcd_clear( void )
     lcd_write_cmd(0x01);
 }
 
+void lcd_clear_line( uint8_t line )
+{
+    lcd_gotoxy( 0, line );
+
+    uint8_t i;
+
+    for( i = 0; i < 20; i++ )
+        lcd_putc(' ');
+}
 
 
