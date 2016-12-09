@@ -14,10 +14,14 @@ void lcd_putf( int f );
 
 //void lcd_set_cursor(int line,int pos);
 
+void lcd_put_bits( uint8_t bits );
+void lcd_put_temp( uint16_t temp );
+void lcd_put_ip_addr( uint32_t ia );
+
+
 void lcd_gotoxy(int x, int y);
 void lcd_clear( void );
 
-void lcd_put_temp( uint16_t temp );
 
 void lcd_clear_line( uint8_t line );
 

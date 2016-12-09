@@ -211,7 +211,8 @@ static void lcd_write(uint8_t data)
     if( LCD_4_BIT )
     {
         lcd_out(data >> 4);     // NB! First we send upper 4 bits, but on lower 4 bits of port
-        delay_ms(1);
+        //delay_ms(1);
+        delay_us(10);
         lcd_out(data);     	// Now lower 4 bits
     }
     else
@@ -307,6 +308,25 @@ void lcd_put_temp( uint16_t temp )
     case 3:        lcd_puts("75"); break;
     }
 }
+
+
+void lcd_put_bits( uint8_t bits )
+{
+    uint8_t bit;
+    for( bit = 0; bit < 8; bit++ )
+    {
+        lcd_putc( (bits & 1) ? '#' : '.' );
+        lcd_putc( ' ' );
+        bits >>= 1;
+    }
+}
+
+void lcd_put_ip_addr( uint32_t ia )
+{
+    char *a = inet_ntoa( ia );
+    lcd_puts( a );
+}
+
 
 
 // ------------------------------------------------------------------

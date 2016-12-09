@@ -49,8 +49,8 @@ void encoder_init( void )
 #endif
 }
 
-//static uint8_t a, b, a0, b0, a1, b1;
-static uint8_t a, b, a0, b0;
+static uint8_t a, b, a0, b0, a1, b1;
+//static uint8_t a, b, a0, b0;
 
 
 static void EncoderInterrupt(void *arg)
@@ -70,13 +70,13 @@ void menu_read_encoder( void )
     a = ENCODER_A;
     b = ENCODER_B;
 
-    //if( (a != a0) || (a != a1) || (b != b0) || (b != b1) )
-    if( (a != a0) || (b != b0) )
+    if( (a != a0) || (a != a1) || (b != b0) || (b != b1) )
+    //if( (a != a0) || (b != b0) )
         diff = 1;
 
-    //a1 = a0;
+    a1 = a0;
     a0 = a;
-    //b1 = b0;
+    b1 = b0;
     b0 = b;
 
     if( diff ) return;

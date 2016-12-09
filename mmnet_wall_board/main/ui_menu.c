@@ -4,6 +4,8 @@
 #include <inttypes.h>
 #include <avr/io.h>
 
+#include <sys/confnet.h>
+
 #include "ui_menu.h"
 #include "ui_lcd.h"
 
@@ -40,10 +42,10 @@ void select_menu( struct menu_t *m );
 
 extern struct menu_t menu[];
 
-struct menu_t menu_main = { "Main", menu_display_main, menu_event_main, menu_monitor_main };
+struct menu_t menu_main = { "Main", "", menu_display_main, menu_event_main, menu_monitor_main };
 struct menu_t *curr_menu = &menu_main;
 
-struct menu_t menu_saved = { "Saved", menu_display_saved, menu_event_saved, menu_monitor_main };
+struct menu_t menu_saved = { "Saved", "", menu_display_saved, menu_event_saved, menu_monitor_main };
 
 uint8_t keys;                   // bit per key, pressed or not
 uint8_t changed = REPAINT; 	// chnaged keys or VR, bitmask
@@ -117,13 +119,19 @@ void menu_display_main(void)
     if( ((changed & ~KEY_ENC) == 0) && (menu_curr == menu_curr_old) ) return;
     menu_curr_old = menu_curr;
 
-    //d_gotoxy( 0, 0 );
+    lcd_gotoxy( 14, 0 );
+    lcd_puts("      "); // Clear tail
+
     lcd_gotoxy( 0, 0 );
     put_menu_item(menu_shift);
     put_menu_item(menu_shift+1);
     put_menu_item(menu_shift+2);
 
+    lcd_gotoxy( 12, 1 );
     lcd_puts("        "); // Clear tail
+    lcd_gotoxy( 0, 1 );
+    lcd_puts(">");
+    lcd_puts(menu[menu_curr].long_name);
 }
 
 void put_menu_item( uint8_t ip )
@@ -138,8 +146,10 @@ void menu_monitor_main( void )
 {
     static uint8_t cnt_main_monitor;
 
+    //lcd_clear_line( 1 );
+
     //lcd_clear_line( 2 );
-    lcd_gotoxy( 16, 2 ); lcd_puts("    ");
+    lcd_gotoxy( 17, 2 ); lcd_puts("   ");
     lcd_gotoxy( 0, 2 );
     lcd_puts("MQTT:");
     lcd_puti( mqtt_io_count % 100 ); // Take 2 digits
@@ -168,197 +178,65 @@ void menu_monitor_main( void )
 // ---------------------------------------------------------------
 
 
-void menu_event_rs485addr(void)
-{
-    if( changed & KEY_OK )
-    {
-#warning make save_eeprom_settings
-        //save_eeprom_settings();
-
-        select_menu( &menu_saved );
-    }
-}
-
-void menu_display_rs485addr(void)
-{
-    if( encoder > MODBUS_MAX_ADDRESS ) encoder = 0;
-    modbus_our_address = encoder;
-    //if( modbus_our_address > MODBUS_MAX_ADDRESS )        modbus_our_address = MODBUS_MAX_ADDRESS;
-
-    if(changed & REPAINT)
-    {
-        lcd_gotoxy( 0, 0 );
-        lcd_puts("RS485 address: ");
-    }
-
-    lcd_gotoxy( 16, 0 );
-    lcd_puti(modbus_our_address);
-
-}
-
-// ---------------------------------------------------------------
-
-static uint16_t rs485_speed = 0xFF;
-
-void menu_event_rs485speed(void)
-{
-    uint8_t sel = encoder % 7;
-    if( sel < 6 )        rs485_speed = (1 << sel) * 1200l;
-//    else        	 rs485_speed = 115200;
-
-    if( changed & KEY_OK )
-    {
-        modbus_set_baud( rs485_speed );
-#warning save_eeprom_settings
-        //save_eeprom_settings();
-
-        //curr_menu = &menu_saved;
-        select_menu( &menu_saved );
-    }
-}
-
-void menu_display_rs485speed(void)
-{
-    lcd_gotoxy( 0, 0 );
-    lcd_puts("RS485 speed:    ");
-
-/*
-    if(rs485_speed == 0xFF)
-        rs485_speed = uart_speed;
-
-    // puti is 16 bit, need some help
-    switch(rs485_speed)
-    {
-    case 38400:        	lcd_puts("38400"); break;
-    case 57600:        	lcd_puts("57600"); break;
-//    case 115200:        lcd_puts("115200"); break;
-
-    default:
-        lcd_puti(rs485_speed); break;
-    }
-*/
-    lcd_puts("     ");
-}
-
-// ---------------------------------------------------------------
 
 static void menu_put_temp(uint8_t id);
 
 void menu_monitor_temperature(void)
 {
-    lcd_gotoxy( 0, 0 ); menu_put_temp( encoder);
-    lcd_gotoxy( 0, 1 ); menu_put_temp( encoder+1);
+    lcd_gotoxy( 0, 0 ); menu_put_temp( encoder   );
+    lcd_gotoxy( 0, 1 ); menu_put_temp( encoder+1 );
+    lcd_gotoxy( 0, 2 ); menu_put_temp( encoder+2 );
+    lcd_gotoxy( 0, 3 ); menu_put_temp( encoder+3 );
+/*
+    lcd_gotoxy( 10, 0 ); menu_put_temp( encoder+4 );
+    lcd_gotoxy( 10, 1 ); menu_put_temp( encoder+5 );
+    lcd_gotoxy( 10, 2 ); menu_put_temp( encoder+6 );
+    lcd_gotoxy( 10, 3 ); menu_put_temp( encoder+7 );
+*/
 }
 
 static void menu_put_temp(uint8_t id)
 {
-    if(id >= SERVANT_NTEMP) id = SERVANT_NTEMP-1;
+    id %= SERVANT_NTEMP;
 
-    lcd_puts(" T");
+    lcd_puts("T");
     if( id < 10 ) lcd_putc(' ');
     lcd_puti(id);
     lcd_puts(": ");
     lcd_put_temp(currTemperature[id]);
-    lcd_puts(" B.");
-    lcd_puti(gTempSensorBus[id]);
-    lcd_puts("    ");
+    //lcd_puts(" B.");
+    //lcd_puti(gTempSensorBus[id]);
+    lcd_puts("  ");
 }
+
 
 
 // ---------------------------------------------------------------
 
-unsigned char * sensor_rom_code;
-int8_t sensor_persistent_id = -1;
 
-void menu_event_map(void)
-{
-    if( changed & KEY_OK )
-    {
-#warning mapping
-        //remove_mapping_by_id(sensor_persistent_id);
-        //remove_mapping_by_rom(sensor_rom_code);
-
-        //add_mapping( sensor_rom_code, sensor_persistent_id );
-
-        //temp_sens_save_logical_numbers();
-
-        //curr_menu = &menu_saved;
-        select_menu( &menu_saved );
-    }
-}
-
-void menu_display_map(void)
-{
-/*
-    uint8_t index = vr1;
-
-    if(index >= SERVANT_NTEMP) index = SERVANT_NTEMP-1;
-
-    sensor_rom_code = gTempSensorIDs[index];
-    sensor_persistent_id = vr2;
-
-//    int pos = find_pos_by_persistent_id(sensor_persistent_id);
-//    uint16_t temp = currTemperature[pos];
-//    if( pos < 0 ) temp = -99;
-
-    uint16_t temp = currTemperature[index];
-
-    lcd_gotoxy( 0, 0 );
-    lcd_puts("> ROM:");
-    lcd_puthex((char *)sensor_rom_code,OW_ROMCODE_SIZE);
-    lcd_puts(" ");
-
-    lcd_gotoxy( 0, 1 );
-    lcd_puts("< ID: ");
-    lcd_puti(sensor_persistent_id);
-    lcd_puts(" t=");
-    lcd_put_temp(temp);
-    lcd_puts(" ");
-*/
-}
-
-// ---------------------------------------------------------------
-
-
-void put_menu_pressure(uint8_t aino );
-
-void menu_display_pressure(void)
+void menu_display_net_status(void)
 {
     lcd_gotoxy( 0, 0 );
-    put_menu_pressure(0);
-    put_menu_pressure(1);
+    lcd_puts("IP A:");
+    lcd_put_ip_addr( confnet.cdn_ip_addr );
 
     lcd_gotoxy( 0, 1 );
-    put_menu_pressure(2);
-    put_menu_pressure(3);
-}
+    lcd_puts("IP M:");
+    lcd_put_ip_addr( confnet.cdn_ip_mask );
 
+    lcd_gotoxy( 0, 2 );
+    lcd_puts("MAC address: ");
 
-void put_menu_pressure(uint8_t aino )
-{
-    lcd_puts("P");
-    lcd_puti( aino );
-    lcd_puts(": ");
-    //lcd_puti( sens[aino].out_value );
-    lcd_puts(" ");
-}
+    lcd_gotoxy( 0, 3 );
 
-// ---------------------------------------------------------------
+    char buf[20];
 
-
-void menu_display_status(void)
-{
-
-    lcd_gotoxy( 0, 0 );
-    /*
-    lcd_puts( active_pump ? "Alt" : "Main");
-    lcd_puts(" pump ");
-
-    lcd_puts( pump_state ? "on " : "off");
-
-    lcd_gotoxy( 0, 1 );
-    lcd_puts( system_failed ? "Fail " : "Ok   ");
-    */
+    static prog_char tfmt[] = "%02X:%02X:%02X:%02X:%02X:%02X";
+    sprintf_P( buf, tfmt,
+                  ee_cfg.mac_addr[0], ee_cfg.mac_addr[1], ee_cfg.mac_addr[2],
+                  ee_cfg.mac_addr[3], ee_cfg.mac_addr[4], ee_cfg.mac_addr[5]
+                 );
+    lcd_puts( buf );
 }
 
 
@@ -369,16 +247,14 @@ void menu_display_status(void)
 // ---------------------------------------------------------------
 
 
-void menu_display_di(void)
+void menu_display_io(void)
 {
     lcd_gotoxy( 0, 0 );
-    lcd_puts("  DIn:  ");
-    lcd_putx( PINB );
-
+    lcd_puts("Channels: ");
     lcd_gotoxy( 0, 1 );
-    lcd_puts("  Dout: ");
-    lcd_putx( PORTB );
+    lcd_put_bits( dio_state );
 
+    if( changed & KEY_OK )        select_menu( &menu_main );
 }
 
 
@@ -395,47 +271,6 @@ void menu_display_scan(void)
 
 
 
-// ---------------------------------------------------------------
-
-static void *shift_buf( void *bp, uint8_t blen )
-{
-#if 0
-    uint8_t shift = encoder;
-
-    blen -= 8; // Show 8 bytes
-
-    if( shift >= blen ) shift = blen-1;
-
-    return bp+shift;
-#else
-    return bp;
-#endif
-}
-
-void menu_display_485_i(void)
-{
-    lcd_gotoxy( 0, 0 );
-    lcd_puts("< RS485 RX data:" );
-}
-
-void menu_monitor_485_i(void)
-{
-    lcd_gotoxy( 0, 1 );
-    //lcd_puthex((char *)modbus_rx_buf,MODBUS_MAX_RX_PKT);
-    lcd_puthex((char *) shift_buf( modbus_rx_buf, MODBUS_MAX_RX_PKT),8);
-}
-
-void menu_display_485_o(void)
-{
-    lcd_gotoxy( 0, 0 );
-    lcd_puts("< RS485 TX data:" );
-}
-
-void menu_monitor_485_o(void)
-{
-    lcd_gotoxy( 0, 1 );
-    lcd_puthex((char *) shift_buf( modbus_tx_buf, MODBUS_MAX_TX_PKT),8);
-}
 
 // ---------------------------------------------------------------
 
@@ -443,21 +278,16 @@ void menu_monitor_485_o(void)
 
 void menu_display_bus(void)
 {
-    uint8_t bus = encoder % N_1W_BUS;
-    if(bus >= N_1W_BUS) bus = N_1W_BUS-1;
+    uint8_t bus = 0; //encoder % N_1W_BUS;    if(bus >= N_1W_BUS) bus = N_1W_BUS-1;
 
     uint8_t i, c = 0;
-    for( i = 0; i < SERVANT_NTEMP; i++ )
+    for( i = 0; i < nTempSensors; i++ )
         if( gTempSensorBus[i] == bus )
             c++;
 
     lcd_gotoxy( 0, 0 );
 
-    lcd_puts("<1w Bus ");
-    lcd_puti(bus);
-
-    lcd_gotoxy( 0, 1 );
-    lcd_puts("Sens:");
+    lcd_puts("1W sensors: ");
     lcd_puti(c);
     lcd_puts(" ");
 }
@@ -467,11 +297,13 @@ void menu_monitor_bus(void)
     uint8_t bus = encoder % N_1W_BUS;
     if(bus >= N_1W_BUS) bus = N_1W_BUS-1;
 
-    lcd_gotoxy( 9, 1 );
+    lcd_gotoxy( 0, 1 );
 
-    lcd_puts("Err:");
+    lcd_puts("1W errors:  ");
     lcd_puti( ow_error_cnt ); //ow_bus_error_cnt[bus]);
     lcd_puts("  ");
+
+    if( changed & KEY_OK )        select_menu( &menu_main );
 }
 
 // ---------------------------------------------------------------
@@ -486,9 +318,11 @@ void menu_display_errlog(void)
 {
     //uint8_t pos = encoder;
     lcd_gotoxy( 0, 0 );
+
     //lcd_put_event( pos );
     lcd_gotoxy( 0, 1 );
     //lcd_put_event( pos+1 );
+
 }
 
 
@@ -514,26 +348,18 @@ void menu_display_errlog(void)
 
 
 struct menu_t menu[] = {
-    { "Help", 	menu_display_help, 		0, 0 },
+    { "Help", 	"Keys functions",	menu_display_help, 		0, 0 },
 
-    { "Status", menu_display_status, 		0, menu_display_status },
-    { "Log", 	menu_display_errlog,            0, menu_display_errlog },
+    { "Net", 	"Network status",	menu_display_net_status, 	0, menu_display_net_status },
+    { "Log", 	"System log    ",      	menu_display_errlog,            0, menu_display_errlog },
 
-    { "Sens", 	menu_display_pressure, 		0, menu_display_pressure },
-    { "DIn", 	menu_display_di, 		0, menu_display_di },
+    { "Switch",	"Switch lights",	menu_display_io, 		0, menu_display_io },
 
-    { "Addr", 	menu_display_rs485addr, 	menu_event_rs485addr, 0 },
-    { "Spd", 	menu_display_rs485speed, 	menu_event_rs485speed, 0 },
-    { "Temp", 	menu_monitor_temperature, 	0, menu_monitor_temperature },
-    { "Map", 	menu_display_map, 		menu_event_map, 0 },
-    { "Scan", 	menu_display_scan, 		0, 0 },
+    { "Temp", 	"Show temperatures",	menu_monitor_temperature, 	0, menu_monitor_temperature },
+    { "Scan", 	"Rescan sensors",	menu_display_scan, 		0, 0 },
     
 
-
-
-    { "485I", 	menu_display_485_i, 		0, menu_monitor_485_i },
-    { "485O", 	menu_display_485_o, 		0, menu_monitor_485_o },
-    { "1wBus",  menu_display_bus,               0, menu_monitor_bus },
+    { "1wBus",  "1Wire bus status",	menu_display_bus,               0, menu_monitor_bus },
 };
 
 #define _MENU_SIZE ( (sizeof(menu)) / (sizeof(struct menu_t))  )

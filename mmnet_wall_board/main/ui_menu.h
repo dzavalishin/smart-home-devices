@@ -31,7 +31,7 @@
 struct menu_t
 {
 	char *name;
-//	char *long_name;
+	char *long_name;
 	void (*display)( void );
         void (*event)( void );
         void (*monitor)( void );        // Called every cycle
