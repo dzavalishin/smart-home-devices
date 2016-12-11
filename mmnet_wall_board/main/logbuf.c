@@ -22,6 +22,16 @@
 #include "util.h"
 
 #include <string.h>
+#include <stdio.h>
+
+#define SYSLOG_INTERNAL
+#include <sys/syslog.h>
+#include <time.h>
+
+#include <sys/confnet.h>
+#include <sys/confos.h>
+
+#include <arpa/inet.h>
 
 
 #define LOG_MEM_SZ 1024
@@ -202,6 +212,12 @@ static uint16_t log_get( char *data, uint16_t len, char **get_ptr_p )
 //
 // -----------------------------------------------------------------------
 
+static int syslog_fac = LOG_USER;
+static int syslog_mask = 0xFF;
+
+//static char *syslog_tag = ;
+
+#define syslog_tag modbus_device_id
 
 /*!
  * \brief Assemble syslog header.
@@ -211,37 +227,28 @@ static uint16_t log_get( char *data, uint16_t len, char **get_ptr_p )
  * \param pri Value of the syslog PRI part.
  *
  */
-static void syslog_header(int pri)
+static void mk_syslog_header(int pri)
 {
-    size_t rc;
+    char tmp[64];
 
-    /* Remove invalid bits. */
-    pri &= LOG_PRIMASK | LOG_FACMASK;
+    pri &= LOG_PRIMASK | LOG_FACMASK;                   // Remove invalid bits.
 
-    /* Check priority against setlog mask values. */
-    if ((LOG_MASK(LOG_PRI(pri)) & syslog_mask) == 0) {
-        return 0;
-    }
+    
+    if( (LOG_MASK(LOG_PRI(pri)) & syslog_mask) == 0 )   // Check priority against setlog mask values
+        return;
 
-    /* Set default facility if none specified. */
-    if ((pri & LOG_FACMASK) == 0) {
+    if( (pri & LOG_FACMASK) == 0 )                      // Set default facility if none specified
         pri |= syslog_fac;
-    }
 
+    if( snprintf(tmp, sizeof(tmp)-1, "<%d>", pri) > 0 ) // PRI field
+        log_puts( tmp );
 
-    /* PRI field.
-    ** This is common to all syslog formats. */
-    rc = sprintf(syslog_buf, "<%d>", pri);
-
-    /* VERSION field.
-    ** Note, that there is no space separator. */
-    syslog_buf[rc++] = '1';
+    log_put( "1", 1 );                                  // VERSION field. Note, that there is no space separator
 
     /* TIMESTAMP field. */
 #ifdef SYSLOG_OMIT_TIMESTAMP
 
-    syslog_buf[rc++] = ' ';
-    syslog_buf[rc++] = '-';
+    log_put( " -", 2 );
 
 #else
     {
@@ -251,54 +258,45 @@ static void syslog_header(int pri)
         time(&now);
 
         tip = gmtime(&now);
-        rc += sprintf(&syslog_buf[rc], " %04d-%02d-%02dT%02d:%02d:%02dZ",
-            tip->tm_year + 1900, tip->tm_mon + 1, tip->tm_mday,
-            tip->tm_hour, tip->tm_min, tip->tm_sec);
+        if( snprintf( tmp, sizeof(tmp)-1, " %04d-%02d-%02dT%02d:%02d:%02dZ",
+                      tip->tm_year + 1900, tip->tm_mon + 1, tip->tm_mday,
+                      tip->tm_hour, tip->tm_min, tip->tm_sec) > 0 )
+            log_puts( tmp );
 
     }
 #endif /* SYSLOG_OMIT_TIMESTAMP */
 
     /* HOSTNAME field. */
 #ifdef SYSLOG_OMIT_HOSTNAME
-
-    syslog_buf[rc++] = ' ';
-    syslog_buf[rc++] = '-';
-
+    log_put( " -", 2 );
 #else
 
-    syslog_buf[rc++] = ' ';
+    log_put( " ", 1 );
+
     if (confnet.cdn_cip_addr) {
-        strcpy(&syslog_buf[rc], inet_ntoa(confnet.cdn_cip_addr));
-        rc += strlen(&syslog_buf[rc]);
+        log_puts( inet_ntoa(confnet.cdn_cip_addr) );
     }
-    else if (confos.hostname[0]) {
-        strcpy(&syslog_buf[rc], confos.hostname);
-        rc += strlen(&syslog_buf[rc]);
+    else if( confos.hostname[0] ) {
+        log_puts( confos.hostname );
     }
     else if (confnet.cdn_ip_addr) {
-        strcpy(&syslog_buf[rc], inet_ntoa(confnet.cdn_ip_addr));
-        rc += strlen(&syslog_buf[rc]);
+        log_puts( inet_ntoa(confnet.cdn_ip_addr) );
     } else {
-        syslog_buf[rc++] = '-';
+        log_put( "-", 1 );
     }
 
 #endif /* SYSLOG_OMIT_HOSTNAME */
 
     /* APP-NAME field. */
-    if (syslog_taglen) {
-        syslog_buf[rc++] = ' ';
-        strcpy(&syslog_buf[rc], syslog_tag);
-        rc += syslog_taglen;
+    if( syslog_tag[0] ) {
+        log_put( " ", 1 );
+        log_puts( syslog_tag );
     }
+    else
+        log_put( " -", 2 );
 
     /* No PROCID and MSGID fields. */
-    syslog_buf[rc++] = ' ';
-    syslog_buf[rc++] = '-';
-    syslog_buf[rc++] = ' ';
-    syslog_buf[rc++] = '-';
-
-    syslog_buf[rc++] = ' ';
-    syslog_buf[rc] = '\0';
+    log_put( " - - ", 5 );
 
 }
 
@@ -314,31 +312,9 @@ static void syslog_header(int pri)
  */
 void vsyslog(int pri, const char *fmt, va_list ap)
 {
-    if( syslog_buf == 0 )
-    {
-        puts("Buffer == 0");
-        return;
-    }
-
-    /* Build the header. */
-    size_t cnt = 0; //syslog_header(pri);
-
-
-    //_write(_fileno(stdout), fmt, strlen(fmt));
-#if 1
-    //if (cnt)
-    {
-        /* Potentially dangerous. We need vsnprintf() * /
-        if (cnt + strlen(fmt) >= SYSLOG_MAXBUF) {
-            puts("Buffer overflow");
-            return;
-        } */
-        //cnt += vsprintf(&syslog_buf[cnt], fmt, ap);
-        //if(fmt) cnt += vsprintf(syslog_buf+cnt, fmt, ap);
-        if(fmt) cnt += vsnprintf(syslog_buf+cnt, SYSLOG_MAXBUF-cnt, fmt, ap);
-        syslog_flush(cnt);
-    }
-#endif
+    mk_syslog_header(pri); // Build the header
+    char buf[128];
+    if(fmt) vsnprintf( buf, sizeof(buf) - 1, fmt, ap );
 }
 
 /*!
