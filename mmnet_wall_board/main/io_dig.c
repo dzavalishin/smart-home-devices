@@ -84,9 +84,9 @@ void dio_init(void)
 
 
 uint8_t         dio_front_buttons_changed = 0;          // Front panel button in non-menu mode pressed
-uint8_t         dio_remote_state_changed = 0;           // We've got remote (MQTT broker) state changeg
-uint8_t         dio_remote_state = 0;                   // Remote state as we got from MQTT
-uint8_t         dio_state = 0;                   	// Our state as we know
+uint32_t        dio_remote_state_changed = 0;           // We've got remote (MQTT broker) state changeg
+uint32_t        dio_remote_state = 0;                   // Remote state as we got from MQTT
+uint32_t        dio_state = 0;                   	// Our state as we know
 
 
 

@@ -60,8 +60,17 @@ init_runtime_cfg()
     ee_cfg.ip_nntp	= 0; // Will use default route instead
     ee_cfg.ip_syslog	= inet_addr( DEFAULT_SYSLOGD );
     ee_cfg.ip_mqtt	= inet_addr( DEFAULT_MQTT );
+#if 0
+    strlcpy( ee_cfg.topics[0], "Light5A", sizeof( ee_cfg.topics[0] ) );
+    strlcpy( ee_cfg.topics[1], "Light5B", sizeof( ee_cfg.topics[1] ) );
+    strlcpy( ee_cfg.topics[2], "Light1A", sizeof( ee_cfg.topics[2] ) );
+    strlcpy( ee_cfg.topics[3], "Light1B", sizeof( ee_cfg.topics[3] ) );
 
-
+    strlcpy( ee_cfg.names[0], "Dinner L", sizeof( ee_cfg.names[0] ) );
+    strlcpy( ee_cfg.names[1], "Dinner R", sizeof( ee_cfg.names[1] ) );
+    strlcpy( ee_cfg.names[2], "Guest L", sizeof( ee_cfg.names[2] ) );
+    strlcpy( ee_cfg.names[3], "Guest R", sizeof( ee_cfg.names[3] ) );
+#endif
     //ee_cfg.ddr_e = 0x0F; // low 4 bits are default outputs
 
     unsigned char def_mac[] = { DEFAULT_MAC };
@@ -106,7 +115,9 @@ runtime_cfg_eeprom_read(void)
 
     if( crc != buf[0] ) return -1;
 
+    cli();
     ee_cfg = *((struct eeprom_cfg *) (buf+1));
+    sei();
     return 0;
 }
 
@@ -115,10 +126,10 @@ runtime_cfg_eeprom_write(void)
 {
     unsigned char buf[EESZ+1];
 
+    cli();
     void *mem = &ee_cfg;
     uint8_t crc = crc8 ( mem, sizeof(struct eeprom_cfg) );
 
-    cli();
     OnChipNvMemSave( EEPROM_CFG_BASE+1, mem, EESZ );
     OnChipNvMemSave( EEPROM_CFG_BASE, &crc, 1 );
 

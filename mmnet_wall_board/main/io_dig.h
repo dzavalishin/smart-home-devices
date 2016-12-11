@@ -27,12 +27,8 @@ unsigned char   dio_get_port_ouput_mask_bit( unsigned char port, unsigned char n
 
 //void            dio_set_default_output_state( void ); // Used on start and if communications are lost
 
-//void set_half_duplex0( char val );
-//void set_half_duplex1( char val );
 
 
-//void add_exclusion_mask( unsigned char exclPos, unsigned char bitmask );
-//#define add_exclusion_pin(p,b) add_exclusion_mask(p,_BV(b))
 
 extern dev_major io_dig;
 
@@ -56,9 +52,9 @@ extern dev_major io_dig;
 
 
 extern uint8_t         dio_front_buttons_changed;       // Front panel button in non-menu mode pressed
-extern uint8_t         dio_remote_state_changed;        // We've got remote (MQTT broker) state changeg
-extern uint8_t         dio_remote_state;		// Remote state as we got from MQTT
-extern uint8_t         dio_state;			// Our state as we know
+extern uint32_t        dio_remote_state_changed;        // We've got remote (MQTT broker) state changeg
+extern uint32_t        dio_remote_state;		// Remote state as we got from MQTT
+extern uint32_t        dio_state;			// Our state as we know, for up to 32 channels
 
 
 

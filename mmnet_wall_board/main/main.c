@@ -17,6 +17,8 @@
 #include "runtime_cfg.h"
 #include "servant.h"
 
+//#include "delay.h"
+
 #include <dev/nicrtl.h>
 #include <dev/debug.h>
 #include <dev/urom.h>
@@ -143,14 +145,14 @@ int main(void)
 
     // DO VERY EARLY!
     init_runtime_cfg();         // Load defaults
-    runtime_cfg_eeprom_read();  // Now attempt to load saved state
 
     led_ddr_init(); // Before using LED!
     LED_ON;
 
-    //set_half_duplex0(0);
-    //set_half_duplex1(1);
+    // [dz] hangs on empty eeprom
+    //runtime_cfg_eeprom_read();  // Now attempt to load saved state
 
+#if 1
     // Initialize the uart device.
     if( RT_IO_ENABLED(IO_LOG) )
     {
@@ -182,11 +184,15 @@ int main(void)
         NutRegisterDevice(&devNull, 0, 0);
         freopen("null", "w", stdout);
     }
-
+#endif
     // We need it here because we use 1-wire 2401 serial as MAC address
     init_devices();
-    led_ddr_init(); // Before using LED!
-    LED_ON;
+    //led_ddr_init(); // Before using LED!
+    //LED_ON;
+    //LED_OFF;
+
+    //while(1) {  LED_ON; delay_us(100); LED_OFF; delay_us(1000);  }
+
 
     lcd_status_line("Network");
     init_net();

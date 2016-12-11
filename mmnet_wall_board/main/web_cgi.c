@@ -322,14 +322,15 @@ static int CgiOutputsRow( FILE * stream, int row_no )
     row_no -= 1;
 #endif
 
-    if( row_no  < 8 )
+    uint8_t n_dio = sizeof(dio_state) * 8;
+    if( row_no  < n_dio )
     {
         static prog_char tfmt[] = "<TR><TD> Channel </TD><TD> %u </TD><TD> %s </TD></TR>\r\n";
-        fprintf_P(stream, tfmt,  row_no, (dio_state & (1 << row_no)) ? "on" : "off" );
+        fprintf_P(stream, tfmt,  row_no, (dio_state & (1L << row_no)) ? "ON" : "off" );
 
         return 1;
     }
-    row_no -= 8;
+    row_no -= n_dio;
 
 
 

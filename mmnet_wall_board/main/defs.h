@@ -76,7 +76,7 @@ extern char *makeDate; // filled in by makefile
 //#	define N_1W_BUS 1
 #	undef N_1W_BUS
 #else
-#	define N_1W_BUS 7
+#	define N_1W_BUS 1
 #endif
 
 #define B1W_NON_FIXED_PORT 1

@@ -69,6 +69,8 @@ struct eeprom_cfg
 
     // MQTT topics
     char                topics[EEPROM_CFG_N_TOPICS][EEPROM_CFG_MAX_TOPIC_LEN];
+    // Corresponding human readable names
+    char                names[EEPROM_CFG_N_TOPICS][EEPROM_CFG_MAX_TOPIC_LEN];
 
     // MQTT topic prefix
     char                topic_prefix[EEPROM_CFG_MAX_TOPIC_LEN];

@@ -121,13 +121,13 @@ void mqtt_recv_item( const char *mqtt_name, const char *data )
 
     // Now put to local data structure
 
-    if( ch >= 8 )
+    if( ch >= (8*sizeof(dio_remote_state)) )
     {
         printf("ch %d >= 8", ch);
         return;
     }
 
-    uint8_t mask = 1 << ch;
+    uint32_t mask = 1 << ch;
 
     dio_remote_state_changed |= mask;
     dio_remote_state &= ~mask;

@@ -69,8 +69,8 @@ void init_temperature(void)
 
     clear_temperature_data();
 
-    if( !(RT_IO_ENABLED(IO_1W1)|RT_IO_ENABLED(IO_1W8)) )
-        return;
+    //if( !(RT_IO_ENABLED(IO_1W1)|RT_IO_ENABLED(IO_1W8)) )        return;
+
 #if B1W_NON_FIXED_PORT
 
     // Bus 0 - usual PG4 bus, 1-7 - buses on PB
@@ -211,8 +211,7 @@ static void request_temperature_measurement(void);
 // Called from main loop once a second
 void temp_meter_measure(void)
 {
-    if( !(RT_IO_ENABLED(IO_1W1)|RT_IO_ENABLED(IO_1W8)) )
-        return;
+    //if( !(RT_IO_ENABLED(IO_1W1)|RT_IO_ENABLED(IO_1W8)) )        return;
 
     // Read data from the previous cycle
     read_temperature_data();
@@ -225,8 +224,7 @@ static uint8_t timerCallNumber = 0;
 
 void temp_meter_measure(void)
 {
-    if( !(RT_IO_ENABLED(IO_1W1)|RT_IO_ENABLED(IO_1W8)) )
-        return;
+    //if( !(RT_IO_ENABLED(IO_1W1)|RT_IO_ENABLED(IO_1W8)) )        return;
 
 
     switch(timerCallNumber++)
