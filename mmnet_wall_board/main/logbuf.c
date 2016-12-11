@@ -128,6 +128,14 @@ static void log_put( const char *data, uint16_t len )
     }
 }
 
+// general log puts func
+static void log_puts( const char *data )
+{
+    uint16_t len = strlen(data);
+    log_put( data, len );
+}
+
+
 // -----------------------------------------------------------------------
 //
 // Read
@@ -190,10 +198,176 @@ static uint16_t log_get( char *data, uint16_t len, char **get_ptr_p )
 
 // -----------------------------------------------------------------------
 //
-// General syslog entry point
+// General syslog entry points
 //
 // -----------------------------------------------------------------------
 
+
+/*!
+ * \brief Assemble syslog header.
+ *
+ * For internal use only.
+ *
+ * \param pri Value of the syslog PRI part.
+ *
+ */
+static void syslog_header(int pri)
+{
+    size_t rc;
+
+    /* Remove invalid bits. */
+    pri &= LOG_PRIMASK | LOG_FACMASK;
+
+    /* Check priority against setlog mask values. */
+    if ((LOG_MASK(LOG_PRI(pri)) & syslog_mask) == 0) {
+        return 0;
+    }
+
+    /* Set default facility if none specified. */
+    if ((pri & LOG_FACMASK) == 0) {
+        pri |= syslog_fac;
+    }
+
+
+    /* PRI field.
+    ** This is common to all syslog formats. */
+    rc = sprintf(syslog_buf, "<%d>", pri);
+
+    /* VERSION field.
+    ** Note, that there is no space separator. */
+    syslog_buf[rc++] = '1';
+
+    /* TIMESTAMP field. */
+#ifdef SYSLOG_OMIT_TIMESTAMP
+
+    syslog_buf[rc++] = ' ';
+    syslog_buf[rc++] = '-';
+
+#else
+    {
+        time_t now;
+        struct _tm *tip;
+
+        time(&now);
+
+        tip = gmtime(&now);
+        rc += sprintf(&syslog_buf[rc], " %04d-%02d-%02dT%02d:%02d:%02dZ",
+            tip->tm_year + 1900, tip->tm_mon + 1, tip->tm_mday,
+            tip->tm_hour, tip->tm_min, tip->tm_sec);
+
+    }
+#endif /* SYSLOG_OMIT_TIMESTAMP */
+
+    /* HOSTNAME field. */
+#ifdef SYSLOG_OMIT_HOSTNAME
+
+    syslog_buf[rc++] = ' ';
+    syslog_buf[rc++] = '-';
+
+#else
+
+    syslog_buf[rc++] = ' ';
+    if (confnet.cdn_cip_addr) {
+        strcpy(&syslog_buf[rc], inet_ntoa(confnet.cdn_cip_addr));
+        rc += strlen(&syslog_buf[rc]);
+    }
+    else if (confos.hostname[0]) {
+        strcpy(&syslog_buf[rc], confos.hostname);
+        rc += strlen(&syslog_buf[rc]);
+    }
+    else if (confnet.cdn_ip_addr) {
+        strcpy(&syslog_buf[rc], inet_ntoa(confnet.cdn_ip_addr));
+        rc += strlen(&syslog_buf[rc]);
+    } else {
+        syslog_buf[rc++] = '-';
+    }
+
+#endif /* SYSLOG_OMIT_HOSTNAME */
+
+    /* APP-NAME field. */
+    if (syslog_taglen) {
+        syslog_buf[rc++] = ' ';
+        strcpy(&syslog_buf[rc], syslog_tag);
+        rc += syslog_taglen;
+    }
+
+    /* No PROCID and MSGID fields. */
+    syslog_buf[rc++] = ' ';
+    syslog_buf[rc++] = '-';
+    syslog_buf[rc++] = ' ';
+    syslog_buf[rc++] = '-';
+
+    syslog_buf[rc++] = ' ';
+    syslog_buf[rc] = '\0';
+
+}
+
+/*!
+ * \brief Print log message.
+ *
+ * Alternate form of syslog(), in which the arguments have already been captured
+ * using the variable-length argument facilities.
+ *
+ * \param pri Priority level of this message. See syslog().
+ * \param fmt Format string containing conversion specifications like printf.
+ * \param ap  List of arguments.
+ */
+void vsyslog(int pri, const char *fmt, va_list ap)
+{
+    if( syslog_buf == 0 )
+    {
+        puts("Buffer == 0");
+        return;
+    }
+
+    /* Build the header. */
+    size_t cnt = 0; //syslog_header(pri);
+
+
+    //_write(_fileno(stdout), fmt, strlen(fmt));
+#if 1
+    //if (cnt)
+    {
+        /* Potentially dangerous. We need vsnprintf() * /
+        if (cnt + strlen(fmt) >= SYSLOG_MAXBUF) {
+            puts("Buffer overflow");
+            return;
+        } */
+        //cnt += vsprintf(&syslog_buf[cnt], fmt, ap);
+        //if(fmt) cnt += vsprintf(syslog_buf+cnt, fmt, ap);
+        if(fmt) cnt += vsnprintf(syslog_buf+cnt, SYSLOG_MAXBUF-cnt, fmt, ap);
+        syslog_flush(cnt);
+    }
+#endif
+}
+
+/*!
+ * \brief Print log message.
+ *
+ * The message is tagged with priority.
+ *
+ * \param pri Priority level of this message, selected from the following
+ *            ordered list (high to low):
+ *            - LOG_EMERG   A panic condition.
+ *            - LOG_ALERT   A condition that should be corrected immediately.
+ *            - LOG_CRIT    Critical conditions, e.g., hard device errors.
+ *            - LOG_ERR     Errors.
+ *            - LOG_WARNING Warning messages.
+ *            - LOG_NOTICE  Conditions that are not error conditions, but should
+ *                          possibly be handled specially.
+ *            - LOG_INFO    Informational messages.
+ *            - LOG_DEBUG   Messages that contain information normally of use only
+ *                          when debugging a program.
+ * \param fmt Format string containing conversion specifications like printf.
+ */
+void syslog(int pri, const char *fmt, ...)
+{
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsyslog(pri, (char *) fmt, ap);
+    va_end(ap);
+}
 
 
 // -----------------------------------------------------------------------
