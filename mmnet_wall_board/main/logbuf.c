@@ -61,6 +61,8 @@ static uint32_t syslog_server;
 static uint16_t syslog_port = SYSLOG_PORT;
 
 
+#define LOGBUF_DEBUG 1
+
 
 // -----------------------------------------------------------------------
 //
@@ -76,7 +78,7 @@ void log_init( void )
 
 void log_syslog_init( void )
 {
-    NutThreadCreate("SysLog", syslog_out, 0, 640);
+    //NutThreadCreate("SysLog", syslog_out, 0, 640);
     syslog_sock = NutUdpCreateSocket( syslog_port );
 }
 
@@ -106,11 +108,14 @@ static void wrap_buf_ptr( char **get_pos_p )
 // Move forward get pos if put overlaps unread area
 static void update_get_pos( char **get_pos_p, uint16_t len )
 {
+    wrap_buf_ptr( &put_pos ); // make sure
 
     if( *get_pos_p <= put_pos ) return; // we do not overlap, return; we assume put_part never crosses buffer end
 
-    if( *get_pos_p <= (put_pos+len) )
-        *get_pos_p = put_pos+len+1;
+    char *new_put_pos = put_pos+len;
+
+    if( *get_pos_p <= new_put_pos )
+        *get_pos_p = new_put_pos+1;
 
     wrap_buf_ptr( get_pos_p );
 }
@@ -133,6 +138,8 @@ static uint16_t log_put_part( const char *data, uint16_t len )
     update_get_pos( &http_get_pos, len );
     update_get_pos( &syslog_get_pos, len );
 
+    if( LOGBUF_DEBUG ) printf("log_put_part place_left=%d http_get_pos=%p logbuf=%p '%.*s'\n", place_left, http_get_pos, logbuf, len, data );
+
     if( len > place_left )
         len = place_left;
 
@@ -152,6 +159,9 @@ static void log_put( const char *data, uint16_t len )
     while( len > 0 )
     {
         uint16_t done = log_put_part( data, len );
+
+        if( LOGBUF_DEBUG ) printf("log_put_part( data %p, len %d ) = %d\n", data, len, done );
+
         if( done == 0 ) return; // can't be
 
         len -= done;
@@ -160,7 +170,7 @@ static void log_put( const char *data, uint16_t len )
 }
 
 // general log puts func
-static void log_puts( const char *data )
+void log_puts( const char *data )
 {
     uint16_t len = strlen(data);
     log_put( data, len );
@@ -179,7 +189,13 @@ static uint16_t log_get_part( char *dest, uint16_t dest_sz, char **get_ptr_p )
 {
     uint16_t len = 0;
 
+    if( LOGBUF_DEBUG ) printf( "log_get_part( dest %p, sz %d, get_ptr_p %p (->%p) ), logbuf %p\n", dest, dest_sz, get_ptr_p, *get_ptr_p, logbuf );
+    if( LOGBUF_DEBUG ) printf( "put_pos %p\n", put_pos );
+
     push_cli();
+
+
+    if( *get_ptr_p == put_pos ) goto nothing;
 
     if( *get_ptr_p < put_pos )
     {
@@ -187,7 +203,7 @@ static uint16_t log_get_part( char *dest, uint16_t dest_sz, char **get_ptr_p )
         if( len > dest_sz )
             len = dest_sz;
 
-        strlcpy( dest, *get_ptr_p, len );
+        memcpy( dest, *get_ptr_p, len );
     }
     else
     {
@@ -196,18 +212,23 @@ static uint16_t log_get_part( char *dest, uint16_t dest_sz, char **get_ptr_p )
         if( len > dest_sz )
             len = dest_sz;
 
-        strlcpy( dest, *get_ptr_p, len );
+        memcpy( dest, *get_ptr_p, len );
     }
 
+    *get_ptr_p += len;
     wrap_buf_ptr( get_ptr_p );
 
+nothing:
     pop_sti();
+
+    if( LOGBUF_DEBUG ) printf( "wrapped get_ptr_p -> %p ), get '%.*s'\n", *get_ptr_p, len, dest );
+
     return len;
 
 }
 
-
-// general log get func
+# if 0
+// general log get func - NB: doesn't add final \0
 static uint16_t log_get( char *data, uint16_t len, char **get_ptr_p )
 {
     uint16_t rlen = 0;
@@ -225,7 +246,7 @@ static uint16_t log_get( char *data, uint16_t len, char **get_ptr_p )
 
     return rlen;
 }
-
+#endif
 
 // -----------------------------------------------------------------------
 //
@@ -268,7 +289,7 @@ static void mk_syslog_header(int pri)
     log_put( "1", 1 );                                  // VERSION field. Note, that there is no space separator
 
     /* TIMESTAMP field. */
-#ifdef SYSLOG_OMIT_TIMESTAMP
+#if 1 //def SYSLOG_OMIT_TIMESTAMP
 
     log_put( " -", 2 );
 
@@ -289,7 +310,7 @@ static void mk_syslog_header(int pri)
 #endif /* SYSLOG_OMIT_TIMESTAMP */
 
     /* HOSTNAME field. */
-#ifdef SYSLOG_OMIT_HOSTNAME
+#if 1 //def SYSLOG_OMIT_HOSTNAME
     log_put( " -", 2 );
 #else
 
@@ -332,9 +353,14 @@ static void mk_syslog_header(int pri)
  */
 void vsyslog(int pri, const char *fmt, va_list ap)
 {
-    mk_syslog_header(pri); // Build the header
+    //mk_syslog_header(pri); // Build the header
     char buf[128];
-    if(fmt) vsnprintf( buf, sizeof(buf) - 1, fmt, ap );
+    if(fmt)
+    {
+        int len = vsnprintf( buf, sizeof(buf) - 1, fmt, ap );
+        if( len > 0 )
+            log_put( buf, len );
+    }
 }
 
 /*!
@@ -533,16 +559,33 @@ THREAD(syslog_out, __arg)
 void log_http_send( FILE * stream )
 {
     char *copy = http_get_pos; // don't update http_get_pos, put will push it around
+    char *nl;
 
     while( 1 )
     {
         char buf[16];
 
-        uint16_t done = log_get_part( buf, sizeof(buf), &copy );
+        uint16_t done = log_get_part( buf, sizeof(buf)-1, &copy );
         if( done == 0 )
             break;
 
-        fwrite( buf, done, 1, stream );
+        buf[ done ] = 0;
+
+        if( LOGBUF_DEBUG ) printf( "log_get_part=%d '0x%x'\n", done, buf[2] );
+
+        char *ptr = buf;
+
+        while( 0 != (nl = strchr( ptr, '\n' )) )
+        {
+            size_t len = nl-ptr;
+            fwrite( ptr, len, 1, stream );
+            fwrite( "<br>\n", 5, 1, stream );
+
+            ptr = nl+1;
+            done -= len+1;
+        }
+
+        fwrite( ptr, done, 1, stream );
     }
 
 }
@@ -560,67 +603,7 @@ uint16_t log_http_read( char *dest, uint16_t dest_sz )
     char *copy = http_get_pos; // don't update http_get_pos, put will push it around
 
     return log_get( dest, dest_sz, &copy );
-/*
-    while( dest_sz > 0 )
-    {
-        uint16_t plen = log_get_part( dest, dest_sz, &copy );
-        if( plen == 0 )
-            break;
-
-        rlen += plen;
-        dest += plen;
-        dest_sz -= plen;
-    }
-
-    return rlen;
-*/
 }
 #endif
 
-/*
-// We read maximum possible data chunk each call
-uint16_t log_http_read( char *dest, uint16_t dest_sz )
-{
-    uint16_t len = 0;
-
-    if( http_get_pos == logbuf )
-        return 0;
-
-    push_cli();
-
-    if( http_get_pos < put_pos )
-    {
-        len = put_pos-http_get_pos;
-        if( len > dest_sz )
-            len = dest_sz;
-
-        strlcpy( dest, http_get_pos, len );
-    }
-    else
-    {
-        uint16_t part_len = place_to_end_of_buf( http_get_pos );
-
-        if( part_len > dest_sz )
-            part_len = dest_sz;
-
-        strlcpy( dest, http_get_pos, part_len );
-
-        len += part_len;
-        dest_sz -= part_len;
-        dest += part_len;
-
-        part_len = put_pos - logbuf;
-
-        if( part_len > dest_sz )
-            part_len = dest_sz;
-
-        strlcpy( dest, http_get_pos, part_len );
-
-        len += part_len;
-    }
-
-    pop_sti();
-    return len;
-}
-*/
 
