@@ -85,7 +85,7 @@ static void init_httpd(void);
 static void init_sntp(void);
 
 #if ENABLE_SYSLOG
-static void init_syslog(void);
+//static void init_syslog(void);
 #endif
 
 // in servant.c
@@ -112,7 +112,8 @@ THREAD(long_init, __arg)
 
 #if ENABLE_SYSLOG
         lcd_status_line("Syslog");
-        init_syslog();
+        //init_syslog();
+        log_syslog_init();
 #endif
 
 
@@ -143,6 +144,8 @@ int main(void)
 {
     NutThreadSetSleepMode(SLEEP_MODE_IDLE); // Let the CPU sleep in idle
 
+    log_init();
+
     // DO VERY EARLY!
     init_runtime_cfg();         // Load defaults
 
@@ -150,7 +153,7 @@ int main(void)
     LED_ON;
 
     // [dz] hangs on empty eeprom
-    //runtime_cfg_eeprom_read();  // Now attempt to load saved state
+    runtime_cfg_eeprom_read();  // Now attempt to load saved state
 
 #if 1
     // Initialize the uart device.
@@ -192,6 +195,8 @@ int main(void)
     //LED_OFF;
 
     //while(1) {  LED_ON; delay_us(100); LED_OFF; delay_us(1000);  }
+    //syslog( LOG_INFO, "Network init" );
+    log_puts( "logging started\n" );
 
 
     lcd_status_line("Network");
@@ -244,6 +249,7 @@ int main(void)
 static void init_net(void)
 {
 //    char tries = 250; // make sure we are really have DHCP address
+    log_puts( "net init - 1 2 3 4 5\n" );
 
 #if DEV1
     // Register Ethernet controller
@@ -306,11 +312,12 @@ static void init_net(void)
     // Use static ip address
     NutNetIfConfig( netdev, ee_cfg.mac_addr, ee_cfg.ip_addr, ee_cfg.ip_mask);
 
+    //log_puts( "net init done\n" );
 
 
 dhcp_ok:
-    printf("Network ready, addr=%s\n", inet_ntoa(confnet.cdn_ip_addr));
-
+    //printf("Network ready, addr=%s\n", inet_ntoa(confnet.cdn_ip_addr));
+    syslog( LOG_INFO, "Network ready, addr=%s", inet_ntoa(confnet.cdn_ip_addr));
 }
 
 
@@ -331,7 +338,7 @@ static void init_cgi(void)
 
     // OpenHAB integration - read (/write&) value with http
     NutRegisterCgi("item.cgi", CgiNetIO );
-
+    NutRegisterCgi("log.cgi", CgiLog );
     // Protect the cgi-bin directory with user and password.
     //NutRegisterAuth("cgi-bin", "root:root");
 
@@ -367,6 +374,7 @@ static void init_sntp(void)
 #endif
 
 #if ENABLE_SYSLOG
+/*
 static void init_syslog(void)
 {
     openlog( DEVICE_NAME, LOG_PERROR, LOG_USER );
@@ -379,7 +387,8 @@ static void init_syslog(void)
     //syslog( LOG_INFO, 0 );
     syslog( LOG_INFO, "!! mmnet !!", 0 );
     //syslog( LOG_INFO, "%s started on Nut/OS %s, build from %s", DEVICE_NAME, NutVersionString(), makeDate );
-}
+    }
+*/
 #endif
 
 

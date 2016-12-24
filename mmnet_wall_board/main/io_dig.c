@@ -100,6 +100,8 @@ static void dio_process( void )
     uint8_t fb_ch = dio_front_buttons_changed;
     uint8_t re_ch = dio_remote_state_changed;
 
+    dio_input();
+
     // Process state changes from MQTT or front buttons
 
     // Nothing changed? no work.

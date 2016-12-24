@@ -36,6 +36,9 @@
 #define MQTT_READ_TIMEOUT 60
 
 
+#define mqtt_debug 0
+
+
 THREAD(mqtt_recv, __arg);
 
 static MUTEX mqttSend;
@@ -45,7 +48,6 @@ uint32_t  mqtt_io_count = 0;
 
 static int need_restart = 0;
 
-#define mqtt_debug 1
 
 mqtt_broker_handle_t broker;
 
@@ -138,7 +140,7 @@ static int init_socket(mqtt_broker_handle_t* broker, const char* hostname, short
         return -1;
     }
 
-printf("mqtt_init sock=%p\n", mqtt_sock );
+    if(mqtt_debug) printf("mqtt_init sock=%p\n", mqtt_sock );
 #warning sock opt
     /*
      // Disable Nagle Algorithm
@@ -152,7 +154,7 @@ printf("mqtt_init sock=%p\n", mqtt_sock );
 
     rc = NutTcpSetSockOpt( mqtt_sock, SO_RCVTIMEO, &to, sizeof(to) );
 
-printf("mqtt_init sock opt, connecting TCP socket\n" );
+    if(mqtt_debug) printf("mqtt_init sock opt, connecting TCP socket\n" );
 
     rc = NutTcpConnect( mqtt_sock, server_ip, port);
     if(rc < 0)
@@ -161,7 +163,7 @@ printf("mqtt_init sock opt, connecting TCP socket\n" );
         return -1;
     }
 
-printf("mqtt_init sock connect\n" );
+    if(mqtt_debug) printf("mqtt_init sock connect\n" );
 
     // MQTT stuffs
     mqtt_set_alive(broker, keepalive);
@@ -290,7 +292,8 @@ uint8_t subscribe( const char *topic )
         return -3;
     }
 
-    printf("subscribe %s done\n", topic );
+    if(mqtt_debug) printf("subscribe %s done\n", topic );
+    syslog( LOG_NOTICE, "subscribe %s done", topic );
 
     return 0;
 }
@@ -328,7 +331,7 @@ THREAD(mqtt_recv, __arg)
         if( need_restart )
         {
             NutSleep( 1000 );
-printf("mqtt_init thread close socket\n");
+            if(mqtt_debug) printf("mqtt_init thread close socket\n");
 
             if( mqtt_sock != 0 )
             {
@@ -339,7 +342,9 @@ printf("mqtt_init thread close socket\n");
                 }
                 mqtt_sock = 0;
             }
-printf("mqtt_init thread init socket\n");
+
+            if(mqtt_debug) printf("mqtt_init thread init socket\n");
+
             rc = init_socket( &broker, ee_cfg.mqtt_host, ee_cfg.mqtt_port );
             if( rc < 0)
             {
@@ -365,7 +370,7 @@ printf("mqtt_init thread init socket\n");
                 continue;
             }
 
-            printf("Connected, subscribe\n" );
+            if(mqtt_debug) printf("Connected, subscribe\n" );
 
 	    //#warning todo subscribe list
             //if( subscribe( "/aa" ) ) continue;
@@ -408,7 +413,7 @@ printf("mqtt_init thread init socket\n");
 
             if( (read_err_cnt > 1000) || (len < 0) )
             {
-                printf( "MQTT: too many read errors (%d), reconnect\n", read_err_cnt );
+                if(mqtt_debug) printf( "MQTT: too many read errors (%d), reconnect\n", read_err_cnt );
                 need_restart = 1;
                 read_err_cnt = 0;
             }
@@ -421,7 +426,7 @@ printf("mqtt_init thread init socket\n");
             continue; // Just ignore? TODO
 
         // Don't report ping replys
-        printf( "MQTT: got pkt len=%d type=%d\n", len, type>>4 );
+        if(mqtt_debug) printf( "MQTT: got pkt len=%d type=%d\n", len, type>>4 );
 
         if( type == MQTT_MSG_PUBLISH)
         {

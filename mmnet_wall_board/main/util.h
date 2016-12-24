@@ -1,10 +1,60 @@
 #include <inttypes.h>
 #include <avr/pgmspace.h>
 #include <stdio.h>
+#include <io.h>
+
+// log levels - move here?
+#include <sys/syslog.h>
+
 
 #include "defs.h"
 
+#define push_cli() uint8_t __save_SREG = SREG; cli();
+#define pop_sti() SREG = __save_SREG;
+
+
 void lcd_status_line(const char *msg);
+
+
+
+void log_init( void );
+void log_syslog_init( void );
+
+void log_puts( const char *data );
+
+#if ENABLE_SYSLOG
+
+#if 0
+void syslog(int pri, const char *fmt, ...);
+void vsyslog(int pri, const char *fmt, va_list ap);
+
+#else
+
+void mk_syslog_header(int pri);
+void log_put( const char *data, uint16_t len );
+
+
+#define syslog( __pri, __fmt, ... ) do {\
+    mk_syslog_header(__pri); 					\
+    char ___buf[128];                                           \
+    if(__fmt)                                                   \
+    {                                                           \
+        int len = snprintf( ___buf, sizeof(___buf) - 1, __fmt, __VA_ARGS__ ); \
+        if( len > 0 )                                           \
+            log_put( ___buf, len );                             \
+    }                                                           \
+    } while(0)
+
+#endif
+
+
+#else
+
+#define syslog( __pri, __fmt, ... ) printf( __fmt "\n", __VA_ARGS__ )
+
+#endif
+
+
 
 
 char hexdigit( unsigned char d );

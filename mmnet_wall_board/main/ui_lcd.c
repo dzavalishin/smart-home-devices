@@ -5,6 +5,7 @@
 #include <compat/deprecated.h>
 #include <avr/io.h>
 #include <stdlib.h>
+#include <arpa/inet.h>
 
 #include "runtime_cfg.h"
 

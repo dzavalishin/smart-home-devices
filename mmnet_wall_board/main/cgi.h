@@ -12,3 +12,8 @@ int CgiOutputs( FILE * stream, REQUEST * req );
 int CgiNetwork( FILE * stream, REQUEST * req );
 int CgiStatus( FILE * stream, REQUEST * req );
 
+
+void log_http_send( FILE * stream );
+int CgiLog(FILE * stream, REQUEST * req);
+
+

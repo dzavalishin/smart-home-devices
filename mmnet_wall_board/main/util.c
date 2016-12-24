@@ -67,6 +67,7 @@ void lcd_status_line(const char *msg)
     lcd_puts( msg );
     lcd_puts("          ");
     lcd_gotoxy( 0, 0 );
+    //syslog( LOG_INFO, "Status: %s", msg );
 }
 
 

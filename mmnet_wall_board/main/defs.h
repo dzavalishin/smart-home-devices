@@ -33,7 +33,7 @@ extern char *makeDate; // filled in by makefile
 // Configuration (on/off/number) of ins/outs
 // ------------------------------------------------------------------------
 
-#define	SERVANT_NPWM	4	// Analogue outputs (PWM) count
+#define	SERVANT_NPWM	1	// Analogue outputs (PWM) count
 
 //#define	SERVANT_NDIG	7	// количество цифровых портов (входы)  - bytes
 //#define	SERVANT_NDIGOUT	0	// количество цифровых портов (выходы) - bytes
@@ -135,8 +135,8 @@ extern char *makeDate; // filled in by makefile
 
 
 
-#define ETHERNET_INTERRUPT_EXCLPOS      4 // Port E
-#define ETHERNET_INTERRUPT_PIN 		PE5
+//#define ETHERNET_INTERRUPT_EXCLPOS      4 // Port E
+//#define ETHERNET_INTERRUPT_PIN 		PE5
 /*
 #define DATAFLASH_EXCLPOS      		1 // Port B
 #define DATAFLASH_SCK_PIN 		PB1
@@ -175,10 +175,11 @@ extern char *makeDate; // filled in by makefile
 
 
 // On 0 we conflict with OS?
-#define EEPROM_CFG_BASE 		1024
+#define EEPROM_CFG_BASE 		512
 
 // Number of MQTT topics we save in config
-#define EEPROM_CFG_N_TOPICS 		16
+//#define EEPROM_CFG_N_TOPICS 		16
+#define EEPROM_CFG_N_TOPICS             8
 
 // Max length of topic name in EEPROM
 #define EEPROM_CFG_MAX_TOPIC_LEN        32

@@ -1,3 +1,4 @@
+# if 0
 /*
  * Copyright (C) 2004 by egnite Software GmbH. All rights reserved.
  *
@@ -477,4 +478,7 @@ void closelog(void)
 }
 
 /*@}*/
+
+
+#endif // 0
 

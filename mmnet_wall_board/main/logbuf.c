@@ -61,7 +61,7 @@ static uint32_t syslog_server;
 static uint16_t syslog_port = SYSLOG_PORT;
 
 
-#define LOGBUF_DEBUG 1
+#define LOGBUF_DEBUG 0
 
 
 // -----------------------------------------------------------------------
@@ -153,9 +153,13 @@ static uint16_t log_put_part( const char *data, uint16_t len )
     return len;
 }
 
-// general log put func
-static void log_put( const char *data, uint16_t len )
+// general log put func, main entrance to log buffer
+void log_put( const char *data, uint16_t len )
 {
+#if 1
+    printf("\r%.*s\n", len, data );
+#endif
+
     while( len > 0 )
     {
         uint16_t done = log_put_part( data, len );
@@ -254,6 +258,8 @@ static uint16_t log_get( char *data, uint16_t len, char **get_ptr_p )
 //
 // -----------------------------------------------------------------------
 
+#if ENABLE_SYSLOG
+
 static int syslog_fac = LOG_USER;
 static int syslog_mask = 0xFF;
 static int syslog_stat;
@@ -270,7 +276,7 @@ static int syslog_stat;
  * \param pri Value of the syslog PRI part.
  *
  */
-static void mk_syslog_header(int pri)
+void mk_syslog_header(int pri)
 {
     char tmp[64];
 
@@ -340,7 +346,7 @@ static void mk_syslog_header(int pri)
     log_put( " - - ", 5 );
 
 }
-
+#if 0
 /*!
  * \brief Print log message.
  *
@@ -353,11 +359,14 @@ static void mk_syslog_header(int pri)
  */
 void vsyslog(int pri, const char *fmt, va_list ap)
 {
-    //mk_syslog_header(pri); // Build the header
+    mk_syslog_header(pri); // Build the header
     char buf[128];
     if(fmt)
     {
-        int len = vsnprintf( buf, sizeof(buf) - 1, fmt, ap );
+        // dies!
+        //int len = vsnprintf( buf, sizeof(buf) - 1, fmt, ap );
+
+        int len = vsprintf( buf, fmt, ap );
         if( len > 0 )
             log_put( buf, len );
     }
@@ -384,13 +393,14 @@ void vsyslog(int pri, const char *fmt, va_list ap)
  */
 void syslog(int pri, const char *fmt, ...)
 {
+
     va_list ap;
 
     va_start(ap, fmt);
     vsyslog(pri, (char *) fmt, ap);
     va_end(ap);
 }
-
+#endif
 
 
 // -----------------------------------------------------------------------
@@ -547,7 +557,7 @@ THREAD(syslog_out, __arg)
 
 
 
-
+#endif // ENABLE_SYSLOG
 
 // -----------------------------------------------------------------------
 //

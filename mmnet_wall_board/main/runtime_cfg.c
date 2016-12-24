@@ -98,6 +98,27 @@ init_runtime_cfg()
 
 }
 
+/*
+__ATTR_PURE__ static __inline__ uint8_t eeprom_read_byte (uint8_t addr)
+{
+    EEAR = addr;
+
+ ////////////////////////////////////////////////////////////
+  // here fixed ERRATA Bug "Reading EEPROM by using ST or STS
+  // to set EERE bit triggers unexpected interrupt request"
+  // EECR |= (1 << EERE);
+  __asm__ __volatile__ (
+        "sbi    %[__eecr], %[__eere]    \n\t"
+        :
+        : [__eecr] "i" (_SFR_IO_ADDR(EECR)),
+         [__eere] "i" (EERE)
+    );
+  return EEDR;
+}
+*/
+
+static void eeload( uint16_t base, void *buf, uint16_t size );
+static void eesave( uint16_t base, void *buf, uint16_t size );
 
 
 #define EESZ (sizeof(struct eeprom_cfg))
@@ -108,7 +129,8 @@ runtime_cfg_eeprom_read(void)
     unsigned char buf[EESZ+1];
 
     cli();
-    OnChipNvMemLoad( EEPROM_CFG_BASE, buf, EESZ + 1 );
+    //OnChipNvMemLoad( EEPROM_CFG_BASE, buf, EESZ + 1 );
+    eeload( EEPROM_CFG_BASE, buf, EESZ + 1 );
     sei();
 
     uint8_t crc = crc8 ( buf+1, EESZ );
@@ -130,11 +152,15 @@ runtime_cfg_eeprom_write(void)
     void *mem = &ee_cfg;
     uint8_t crc = crc8 ( mem, sizeof(struct eeprom_cfg) );
 
-    OnChipNvMemSave( EEPROM_CFG_BASE+1, mem, EESZ );
-    OnChipNvMemSave( EEPROM_CFG_BASE, &crc, 1 );
+    //OnChipNvMemSave( EEPROM_CFG_BASE+1, mem, EESZ );
+    //OnChipNvMemSave( EEPROM_CFG_BASE, &crc, 1 );
+
+    eesave( EEPROM_CFG_BASE+1, mem, EESZ );
+    eesave( EEPROM_CFG_BASE, &crc, 1 );
 
     // Now check
-    OnChipNvMemLoad( EEPROM_CFG_BASE, buf,  EESZ + 1 );
+    //OnChipNvMemLoad( EEPROM_CFG_BASE, buf,  EESZ + 1 );
+    eeload( EEPROM_CFG_BASE, buf,  EESZ + 1 );
     sei();
 
     crc = crc8 ( buf+1, EESZ );
@@ -146,6 +172,41 @@ runtime_cfg_eeprom_write(void)
     return 0;
 }
 
+// -----------------------------------------------------------------------
+// eeprom code dies on big IO, do in parts
+// -----------------------------------------------------------------------
+
+
+static void eeload( uint16_t base, void *buf, uint16_t size )
+{
+    while( size )
+    {
+        uint16_t part = size;
+
+        if( part > 256 ) part = 256;
+
+        OnChipNvMemLoad( base, buf, part );
+
+        base += part;
+        size -= part;
+
+    }
+}
+
+static void eesave( uint16_t base, void *buf, uint16_t size )
+{
+    while( size )
+    {
+        uint16_t part = size;
+
+        if( part > 256 ) part = 256;
+
+        OnChipNvMemSave( base, buf, part );
+
+        base += part;
+        size -= part;
+    }
+}
 
 
 

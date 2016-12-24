@@ -24,7 +24,7 @@
 #define ENCODER_BITS 0b11010000
 
 
-static void EncoderInterrupt(void *arg);
+//static void EncoderInterrupt(void *arg);
 
 void encoder_init( void )
 {
@@ -52,7 +52,7 @@ void encoder_init( void )
 static uint8_t a, b, a0, b0, a1, b1;
 //static uint8_t a, b, a0, b0;
 
-
+/*
 static void EncoderInterrupt(void *arg)
 {
     (void) arg;
@@ -60,7 +60,7 @@ static void EncoderInterrupt(void *arg)
     a = ENCODER_A;
     b = ENCODER_B;
 }
-
+*/
 
 // Called once in msec
 void menu_read_encoder( void )
