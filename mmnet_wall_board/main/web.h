@@ -17,7 +17,7 @@
 #include <pro/httpd.h>
 
 // httpd
-THREAD(Service, arg);
+THREAD(HttpService, arg);
 
 
 

@@ -6,6 +6,9 @@
 
 #include <sys/confnet.h>
 
+#include <time.h>
+#include <stdio.h>
+
 #include "ui_menu.h"
 #include "ui_lcd.h"
 
@@ -144,31 +147,18 @@ void put_menu_item( uint8_t ip )
 
 void menu_monitor_main( void )
 {
-    static uint8_t cnt_main_monitor;
+    char buf[20];
 
-    //lcd_clear_line( 1 );
+    time_t secs = time(NULL);
+    struct _tm *stm = localtime(&secs);
 
-    //lcd_clear_line( 2 );
-    lcd_gotoxy( 17, 2 ); lcd_puts("   ");
-    lcd_gotoxy( 0, 2 );
-    lcd_puts("MQTT:");
-    lcd_puti( mqtt_io_count % 100 ); // Take 2 digits
-    lcd_puts(" ModBus:");
-    lcd_puti( modbus_event_cnt % 100 ); // Take 2 digits
-    lcd_putc( (cnt_main_monitor++ & 1) ? ':' : '.' );
-    lcd_puti( (modbus_crc_cnt+modbus_exceptions_cnt) % 100 ); // Take 2 digits
-    //lcd_puts("  ");
+    snprintf( buf, sizeof(buf),  "%02d/%02d/%04d, %02d:%02d:%02d",
+            stm->tm_mday, stm->tm_mon + 1, stm->tm_year + 1900,
+            stm->tm_hour, stm->tm_min, stm->tm_sec
+            );
 
-    //lcd_clear_line( 3 );
-    lcd_gotoxy( 16, 3 ); lcd_puts("    ");
     lcd_gotoxy( 0, 3 );
-    lcd_puts("EEprom:");
-    lcd_putc( ui_marker_unsaved ? '*' : '.' );
-    lcd_puts(" 1WErr:");
-    lcd_puti( ow_error_cnt % 100 ); // Take 2 digits
-    //lcd_puts("  ");
-
-    lcd_gotoxy( 0, 0 );
+    lcd_puts( buf );
 }
 
 // ---------------------------------------------------------------
@@ -329,14 +319,40 @@ void menu_display_errlog(void)
 
 // ---------------------------------------------------------------
 //
-// 
+// IO Errors status
 //
 // ---------------------------------------------------------------
 
 
+void menu_display_status(void)
+{
+    static uint8_t cnt_main_monitor;
 
+    //lcd_clear_line( 1 );
 
+    //lcd_clear_line( 2 );
+    lcd_gotoxy( 17, 2 ); lcd_puts("   ");
+    lcd_gotoxy( 0, 2 );
+    lcd_puts("MQTT:");
+    lcd_puti( mqtt_io_count % 100 ); // Take 2 digits
+    lcd_puts(" ModBus:");
+    lcd_puti( modbus_event_cnt % 100 ); // Take 2 digits
+    lcd_putc( (cnt_main_monitor++ & 1) ? ':' : '.' );
+    lcd_puti( (modbus_crc_cnt+modbus_exceptions_cnt) % 100 ); // Take 2 digits
+    //lcd_puts("  ");
 
+    //lcd_clear_line( 3 );
+    lcd_gotoxy( 16, 3 ); lcd_puts("    ");
+    lcd_gotoxy( 0, 3 );
+    lcd_puts("EEprom:");
+    lcd_putc( ui_marker_unsaved ? '*' : '.' );
+    lcd_puts(" 1WErr:");
+    lcd_puti( ow_error_cnt % 100 ); // Take 2 digits
+    //lcd_puts("  ");
+
+    lcd_gotoxy( 0, 0 );
+    lcd_puts("IO Status  ");
+}
 
 
 // ---------------------------------------------------------------
@@ -360,6 +376,8 @@ struct menu_t menu[] = {
     
 
     { "1wBus",  "1Wire bus status",	menu_display_bus,               0, menu_monitor_bus },
+
+    { "Status",	"IO Err Status",	menu_display_status, 		0, menu_display_status },
 };
 
 #define _MENU_SIZE ( (sizeof(menu)) / (sizeof(struct menu_t))  )
@@ -373,7 +391,7 @@ void menu_run(void)
 {
     // read keys & vr!
     menu_read_input();
-    menu_read_encoder();
+    //menu_read_encoder();
 
     if( changed )
     {
@@ -381,6 +399,7 @@ void menu_run(void)
         if( curr_menu->event != 0 )
             curr_menu->event();
 
+        // We had 'No' pressed and curr_menu didn't consume?
         if( changed & KEY_NO )
             select_menu( &menu_main );
 
@@ -428,6 +447,8 @@ void menu_init(void)
     // Input
     BUTTONS_DDR &= ~key_mask;
     ENCODER_DDR &= ~enc_mask;
+
+    changed |= KEY_NO; // to repaint main menu on first time
 
 }
 

@@ -11,7 +11,8 @@ MCU_TARGET = atmega128
 
 LDSECTION  = --section-start=.text=0x00000
 
-OBJ        = crc8.o crc16.o
+OBJ        = crc8.o crc16.o 
+#eewr_block.o
 
 
 OPTIMIZE   = -O2
