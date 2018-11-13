@@ -20,7 +20,11 @@ void lcd_status_line(const char *msg);
 void log_init( void );
 void log_syslog_init( void );
 
+#if ENABLE_LOGBUF
 void log_puts( const char *data );
+#else
+#  define log_puts(...)
+#endif
 
 #if ENABLE_SYSLOG
 

@@ -23,8 +23,11 @@ int CgiLog(FILE * stream, REQUEST * req)
     web_header_200(stream, req);
     fputs_P(head, stream);
 
+#if ENABLE_LOGBUF
     log_http_send( stream );
-
+#else
+    fputs( "(logging is not compiled in)", stream );
+#endif
     fputs_P(foot, stream);
     fflush(stream);
 

@@ -107,5 +107,8 @@ void menu_read_encoder( void )
 
     //if( enc_prev != encoder )        printf(" >%d ", encoder-enc_prev);
 
+    // temp to see stack remain
+    //NutSleep(1);
+
 }
 

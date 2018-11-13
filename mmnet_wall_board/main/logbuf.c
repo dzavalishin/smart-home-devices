@@ -1,3 +1,4 @@
+
 /**
  *
  * DZ-MMNET-WALL: Wall control panel based on MMNet01.
@@ -39,6 +40,7 @@
 #include <sys/socket.h>
 
 
+#if ENABLE_LOGBUF
 
 #define LOG_MEM_SZ 1024
 
@@ -617,3 +619,4 @@ uint16_t log_http_read( char *dest, uint16_t dest_sz )
 #endif
 
 
+#endif

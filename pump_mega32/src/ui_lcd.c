@@ -82,7 +82,7 @@ void lcd_init(void)
 // Internal
 // ------------------------------------------------------------------
 
-void lcd_write_data(int data)
+static void lcd_write_data(int data)
 {
     PORTC = data;
 
@@ -93,7 +93,7 @@ void lcd_write_data(int data)
 }
 
 
-void lcd_write_cmd(int cmd)
+static void lcd_write_cmd(int cmd)
 {
     RS_DISABLE;
     lcd_write_data(cmd);

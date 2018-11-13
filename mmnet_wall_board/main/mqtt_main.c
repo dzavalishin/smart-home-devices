@@ -36,7 +36,7 @@
 #define MQTT_READ_TIMEOUT 60
 
 
-#define mqtt_debug 0
+#define mqtt_debug 1
 
 
 THREAD(mqtt_recv, __arg);

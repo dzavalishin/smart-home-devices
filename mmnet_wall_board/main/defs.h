@@ -63,6 +63,7 @@ extern char *makeDate; // filled in by makefile
 
 // Syslog kills us :(
 #define ENABLE_SNTP 1
+#define ENABLE_LOGBUF 0
 #define ENABLE_SYSLOG 0
 
 #define ENABLE_1WIRE ((SERVANT_NTEMP)||(SERVANT_1WMAC))

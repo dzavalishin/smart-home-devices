@@ -122,8 +122,8 @@ THREAD(long_init, __arg)
         lua_init();
 #endif
 
-        lcd_status_line("MQTT");
-        mqtt_start();
+//        lcd_status_line("MQTT");
+//        mqtt_start();
 
         NutThreadExit();
     }
@@ -144,7 +144,9 @@ int main(void)
 {
     NutThreadSetSleepMode(SLEEP_MODE_IDLE); // Let the CPU sleep in idle
 
+#if ENABLE_LOGBUF
     log_init();
+#endif
 
     // DO VERY EARLY!
     init_runtime_cfg();         // Load defaults
@@ -196,26 +198,26 @@ int main(void)
 
     //while(1) {  LED_ON; delay_us(100); LED_OFF; delay_us(1000);  }
     //syslog( LOG_INFO, "Network init" );
+#if ENABLE_LOGBUF
     log_puts( "logging started\n" );
-
+#endif
 
     lcd_status_line("Network");
     init_net();
 
+    lcd_status_line("MQTT");
+    mqtt_start();
 
     _timezone = (((long)ee_cfg.timezone) * 60L * 60L);
-    //_timezone = -(((long)ee_cfg.timezone) * 60L * 60L);
-    //_timezone = ((long)1) * 60L * 60L;
     _daylight = 0; // No DST in Russia now
     NutThreadCreate("LongInit", long_init, 0, 2640);
-
+NutSleep(10000);
 
     // Register our device for the file system.
     NutRegisterDevice(&devUrom, 0, 0);
 
     init_cgi();
     init_httpd();
-
     printf("httpd ready\n");
 
     lcd_status_line("Modbus");
@@ -249,7 +251,9 @@ int main(void)
 static void init_net(void)
 {
 //    char tries = 250; // make sure we are really have DHCP address
+//#if ENABLE_LOGBUF
     log_puts( "net init - 1 2 3 4 5\n" );
+//#endif
 
 #if DEV1
     // Register Ethernet controller
@@ -353,7 +357,7 @@ static void init_httpd(void)
         char *thname = "httpd0";
 
         thname[5] = '0' + i;
-        NutThreadCreate(thname, Service, (void *) (uptr_t) i, 640);
+        NutThreadCreate(thname, HttpService, (void *) (uptr_t) i, 640);
     }
 
 }

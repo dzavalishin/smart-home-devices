@@ -23,7 +23,7 @@
  * several threads.
  *
  */
-THREAD(Service, arg)
+THREAD(HttpService, arg)
 {
     TCPSOCKET *sock;
     FILE *stream;
@@ -48,21 +48,21 @@ THREAD(Service, arg)
          * from a client.
          */
         NutTcpAccept(sock, 80);
-#if defined(__AVR_ATmega128__) || defined(__AVR_ATmega103__)
+//#if defined(__AVR_ATmega128__) || defined(__AVR_ATmega103__)
         printf("[%u] Connected, %u bytes free\n", id, NutHeapAvailable());
-#else
-        printf("[%u] Connected, %lu bytes free\n", id, NutHeapAvailable());
-#endif
+//#else
+//        printf("[%u] Connected, %lu bytes free\n", id, NutHeapAvailable());
+//#endif
 
         /*
          * Wait until at least 8 kByte of free RAM is available. This will 
          * keep the client connected in low memory situations.
          */
-#if defined(__AVR_ATmega128__) || defined(__AVR_ATmega103__)
+//#if defined(__AVR_ATmega128__) || defined(__AVR_ATmega103__)
         while (NutHeapAvailable() < 8192) {
-#else
-        while (NutHeapAvailable() < 4096) {
-#endif
+//#else
+//        while (NutHeapAvailable() < 4096) {
+//#endif
             printf("[%u] Low mem\n", id);
             NutSleep(1000);
         }
