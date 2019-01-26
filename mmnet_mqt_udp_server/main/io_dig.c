@@ -11,6 +11,7 @@
 #include "runtime_cfg.h"
 
 #include "io_dig.h"
+#include "mqtt_udp_glue.h"
 //#include "mqtt.h"
 
 
@@ -128,9 +129,8 @@ static void dio_process( void )
         uint8_t mask, ch = 0;
         for( mask = 1; mask < 0x10; mask <<= 1, ch++ )
         {
-        //    if( fb_ch & mask )
-            //        mqtt_send_channel( (dio_state & mask) ? 1 : 0, ch );
-#warning connect MQTT/UDP
+            if( fb_ch & mask )
+                mqtt_udp_send_channel( (dio_state & mask) ? 1 : 0, ch );
         }
     }
 

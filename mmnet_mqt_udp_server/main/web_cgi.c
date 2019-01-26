@@ -21,7 +21,7 @@
 
 #include "ds18x20.h"
 
-#include <modbus.h> // err codes
+//#include <modbus.h> // err codes
 
 #include <sys/confnet.h>
 #include <arpa/inet.h>
@@ -518,7 +518,7 @@ static int setNamedParameter( const char *name, const char *value )
     {
         if( nout >= SERVANT_NPWM ) nout = -1;
 
-        if( nout < 0 ) return MODBUS_EXCEPTION_ILLEGAL_DATA_ADDFRESS;
+        if( nout < 0 ) return -1;
 
         //set_an( (unsigned char)nout, (unsigned char) atoi(value) );
 
@@ -553,7 +553,7 @@ static int setNamedParameter( const char *name, const char *value )
     }
 #endif
 */
-    return MODBUS_EXCEPTION_ILLEGAL_DATA_ADDFRESS;
+    return -1;
 }
 
 
