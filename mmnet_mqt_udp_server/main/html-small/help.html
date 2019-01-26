@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>TCP/IP Wall Control Panel: Help</title>
+	<link href="screen.css" rel="stylesheet" type="text/css">
+	<meta http-equiv="content-type" content="text/html; charset=Windows-1251">
+</head>
+<body>
+
+<div id="global">
+
+	<div id="empty">&nbsp;</div>
+
+	<br style="clear: both;">
+			
+	<table    cellspacing="2" cellpadding="4" class="main">
+		<tr valign="top">
+                
+           	<td class="block1">
+				<h2>URLs</h2>
+				<ul>
+                    <li><b>/item.cgi?name=<u>adc0</u></b>			- read item value
+                    <li><b>/item.cgi?name=<u>dig0</u>&amp;value=<u>1</u></b>	- write item value
+                </ul>
+			</td>
+		</tr><tr valign="top">      		
+                        <td><div style="width: 25px; height: 25px;"><!-- --></div></td>
+		</tr><tr valign="top">      		
+                        
+			<td class="block1">
+				<h2>Item names</h2>
+				<ul>
+                                <li><b>dig</b>   - Digital I/O, bits
+                                <li><b>temp</b>  - Temperature sensors (1-wire), ordered (see Config page)
+                                <li><b>utemp</b> - Temperature sensors (1-wire), unordered
+                                <li><b>pwm</b>   - Analogue outputs
+				</ul>
+			</td>
+		</tr><tr valign="top">      		
+			<td><div style="width: 25px; height: 25px;"><!-- --></div></td>
+		</tr><tr valign="top">      		                                        
+			<td class="block1">
+				<h2>Pins</h2>
+				<ul>
+					<li><b>PB0-3</b> - front panel LEDs
+					<li><b>PB4-5</b> - relays (move to 4,6)
+					<li><b>PB6</b>   - 
+					<li><b>PB7</b>   - LCD backlight PWM
+
+					<li><b>PD0-3</b> - front panel buttons
+					<li><b>PD4-5</b> - 
+					<li><b>PD6-7</b> - Di
+                                        
+					<li><b>PD6-7</b> - Encoder rotation
+					<li><b>PE4</b>   - Encoder button
+					<li><b>PE3</b>   - 
+                                        
+					<li><b>PE2</b>   - R/S
+					<li><b>PE1</b>   - R/W
+					<li><b>PE0</b>   - E
+                                        
+					<li><b>PF0-7</b> - LCD data bus
+					<li><b>PG3</b>   - 
+					<li><b>PG4</b>   - 1Wire (2401, single bus 18B20, etc)
+				</ul>
+			</td>
+		</tr><tr valign="top">      		
+			<td><div style="width: 25px; height: 25px;"><!-- --></div></td>
+		</tr><tr valign="top">      		                                        
+			<td class="block1">
+				<h2>Modbus registers, 0 based (add 1 for modpoll)</h2>
+				<ul>
+					<li><b>0-3</b> - text id, 'DZ' 'DZ' 'WA' '00'
+					<li><b>4-6</b> - 6 bytes of serial number (part of MAC, usually)
+					<li><b>16-19</b>   - Di/Do: MCU ports B, D, E, F
+					<li><b>64-71</b> - Ai
+					<li><b>80-87</b> - Ao (PWM)
+					<li><b>512-518</b> - Config: Di count, Do count, Ai+special dev count, Ao/PWM count, counters count, temp sensors max, temp sensors actual
+					<li><b>1024...</b> - temperature sensors, ordered by permanent ID (as configured)
+					<li><b>2048...</b> - temperature sensors, natural order (as found)
+				</ul>
+			</td>
+		</tr><tr valign="top">      		
+			<td><div style="width: 25px; height: 25px;"><!-- --></div></td>
+		</tr><tr valign="top">      		                      
+			<td class="block1">
+			<h2>Defaults</h2>
+				<ul>
+					<li><b>IP address</b> - 192.168.88.147
+					<li><b>MAC</b> - 02:06:98:00:00:00
+					<li><b>Serial speed</b> - 38400
+					<li><b>Debug serial</b> - UART1 (PD2-3)
+					<li><b>Error/unread value</b> - 0x1000 for 16 bit values, 0x10000000 for 32 bit
+
+				</ul>
+			</td>
+		</tr>
+	</table>
+
+</div>
+
+
+<div id="empty">&nbsp;</div>
+
+
+</body>
+</html>

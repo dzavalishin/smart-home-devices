@@ -1,0 +1,4 @@
+# Do not edit! Automatically generated on Sat Jun 21 17:27:42 2008
+
+
+include $(top_srcdir)/app/Makerules.avr-gcc
