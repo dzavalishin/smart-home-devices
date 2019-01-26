@@ -1,4 +1,4 @@
-#.SILENT:
+.SILENT:
 
 #NEW_AVR_DIR=c:/avr-libc-bin/avr
 #NEW_AVR_LIB=$(NEW_AVR_DIR)/lib/libc.a
@@ -35,8 +35,10 @@ OBJS =  $(SRCS:.c=.o)
 #eewr_block.o eewr_byte.o
 
 #LIBS =  $(LIBDIR)/nutinit.o $(MODS) -lnutnet -lnutpro -lnutfs -lnutos -lnutdev -lnutnet -lnutcrt -lnutarch -lnutgorp ../../modbus-lib/libmodbus.a  ../../avr-util-lib/libdz-avr-util.a $(NEW_AVR_LIB)
-LIBS =  $(LIBDIR)/nutinit.o $(MODS) -lnutnet -lnutpro -lnutfs -lnutos -lnutdev -lnutnet -lnutcrt -lnutarch -lnutgorp  ../../avr-util-lib/libdz-avr-util.a ../mqtt_udp/libmqttudp.a  $(NEW_AVR_LIB)
-# -lnutlua 
+LIBS  =  $(LIBDIR)/nutinit.o $(MODS) -lnutnet -lnutpro -lnutfs -lnutos -lnutdev -lnutnet -lnutcrt -lnutarch -lnutgorp  ../../avr-util-lib/libdz-avr-util.a   $(NEW_AVR_LIB)
+LIBS += ../mqtt_udp/libmqttudp.a
+#LIBS += -lnutlua 
+
 TARG =  $(PROJ).hex $(PROJ).elf
 
 

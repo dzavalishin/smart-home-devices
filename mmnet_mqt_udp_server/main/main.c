@@ -67,7 +67,7 @@
 #include "ui_lcd.h"
 #include "ui_menu.h"
 
-//#include "mqtt.h"
+#include "mqtt_udp_glue.h"
 
 // NB - contains var def and init
 #include "makedate.h"
@@ -132,7 +132,14 @@ THREAD(long_init, __arg)
 
 
 
+void check( void )
+{
+    DDRE = 0xFF;
+    PORTE = 0;
 
+    while(1)
+        ;
+}
 
 
 /*!
@@ -142,6 +149,7 @@ THREAD(long_init, __arg)
  */
 int main(void)
 {
+
     NutThreadSetSleepMode(SLEEP_MODE_IDLE); // Let the CPU sleep in idle
 
 #if ENABLE_LOGBUF
@@ -154,16 +162,22 @@ int main(void)
     led_ddr_init(); // Before using LED!
     LED_ON;
 
+    //fail_led();
+
+
     // [dz] hangs on empty eeprom
-    runtime_cfg_eeprom_read();  // Now attempt to load saved state
+    //runtime_cfg_eeprom_read();  // Now attempt to load saved state
+
 
 #if 1
     // Initialize the uart device.
-    if( RT_IO_ENABLED(IO_LOG) )
+    //if( RT_IO_ENABLED(IO_LOG) )
+    if(1)
     {
 #if 1 // must be 1
 #if !SERVANT_TUN1
         NutRegisterDevice(&devDebug1, 0, 0); // USB
+    //check();
         freopen("uart1", "w", stdout);
 #endif
 #else
@@ -190,6 +204,7 @@ int main(void)
         freopen("null", "w", stdout);
     }
 #endif
+
     // We need it here because we use 1-wire 2401 serial as MAC address
     init_devices();
     //led_ddr_init(); // Before using LED!
@@ -206,8 +221,10 @@ int main(void)
     init_net();
 
 #warning connect MQTT/UDP
-    //lcd_status_line("MQTT/UDP");
-    //mqtt_start();
+    lcd_status_line("MQTT/UDP");
+#if ENABLE_MQTT_UDP
+    mqtt_udp_start();
+#endif
 
     _timezone = (((long)ee_cfg.timezone) * 60L * 60L);
     _daylight = 0; // No DST in Russia now

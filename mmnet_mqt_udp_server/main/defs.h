@@ -70,6 +70,7 @@ extern char *makeDate; // filled in by makefile
 
 #define ENABLE_1WIRE ((SERVANT_NTEMP)||(SERVANT_1WMAC))
 
+#define ENABLE_MQTT_UDP 0
 
 //#ifdef OW_ONE_BUS
 //#define OW_PIN  PB0
@@ -113,7 +114,7 @@ extern char *makeDate; // filled in by makefile
 #define LED_PIN  PING
 #define LED      PING3
 
-#if 0
+#if 1
 
 //#define FAIL_LED_EXCLPOS  4 // E
 #define FAIL_LED_DDR  DDRE

@@ -16,6 +16,11 @@
 #include <sys/socket.h>
 #include <sys/event.h>
 
+#include <string.h>
+#include <stdio.h>
+
+#if ENABLE_MQTT_UDP
+
 
 void mqtt_udp_start( void )
 {
@@ -32,9 +37,8 @@ void mqtt_udp_send_channel( uint8_t state, uint8_t ch )
     char val[4];
     snprintf( val, sizeof(val) - 1, "%d", state );
 
-    int rc = mqtt_udp_send_publish( topic, val );
-    if( rc )
-        printf("publish err=%d", rc);
+//    int rc = mqtt_udp_send_publish( topic, val );
+//    if( rc )        printf("publish err=%d", rc);
 }
 
 
@@ -78,7 +82,7 @@ int mqtt_udp_socket(void)
 
     if( fd == 0 )
     {
-        mqtt_udp_global_error_handler( MQ_Err_Establish, fd, "socket creation error", "" );
+        mqtt_udp_global_error_handler( MQ_Err_Establish, (int)fd, "socket creation error", "" );
         return 0;
     }
 
@@ -125,7 +129,8 @@ int mqtt_udp_bind( int fd )
         perror("bind");
         exit(1);
     }
-*/
+    */
+    return 0;
 }
 
 
@@ -235,4 +240,5 @@ int mqtt_udp_send_pkt_addr( int fd, char *data, size_t len, int ip_addr )
 
 
 
+#endif // ENABLE_MQTT_UDP
 

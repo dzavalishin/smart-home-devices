@@ -122,6 +122,7 @@ static void dio_process( void )
     DO_PORT &= ~DO_LED_MASK;
     DO_PORT |= DO_LED_MASK & (~dio_state);
 
+#if ENABLE_MQTT_UDP
     if( fb_ch )
     {
         //printf("fb_ch 0x%x", fb_ch);
@@ -133,6 +134,7 @@ static void dio_process( void )
                 mqtt_udp_send_channel( (dio_state & mask) ? 1 : 0, ch );
         }
     }
+#endif
 
     dio_front_buttons_changed &= ~fb_ch;
     dio_remote_state_changed &= ~re_ch;
