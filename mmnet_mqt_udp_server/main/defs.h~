@@ -101,7 +101,7 @@ extern char *makeDate; // filled in by makefile
 
 #define DEFAULT_SYSLOGD		"192.168.1.130"
 //#define MYSYSLOGD  "syslog."
-//#define DEFAULT_MQTT 		"192.168.1.141"
+#define DEFAULT_MQTT 		"192.168.1.141"
 
 // ------------------------------------------------------------------------
 // Hardware connections

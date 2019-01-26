@@ -52,8 +52,8 @@
 
 #include "web.h"
 
-#include "modbus_srv.h"
-#include <modbus.h>
+//#include "modbus_srv.h"
+//#include <modbus.h>
 
 #include "map.h"
 
@@ -221,10 +221,10 @@ NutSleep(10000);
     init_httpd();
     printf("httpd ready\n");
 
-    lcd_status_line("Modbus");
+    //lcd_status_line("Modbus");
+    //modbus_init( 9600, 1 ); // we don't need both parameters, actually
+    //NutThreadCreate( "ModBusTCP", ModbusService, (void *) 0, 640);
 
-    modbus_init( 9600, 1 ); // we don't need both parameters, actually
-    NutThreadCreate( "ModBusTCP", ModbusService, (void *) 0, 640);
     NutThreadSetPriority(254);
     NutTimerStart(1000, each_second, 0, 0 ); // Each second call each_second
 

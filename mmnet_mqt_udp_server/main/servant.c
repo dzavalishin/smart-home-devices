@@ -16,7 +16,7 @@
 
 #include <avr/wdt.h>
 
-#include <modbus.h>
+//#include <modbus.h>
 
 #include <sys/nutconfig.h>
 #include <sys/thread.h>
@@ -92,7 +92,7 @@ void each_second(HANDLE h, void *arg)
 
 THREAD(main_loop, arg)
 {
-    static uint16_t modbus_event_cnt_prev = 0;
+    //static uint16_t modbus_event_cnt_prev = 0;
     char had_io = 0;
     char count = 0;
 
@@ -111,7 +111,7 @@ THREAD(main_loop, arg)
         LED_OFF; // at least 10 msec of LED off
 
         //NutEventWait(&sendOutEvent, 100); // Once in 100 msec try sending anyway
-
+/*
         // No IO?
         if( modbus_event_cnt_prev != modbus_event_cnt )
         {
@@ -119,7 +119,7 @@ THREAD(main_loop, arg)
             had_io = 1;
             notice_activity();
         }
-
+*/
         //if(!had_io )            LED_OFF;
 
 #if SERVANT_NTEMP

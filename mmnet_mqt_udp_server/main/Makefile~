@@ -33,8 +33,7 @@ SRCS += logbuf.c
 OBJS =  $(SRCS:.c=.o) 
 #eewr_block.o eewr_byte.o
 
-#LIBS =  $(LIBDIR)/nutinit.o $(MODS) -lnutnet -lnutpro -lnutfs -lnutos -lnutdev -lnutnet -lnutcrt -lnutarch -lnutgorp ../../modbus-lib/libmodbus.a  ../../avr-util-lib/libdz-avr-util.a $(NEW_AVR_LIB)
-LIBS =  $(LIBDIR)/nutinit.o $(MODS) -lnutnet -lnutpro -lnutfs -lnutos -lnutdev -lnutnet -lnutcrt -lnutarch -lnutgorp  ../../avr-util-lib/libdz-avr-util.a $(NEW_AVR_LIB)
+LIBS =  $(LIBDIR)/nutinit.o $(MODS) -lnutnet -lnutpro -lnutfs -lnutos -lnutdev -lnutnet -lnutcrt -lnutarch -lnutgorp ../../modbus-lib/libmodbus.a  ../../avr-util-lib/libdz-avr-util.a $(NEW_AVR_LIB)
 # -lnutlua 
 TARG =  $(PROJ).hex $(PROJ).elf
 

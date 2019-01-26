@@ -16,6 +16,10 @@
 #include <string.h>
 
 
+
+char modbus_device_id[] = MODBUS_DEVICE_ID; // TODO RENAME ME
+
+
 uint8_t		onewire_available = 0;
 uint8_t		sntp_available = 0;
 uint8_t		error_flags; // bit per error type
@@ -59,7 +63,7 @@ init_runtime_cfg()
 
     ee_cfg.ip_nntp	= 0; // Will use default route instead
     ee_cfg.ip_syslog	= inet_addr( DEFAULT_SYSLOGD );
-    ee_cfg.ip_mqtt	= inet_addr( DEFAULT_MQTT );
+    ee_cfg.ip_mqtt	= 0; //inet_addr( DEFAULT_MQTT );
 #if 0
     strlcpy( ee_cfg.topics[0], "Light5A", sizeof( ee_cfg.topics[0] ) );
     strlcpy( ee_cfg.topics[1], "Light5B", sizeof( ee_cfg.topics[1] ) );
