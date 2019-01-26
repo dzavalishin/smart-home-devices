@@ -70,7 +70,7 @@ extern char *makeDate; // filled in by makefile
 
 #define ENABLE_1WIRE ((SERVANT_NTEMP)||(SERVANT_1WMAC))
 
-#define ENABLE_MQTT_UDP 0
+#define ENABLE_MQTT_UDP 1
 
 //#ifdef OW_ONE_BUS
 //#define OW_PIN  PB0

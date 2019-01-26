@@ -52,7 +52,7 @@ void each_second(HANDLE h, void *arg)
     //mqtt_keepalive_timer++;
 #warning connect MQTT/UDP
 
-    // Will become 0 right now, point to trigger connection lost action
+    // Will become 0 right now, time to trigger connection lost action
     if( network_activity == 1 )
     {
         //dio_set_default_output_state();

@@ -125,13 +125,20 @@ THREAD(long_init, __arg)
 //        lcd_status_line("MQTT");
 //        mqtt_start();
 
+#if ENABLE_MQTT_UDP
+        lcd_status_line("MQTT/UDP");
+        mqtt_udp_start();
+        mqtt_udp_send_channel( 333, 0 );
+#endif
+
+
         NutThreadExit();
     }
 }
 
 
 
-
+/*
 void check( void )
 {
     DDRE = 0xFF;
@@ -140,7 +147,7 @@ void check( void )
     while(1)
         ;
 }
-
+*/
 
 /*!
  * \brief Main application routine.
@@ -164,15 +171,15 @@ int main(void)
 
     //fail_led();
 
-
+#warning fixme
     // [dz] hangs on empty eeprom
     //runtime_cfg_eeprom_read();  // Now attempt to load saved state
 
 
 #if 1
     // Initialize the uart device.
-    //if( RT_IO_ENABLED(IO_LOG) )
-    if(1)
+    if( RT_IO_ENABLED(IO_LOG) )
+    //if(1)
     {
 #if 1 // must be 1
 #if !SERVANT_TUN1
@@ -220,14 +227,17 @@ int main(void)
     lcd_status_line("Network");
     init_net();
 
-#warning connect MQTT/UDP
-    lcd_status_line("MQTT/UDP");
+/*
 #if ENABLE_MQTT_UDP
+    lcd_status_line("MQTT/UDP");
     mqtt_udp_start();
+    mqtt_udp_send_channel( 333, 0 );
 #endif
+*/
 
     _timezone = (((long)ee_cfg.timezone) * 60L * 60L);
     _daylight = 0; // No DST in Russia now
+
     NutThreadCreate("LongInit", long_init, 0, 2640);
 NutSleep(10000);
 

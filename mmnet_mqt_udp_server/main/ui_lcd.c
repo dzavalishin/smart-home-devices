@@ -46,8 +46,8 @@ static void lcd_write( uint8_t data );
 static void lcd_write_data( uint8_t data );
 static void lcd_write_cmd(  uint8_t cmd  );
 
-static uint8_t lcd_read_data( void );
-static uint8_t lcd_read_cmd( void );
+//static uint8_t lcd_read_data( void );
+//static uint8_t lcd_read_cmd( void );
 
 // ------------------------------------------------------------------
 // Init
@@ -173,6 +173,7 @@ static uint8_t lcd_read( void )
     return data;
 }
 
+/* unused
 static uint8_t lcd_read_data( void )
 {
     RS_ENABLE;
@@ -184,7 +185,7 @@ static uint8_t lcd_read_cmd( void )
     RS_DISABLE;
     return lcd_read();
 }
-
+*/
 
 // ------------------------------------------------------------------
 // Write
