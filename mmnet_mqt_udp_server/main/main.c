@@ -67,7 +67,7 @@
 #include "ui_lcd.h"
 #include "ui_menu.h"
 
-#include "mqtt.h"
+//#include "mqtt.h"
 
 // NB - contains var def and init
 #include "makedate.h"
@@ -205,8 +205,9 @@ int main(void)
     lcd_status_line("Network");
     init_net();
 
-    lcd_status_line("MQTT");
-    mqtt_start();
+#warning connect MQTT/UDP
+    //lcd_status_line("MQTT/UDP");
+    //mqtt_start();
 
     _timezone = (((long)ee_cfg.timezone) * 60L * 60L);
     _daylight = 0; // No DST in Russia now

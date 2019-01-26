@@ -22,7 +22,7 @@
 #include <modbus.h>
 
 #include "io_temp.h"
-#include "mqtt.h"
+//#include "mqtt.h"
 
 
 static void printTime( FILE * stream, struct _tm *stm )
@@ -117,8 +117,10 @@ static int CgiStatusRow( FILE * stream, int row_no )
         break;
 
     case 13:
-        subhdr( stream, "MQTT" ); 
-        ShowTableRow2i( stream, "IO count", mqtt_io_count );
+        subhdr( stream, "MQTT/UDP" );
+#warning connect MQTT/UDP
+        //ShowTableRow2i( stream, "IO count", mqtt_io_count );
+        ShowTableRow2i( stream, "IO count", 0 );
         break;
 
     case 14: subhdr( stream, "1-Wire" ); break;

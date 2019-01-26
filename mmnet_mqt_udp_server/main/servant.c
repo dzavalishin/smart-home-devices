@@ -29,7 +29,7 @@
 
 #include "ui_menu.h"
 
-#include "mqtt.h"
+//#include "mqtt.h"
 
 
 #define TEMPERATURE_RESCAN_SEC 240
@@ -49,7 +49,8 @@ void each_second(HANDLE h, void *arg)
 {
     second_counter++;
     temperatureMeterCnt++;
-    mqtt_keepalive_timer++;
+    //mqtt_keepalive_timer++;
+#warning connect MQTT/UDP
 
     // Will become 0 right now, point to trigger connection lost action
     if( network_activity == 1 )
@@ -72,10 +73,12 @@ void each_second(HANDLE h, void *arg)
         FAIL_LED_OFF;
 
 
-    if( watch_mqtt && watch_main_loop && watch_ui_loop )
+#warning connect MQTT/UDP
+    //if( watch_mqtt && watch_main_loop && watch_ui_loop )
+    if( watch_main_loop && watch_ui_loop )
     {
         watch_mqtt = watch_main_loop = watch_ui_loop = 0;
-        wdt_reset();
+        //wdt_reset();
     }
 
     menu_timer_05sec(); // TODO 0.5 sec, not 1

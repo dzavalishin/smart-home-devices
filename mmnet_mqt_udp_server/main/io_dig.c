@@ -11,7 +11,7 @@
 #include "runtime_cfg.h"
 
 #include "io_dig.h"
-#include "mqtt.h"
+//#include "mqtt.h"
 
 
 #include <inttypes.h>
@@ -84,8 +84,8 @@ void dio_init(void)
 
 
 uint8_t         dio_front_buttons_changed = 0;          // Front panel button in non-menu mode pressed
-uint32_t        dio_remote_state_changed = 0;           // We've got remote (MQTT broker) state changeg
-uint32_t        dio_remote_state = 0;                   // Remote state as we got from MQTT
+uint32_t        dio_remote_state_changed = 0;           // We've got remote (MQTT/UDP) state changeg
+uint32_t        dio_remote_state = 0;                   // Remote state as we got from MQTT/UDP
 uint32_t        dio_state = 0;                   	// Our state as we know
 
 
@@ -128,8 +128,9 @@ static void dio_process( void )
         uint8_t mask, ch = 0;
         for( mask = 1; mask < 0x10; mask <<= 1, ch++ )
         {
-            if( fb_ch & mask )
-                mqtt_send_channel( (dio_state & mask) ? 1 : 0, ch );
+        //    if( fb_ch & mask )
+            //        mqtt_send_channel( (dio_state & mask) ? 1 : 0, ch );
+#warning connect MQTT/UDP
         }
     }
 
