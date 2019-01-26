@@ -1,9 +1,10 @@
 
 *.d
 *.o
-*.a
 *.lst
 *.elf
 *.hex
 *.map
 *.c~
+*.h~
+*.h~
