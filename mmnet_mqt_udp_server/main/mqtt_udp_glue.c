@@ -22,13 +22,33 @@
 #if ENABLE_MQTT_UDP
 
 
+#define DEBUG 0
 
-#if 0
-int mqtt_udp_parse_any_pkt( const char *pkt, size_t plen, int from_ip, process_pkt callback )
+
+
+
+int mqtt_udp_incoming_pkt( struct mqtt_udp_pkt *o )
 {
-    printf("MQTT/UDP got pkt\n");
+    if( o->ptype != PTYPE_PUBLISH ) return;
+
+    printf( "got pkt from %d.%d.%d.%d",
+            //o->pflags, o->pkt_id,
+            (int)(0xFF & (o->from_ip >> 24)),
+            (int)(0xFF & (o->from_ip >> 16)),
+            (int)(0xFF & (o->from_ip >> 8)),
+            (int)(0xFF & (o->from_ip))
+          );
+
+    if( o->topic_len > 0 )
+        printf(" topic '%s'", o->topic );
+
+    if( o->value_len > 0 )
+        printf(" = '%s'", o->value );
+
+    printf( "\n");
+    return 0;
 }
-#endif
+
 
 
 THREAD( mqtt_udp_recv_thread, __arg )
@@ -37,7 +57,7 @@ THREAD( mqtt_udp_recv_thread, __arg )
 
     while(1)
     {
-        int rc = mqtt_udp_recv_loop( mqtt_udp_dump_any_pkt );
+        int rc = mqtt_udp_recv_loop( mqtt_udp_incoming_pkt );
         if( rc )
             mqtt_udp_global_error_handler( MQ_Err_Other, rc, "recv_loop error", 0 );
     }
@@ -101,7 +121,9 @@ void  mqtt_udp_arch_sleep_msec( uint32_t msec )
 
 int mqtt_udp_socket(void)
 {
+#if DEBUG
     printf("MQTT/UDP mk socket \n");
+#endif
 
     UDPSOCKET *fd = NutUdpCreateSocket( MQTT_PORT );
 
@@ -136,27 +158,9 @@ int mqtt_udp_socket(void)
 
 int mqtt_udp_bind( int fd )
 {
+#if DEBUG
     printf("MQTT/UDP bind \n");
-    /*
-    struct sockaddr_in srcaddr;
-
-    memset(&srcaddr, 0, sizeof(srcaddr));
-
-    srcaddr.sin_family = AF_INET;
-#ifdef __MINGW32__
-    srcaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-#else
-    srcaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 #endif
-    srcaddr.sin_port = htons(MQTT_PORT);
-
-    return bind(fd, (struct sockaddr *) &srcaddr, sizeof(srcaddr));
-/ *
-    if (bind(fd, (struct sockaddr *) &srcaddr, sizeof(srcaddr)) < 0) {
-        perror("bind");
-        exit(1);
-    }
-    */
     return 0;
 }
 
@@ -175,27 +179,9 @@ int mqtt_udp_close_fd( int fd )
 int mqtt_udp_recv_pkt( int fd, char *buf, size_t buflen, int *src_ip_addr )
 {
 
-    /*
-    struct sockaddr_in addr;
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    //addr.sin_addr.s_addr = inet_addr(IP);
-    //addr.sin_port = htons(MQTT_PORT);
-
-    //int slen = sizeof(addr);
-    socklen_t slen = sizeof(addr);
-
-    //memset(buf, 0, sizeof(buf));
-    memset( buf, 0, buflen );
-
-    int rc = recvfrom(fd, buf, buflen, 0, (struct sockaddr *) &addr, &slen);
-
-    if( src_ip_addr ) *src_ip_addr = ntohl( addr.sin_addr.s_addr );
-
-    return rc;
-    */
-
+#if DEBUG
     printf("MQTT/UDP recv pkt ");
+#endif
 
     memset( buf, 0, buflen );
 
@@ -206,7 +192,9 @@ int mqtt_udp_recv_pkt( int fd, char *buf, size_t buflen, int *src_ip_addr )
 
     if( src_ip_addr ) *src_ip_addr = ntohl( netorder_src_addr );
 
+#if DEBUG
     printf(" recv pkt ok\n");
+#endif
 
     return rc;
 }
@@ -217,61 +205,28 @@ int mqtt_udp_recv_pkt( int fd, char *buf, size_t buflen, int *src_ip_addr )
 
 int mqtt_udp_send_pkt( int fd, char *data, size_t len )
 {
-    /*
-    struct sockaddr_in addr;
-
-    struct sockaddr_in serverAddr;
-    socklen_t addr_size;
-
-    //Configure settings in address struct
-    serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons( MQTT_PORT );
-    serverAddr.sin_addr.s_addr = inet_addr("255.255.255.255");
-    memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
-
-    addr_size = sizeof serverAddr;
-
-    mqtt_udp_throttle(); // Speed limit
-
-    ssize_t rc = sendto( fd, data, len, 0, (struct sockaddr *)&serverAddr, addr_size);
-
-    return (rc != len) ? EIO : 0;
-    */
+#if DEBUG
     printf("MQTT/UDP broadcast pkt\n");
+#endif
 
     int rc = NutUdpSendTo( (UDPSOCKET *) fd, 0xFFFFFFFF, htons( MQTT_PORT ), data, len );
-    printf("MQTT/UDP broadcast rc = %d  len = %d\n", rc, len );
 
-    //return (rc != len) ? -5 : 0; // -5 = EIO
+#if DEBUG
+    printf("MQTT/UDP broadcast rc = %d  len = %d\n", rc, len );
+#endif
+
     return rc ? -5 : 0; // -5 = EIO
 }
 
 
 int mqtt_udp_send_pkt_addr( int fd, char *data, size_t len, int ip_addr )
 {
-    /*
-    struct sockaddr_in addr;
-
-    struct sockaddr_in serverAddr;
-    socklen_t addr_size;
-
-    // Configure settings in address struct
-    serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons( MQTT_PORT );
-    serverAddr.sin_addr.s_addr = ip_addr;
-    memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
-
-    addr_size = sizeof serverAddr;
-
-    ssize_t rc = sendto( fd, data, len, 0, (struct sockaddr *)&serverAddr, addr_size);
-
-    return (rc != len) ? EIO : 0;
-    */
+#if DEBUG
     printf("MQTT/UDP sent pkt to\n");
-
+#endif
 
     int rc = NutUdpSendTo( (UDPSOCKET *) fd, htonl( ip_addr ), htons( MQTT_PORT ), data, len );
-    //return (rc != len) ? -5 : 0; // -5 = EIO
+
     return rc ? -5 : 0; // -5 = EIO
 }
 
