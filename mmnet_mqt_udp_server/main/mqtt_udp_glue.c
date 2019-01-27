@@ -75,7 +75,7 @@ void mqtt_udp_start( void )
 void mqtt_udp_send_channel( uint8_t state, uint8_t ch )
 {
     char topic[] = "mmnet/01/dio0";
-    //topic[12] = ch + '0';
+    topic[12] = ch + '0';
 
     char val[4+10];
     //snprintf( val, sizeof(val) - 1, "%d", state );
@@ -209,7 +209,8 @@ int mqtt_udp_send_pkt( int fd, char *data, size_t len )
     printf("MQTT/UDP broadcast pkt\n");
 #endif
 
-    int rc = NutUdpSendTo( (UDPSOCKET *) fd, 0xFFFFFFFF, htons( MQTT_PORT ), data, len );
+    int rc = NutUdpSendTo( (UDPSOCKET *) fd, 0xFFFFFFFF, MQTT_PORT, data, len );
+    //int rc = NutUdpSendTo( (UDPSOCKET *) fd, 0xFFFFFFFF, htons( MQTT_PORT ), data, len );
 
 #if DEBUG
     printf("MQTT/UDP broadcast rc = %d  len = %d\n", rc, len );
@@ -225,7 +226,9 @@ int mqtt_udp_send_pkt_addr( int fd, char *data, size_t len, uint32_t ip_addr )
     printf("MQTT/UDP sent pkt to\n");
 #endif
 
-    int rc = NutUdpSendTo( (UDPSOCKET *) fd, htonl( ip_addr ), htons( MQTT_PORT ), data, len );
+    //int rc = NutUdpSendTo( (UDPSOCKET *) fd, htonl( ip_addr ), htons( MQTT_PORT ), data, len );
+    // TODO test me, do I have to use htonl( ip_addr )?
+    int rc = NutUdpSendTo( (UDPSOCKET *) fd, ip_addr, MQTT_PORT, data, len );
 
     return rc ? -5 : 0; // -5 = EIO
 }

@@ -107,10 +107,13 @@ static int CgiStatusRow( FILE * stream, int row_no )
     case 7: ShowTableRow2( stream, "Name", DEVICE_NAME );                	break;
     case 8: ShowTableRow2( stream, "ModBus Id", modbus_device_id );		break;
 
-    //case 9: subhdr( stream, "ModBus" ); break;
+    case 9: //subhdr( stream, "ModBus" );
+        break;
 
-    //case 10: ShowTableRow2i( stream, "IO count", modbus_event_cnt );		break;
-    //case 11: ShowTableRow2i( stream, "CRC count", modbus_crc_cnt );		break;
+    case 10: //ShowTableRow2i( stream, "IO count", modbus_event_cnt );
+        break;
+    case 11: //ShowTableRow2i( stream, "CRC count", modbus_crc_cnt );
+        break;
     case 12:
         //ShowTableRow2i( stream, "exceptions count", modbus_exceptions_cnt );
         //ShowTableRow2i( stream, "err flags", modbus_error_flags );

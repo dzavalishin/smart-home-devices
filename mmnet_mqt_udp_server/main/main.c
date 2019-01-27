@@ -73,6 +73,9 @@
 #include "makedate.h"
 
 
+//#include <sys/device.h>
+//#include <net/route.h>
+
 
 
 static int tryToFillMac(unsigned char *mac, unsigned char *oneWireId);
@@ -128,7 +131,23 @@ THREAD(long_init, __arg)
 #if ENABLE_MQTT_UDP
         lcd_status_line("MQTT/UDP");
         mqtt_udp_start();
-        mqtt_udp_send_channel( 233, 0 );
+        mqtt_udp_send_channel( 233, 3 );
+        NutSleep(1000);
+
+        /*{
+            NUTDEVICE *dev;
+            uint32_t saddr;
+
+            dev = NutIpRouteQuery( 0xFFFFFFFF, &saddr);
+
+            printf("Route for broadcast 0x%lX, dev %s\n", saddr, dev->dev_name );
+        }*/
+
+
+        NutSleep(1000);
+        mqtt_udp_send_channel( 233, 2 );
+        NutSleep(1000);
+        mqtt_udp_send_channel( 233, 1 );
 #endif
 
 

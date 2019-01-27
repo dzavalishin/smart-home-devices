@@ -41,6 +41,16 @@ int ShowOsData(FILE * stream, REQUEST * req)
 static prog_char endtable[] = "</TABLE>";
 
 
+/*
+// Show list of IP routes
+static void ShowRutes(FILE * stream)
+{
+    // RTENTRY *NutIpRouteList(int *numEntries) -- BROKEN on OS code
+
+}
+*/
+
+
 // Show list of threads.
 static void ShowThreads(FILE * stream)
 {
