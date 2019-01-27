@@ -12,6 +12,7 @@
 
 #include "web.h"
 
+#if ENABLE_HTTP
 
 char *html_mtype = "text/html";
 
@@ -105,4 +106,5 @@ ShowTableRow3(FILE * stream, char *c1, char *c2, char *c3 )
 
 
 
+#endif // ENABLE_HTTP
 

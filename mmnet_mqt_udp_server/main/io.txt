@@ -1,12 +1,12 @@
-Basic pin map for MMNET101
+Basic pin map for MMNET01
 
 Port B
 
     0-3 - front panel LEDs
 
-    4,5 - relays (move to 4,6)
+    4,6 - relays (soldered on 4,5)
 
-    6   - 
+    5   - 
 
     7   - LCD backlight PWM
 

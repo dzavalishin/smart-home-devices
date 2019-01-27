@@ -16,6 +16,8 @@
 
 #include "io_temp.h"
 
+#if ENABLE_HTTP
+
 
 //const unsigned char *enableBitNames = (unsigned char *)"\1ADC analogue inputs\2PWM analogue outputs\3DHT11 humidity sensor\4BMP180 pressure sensor\5TUN0 TCP-485 tunnel\6TUN1 TCP-485 tunnel\7B1W1 - single bus 1Wire\10B1W8 - multibus 1Wire\11Serial debug (UART1)";
 const unsigned char *enableBitNames = (unsigned char *)"\1Internal XOR switch logic\2LCD backlight PWM\3Di\4Do (relays)\5LCD in 4 bit mode\7B1W1 - single bus 1Wire\11Serial debug (UART1)";
@@ -430,6 +432,7 @@ static void decode_bit( const char *pname, const char *pval, unsigned int *data 
 }
 
 
+#endif // ENABLE_HTTP
 
 
 

@@ -21,8 +21,6 @@
 
 #include "ds18x20.h"
 
-//#include <modbus.h> // err codes
-
 #include <sys/confnet.h>
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -34,6 +32,7 @@
 
 
 
+#if ENABLE_HTTP
 
 
 
@@ -558,4 +557,5 @@ static int setNamedParameter( const char *name, const char *value )
 
 
 
+#endif // ENABLE_HTTP
 

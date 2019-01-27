@@ -14,6 +14,10 @@
 #include "cgi.h"
 #include "web.h"
 
+
+#if ENABLE_HTTP
+
+
 static void ShowThreads(FILE * stream);
 static void ShowTimers(FILE * stream);
 static void ShowSockets(FILE * stream);
@@ -175,3 +179,7 @@ static void ShowSockets(FILE * stream)
     fputs_P(endtable, stream);
     fflush(stream);
 }
+
+
+#endif // ENABLE_HTTP
+

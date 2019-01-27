@@ -14,6 +14,8 @@
 #include "cgi.h"
 #include "web.h"
 
+#if ENABLE_HTTP
+
 
 int CgiLog(FILE * stream, REQUEST * req)
 {
@@ -33,3 +35,6 @@ int CgiLog(FILE * stream, REQUEST * req)
 
     return 0;
 }
+
+#endif // ENABLE_HTTP
+

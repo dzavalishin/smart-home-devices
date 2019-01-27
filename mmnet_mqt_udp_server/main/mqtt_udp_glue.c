@@ -25,11 +25,18 @@
 #define DEBUG 0
 
 
+uint8_t		mqtt_keepalive_timer = 0;
+uint32_t	mqtt_io_count = 0;
+
+
+
 
 
 int mqtt_udp_incoming_pkt( struct mqtt_udp_pkt *o )
 {
     if( o->ptype != PTYPE_PUBLISH ) return 0;
+
+    mqtt_io_count++;
 
     printf( "got pkt from %d.%d.%d.%d", 
             //o->pflags, o->pkt_id,
@@ -53,7 +60,7 @@ int mqtt_udp_incoming_pkt( struct mqtt_udp_pkt *o )
 
 THREAD( mqtt_udp_recv_thread, __arg )
 {
-    printf("Listen to MQTT/UDP\n");
+    printf("MQTT/UDP listen thread\n");
 
     while(1)
     {
@@ -63,11 +70,33 @@ THREAD( mqtt_udp_recv_thread, __arg )
     }
 }
 
+/*
+THREAD( mqtt_udp_send_thread, __arg )
+{
+    printf("MQTT/UDP send thread\n");
+
+    while(1)
+    {
+        NutSleep(1000);
+
+        // Incremented by timer each second
+        if( mqtt_keepalive_timer > 20 )
+        {
+            mqtt_keepalive_timer = 0;
+            mqtt_udp_send_ping_responce(); // We are alive
+            //mqtt_ping( &broker );
+        }
+
+    }
+}
+*/
+
 
 void mqtt_udp_start( void )
 {
     mqtt_udp_set_throttle( 0 ); // Turn off for a while
     NutThreadCreate("MQTT/UDP Recv", mqtt_udp_recv_thread, 0, 3640);
+    //NutThreadCreate("MQTT/UDP Send", mqtt_udp_send_thread, 0, 3640);
 }
 
 

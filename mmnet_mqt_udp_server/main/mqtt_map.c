@@ -2,7 +2,7 @@
  *
  * DZ-MMNET-WALL: Wall control panel based on MMNet01.
  *
- * MQTT to local ids mapping.
+ * MQTT/UDP to local ids mapping.
  *
 **/
 
@@ -143,7 +143,7 @@ void mqtt_recv_item( const char *mqtt_name, const char *data )
 
 
 
-
+/*
 uint8_t subscribe_all( void )
 {
     uint8_t i;
@@ -161,4 +161,5 @@ uint8_t subscribe_all( void )
     return 0;
 }
 
+*/
 

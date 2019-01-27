@@ -72,6 +72,9 @@ extern char *makeDate; // filled in by makefile
 
 #define ENABLE_MQTT_UDP 1
 
+#define ENABLE_HTTP 0
+
+
 //#ifdef OW_ONE_BUS
 //#define OW_PIN  PB0
 //#endif

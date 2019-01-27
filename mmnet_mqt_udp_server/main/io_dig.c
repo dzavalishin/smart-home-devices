@@ -96,20 +96,25 @@ uint32_t        dio_state = 0;                   	// Our state as we know
 
 static uint8_t  dio_start = 1;
 
+// loop in thread
 static void dio_process( void )
 {
+    dio_input();
+
     uint8_t fb_ch = dio_front_buttons_changed;
     uint8_t re_ch = dio_remote_state_changed;
 
-    dio_input();
+    //dio_input();
 
-    // Process state changes from MQTT or front buttons
+    // Process state changes from MQTT/UDP or front buttons
 
     // Nothing changed? no work.
     if( (!fb_ch) && (!re_ch) && (!dio_start) )
         return;
 
     dio_start = 0;
+
+    printf("dio_process\n");
 
     if( re_ch )
     {
@@ -122,7 +127,7 @@ static void dio_process( void )
     DO_PORT &= ~DO_LED_MASK;
     DO_PORT |= DO_LED_MASK & (~dio_state);
 
-#if ENABLE_MQTT_UDP
+#if ENABLE_MQTT_UDP && 0
     if( fb_ch )
     {
         //printf("fb_ch 0x%x", fb_ch);
@@ -146,13 +151,18 @@ static void dio_in_channel( uint8_t ch, uint8_t *prev_state, uint8_t new_state, 
     new_state = new_state ? 1 : 0; // not -1
 
     // If switch, we react on any change, for button we react to 1->0 only (press, not release)
-    if( is_button && new_state )
-        return;
+    //if( is_button && new_state )        return;
+
+    //if( is_button )        goto change;
 
     if( new_state == *prev_state )
         return;
 
     *prev_state = new_state;
+
+//change:
+    if( is_button && new_state )
+        return;
 
     dio_front_buttons_changed |= _BV(ch);
 }
@@ -161,10 +171,26 @@ static void dio_in_channel( uint8_t ch, uint8_t *prev_state, uint8_t new_state, 
 uint8_t di0_prev = -1; // undefined
 uint8_t di1_prev = -1;
 
+uint8_t btn0_prev = -1;
+uint8_t btn1_prev = -1;
+uint8_t btn2_prev = -1;
+uint8_t btn3_prev = -1;
+
+
 static void dio_input( void )
 {
     uint8_t di0 = DI_PIN & _BV(DI_1_BIT);
     uint8_t di1 = DI_PIN & _BV(DI_2_BIT);
+
+    uint8_t btn0 = DI_PIN & _BV(0);
+    uint8_t btn1 = DI_PIN & _BV(1);
+    uint8_t btn2 = DI_PIN & _BV(2);
+    uint8_t btn3 = DI_PIN & _BV(3);
+
+    dio_in_channel( 0, &btn0_prev, btn0, DI_IS_BUTTON );
+    dio_in_channel( 1, &btn1_prev, btn1, DI_IS_BUTTON );
+    dio_in_channel( 2, &btn2_prev, btn2, DI_IS_BUTTON );
+    dio_in_channel( 3, &btn3_prev, btn3, DI_IS_BUTTON );
 
     dio_in_channel( ee_cfg.di_channel[0], &di0_prev, di0, ee_cfg.di_mode[0] & DI_IS_BUTTON );
     dio_in_channel( ee_cfg.di_channel[1], &di1_prev, di1, ee_cfg.di_mode[1] & DI_IS_BUTTON );
@@ -309,7 +335,7 @@ static uint8_t dio_start_dev( dev_major* d )
     (void) d;
     printf("dio_start_dev\n");
 
-    NutThreadCreate("IO", dio_proc, 0, 1024 );
+    NutThreadCreate("IO", dio_proc, 0, 4024 );
 
     return 0;
 }

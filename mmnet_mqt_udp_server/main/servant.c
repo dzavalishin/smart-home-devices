@@ -16,8 +16,6 @@
 
 #include <avr/wdt.h>
 
-//#include <modbus.h>
-
 #include <sys/nutconfig.h>
 #include <sys/thread.h>
 #include <sys/timer.h>
@@ -29,7 +27,7 @@
 
 #include "ui_menu.h"
 
-//#include "mqtt.h"
+#include "mqtt_udp_glue.h"
 
 
 #define TEMPERATURE_RESCAN_SEC 240
@@ -49,8 +47,7 @@ void each_second(HANDLE h, void *arg)
 {
     second_counter++;
     temperatureMeterCnt++;
-    //mqtt_keepalive_timer++;
-#warning connect MQTT/UDP
+    mqtt_keepalive_timer++;
 
     // Will become 0 right now, time to trigger connection lost action
     if( network_activity == 1 )

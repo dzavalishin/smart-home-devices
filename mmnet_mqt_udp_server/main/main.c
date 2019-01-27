@@ -131,23 +131,25 @@ THREAD(long_init, __arg)
 #if ENABLE_MQTT_UDP
         lcd_status_line("MQTT/UDP");
         mqtt_udp_start();
+        /*
         mqtt_udp_send_channel( 233, 3 );
         NutSleep(1000);
 
-        /*{
+        {
             NUTDEVICE *dev;
             uint32_t saddr;
 
             dev = NutIpRouteQuery( 0xFFFFFFFF, &saddr);
 
             printf("Route for broadcast 0x%lX, dev %s\n", saddr, dev->dev_name );
-        }*/
+        }
 
 
         NutSleep(1000);
         mqtt_udp_send_channel( 233, 2 );
         NutSleep(1000);
         mqtt_udp_send_channel( 233, 1 );
+        */
 #endif
 
 
@@ -156,17 +158,6 @@ THREAD(long_init, __arg)
 }
 
 
-
-/*
-void check( void )
-{
-    DDRE = 0xFF;
-    PORTE = 0;
-
-    while(1)
-        ;
-}
-*/
 
 /*!
  * \brief Main application routine.
@@ -190,9 +181,9 @@ int main(void)
 
     //fail_led();
 
-#warning fixme
+//#warning fixme
     // [dz] hangs on empty eeprom
-    //runtime_cfg_eeprom_read();  // Now attempt to load saved state
+    runtime_cfg_eeprom_read();  // Now attempt to load saved state
 
 
 #if 1
@@ -233,11 +224,7 @@ int main(void)
 
     // We need it here because we use 1-wire 2401 serial as MAC address
     init_devices();
-    //led_ddr_init(); // Before using LED!
-    //LED_ON;
-    //LED_OFF;
 
-    //while(1) {  LED_ON; delay_us(100); LED_OFF; delay_us(1000);  }
     //syslog( LOG_INFO, "Network init" );
 #if ENABLE_LOGBUF
     log_puts( "logging started\n" );
@@ -258,14 +245,16 @@ int main(void)
     _daylight = 0; // No DST in Russia now
 
     NutThreadCreate("LongInit", long_init, 0, 2640);
-NutSleep(10000);
+//NutSleep(10000);
 
     // Register our device for the file system.
     NutRegisterDevice(&devUrom, 0, 0);
 
+#if ENABLE_HTTP
     init_cgi();
     init_httpd();
     printf("httpd ready\n");
+#endif
 
     //lcd_status_line("Modbus");
     //modbus_init( 9600, 1 ); // we don't need both parameters, actually

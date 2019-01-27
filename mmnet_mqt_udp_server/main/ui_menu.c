@@ -12,8 +12,7 @@
 #include "ui_menu.h"
 #include "ui_lcd.h"
 
-//#include "modbus.h"
-//#include "mqtt.h"
+#include "mqtt_udp_glue.h"
 
 #include "io_temp.h"
 #include "io_dig.h"
@@ -335,8 +334,8 @@ void menu_display_status(void)
     lcd_gotoxy( 17, 2 ); lcd_puts("   ");
     lcd_gotoxy( 0, 2 );
     lcd_puts("MQTT/UDP:");
-    //lcd_puti( mqtt_io_count % 100 ); // Take 2 digits
-#warning connect MQTT/UDP
+    lcd_puti( mqtt_io_count % 100 ); // Take 2 digits
+
 /*
     lcd_puts(" ModBus:");
     lcd_puti( modbus_event_cnt % 100 ); // Take 2 digits
