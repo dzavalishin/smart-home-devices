@@ -9,3 +9,5 @@
 *.h~
 *.h~
 *.h~
+mmnet_mqt_udp_server/main/makedate.h
+mmnet_mqt_udp_server/main/Makefile~
