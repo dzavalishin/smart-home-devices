@@ -11,6 +11,8 @@
 #include <sys/socket.h>
 #include <sys/timer.h>
 
+#include "defs.h"
+
 #include "cgi.h"
 #include "web.h"
 

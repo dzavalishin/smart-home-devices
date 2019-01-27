@@ -114,7 +114,7 @@ static void dio_process( void )
 
     dio_start = 0;
 
-    printf("dio_process\n");
+    //printf("dio_process ... ");
 
     if( re_ch )
     {
@@ -127,7 +127,7 @@ static void dio_process( void )
     DO_PORT &= ~DO_LED_MASK;
     DO_PORT |= DO_LED_MASK & (~dio_state);
 
-#if ENABLE_MQTT_UDP && 0
+#if ENABLE_MQTT_UDP && 1
     if( fb_ch )
     {
         //printf("fb_ch 0x%x", fb_ch);
@@ -143,6 +143,8 @@ static void dio_process( void )
 
     dio_front_buttons_changed &= ~fb_ch;
     dio_remote_state_changed &= ~re_ch;
+
+    //printf("done\n");
 }
 
 

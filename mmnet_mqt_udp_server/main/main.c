@@ -361,6 +361,7 @@ dhcp_ok:
 }
 
 
+#if ENABLE_HTTP
 static void init_cgi(void)
 {
     // Register OS statistics/debug CGI 
@@ -397,6 +398,8 @@ static void init_httpd(void)
     }
 
 }
+#endif
+
 
 #if ENABLE_SNTP
 static void init_sntp(void)

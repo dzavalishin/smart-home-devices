@@ -144,8 +144,13 @@ void  mqtt_udp_arch_sleep_msec( uint32_t msec )
 
 
 
+// MQTT/UDP library requests two sockets, one for recv, one for xmit.
+// As we have no bind() we put both on MQTT_PORT, and second one takes
+// over. If second one is send, it kills recption.
+//
+// That's why we keep it here and reuse for all calls.
 
-
+static int last_fd = -1;
 
 
 int mqtt_udp_socket(void)
@@ -153,6 +158,7 @@ int mqtt_udp_socket(void)
 #if DEBUG
     printf("MQTT/UDP mk socket \n");
 #endif
+    if( last_fd >= 0 ) return last_fd;
 
     UDPSOCKET *fd = NutUdpCreateSocket( MQTT_PORT );
 
@@ -180,6 +186,8 @@ int mqtt_udp_socket(void)
 
     uint16_t sz = PKT_BUF_SIZE;
     NutUdpSetSockOpt( fd, SO_RCVBUF, &sz, sizeof(uint16_t) );
+
+    last_fd = (int) fd;
 
     return (int) fd;
 }
