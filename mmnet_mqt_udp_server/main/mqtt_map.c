@@ -9,10 +9,12 @@
 #include "defs.h"
 #include "util.h"
 #include "runtime_cfg.h"
+#include "servant.h"
 
 #include "io_dig.h"
 
-#include "mqtt.h"
+#include "mqtt_udp.h"
+#include "mqtt_udp_glue.h"
 
 #include <inttypes.h>
 #include <string.h>
@@ -62,9 +64,11 @@ static int8_t pos_by_name( const char *name )
 
 
 
-
-void mqtt_send_channel( uint8_t state, uint8_t ch )
+/*
+void mqtt_udp_send_channel( uint8_t state, uint8_t ch )
 {
+    if( !network_started ) return;
+
     int8_t pos = pos_by_id( ch );
 
     if( pos < 0 )
@@ -86,8 +90,13 @@ void mqtt_send_channel( uint8_t state, uint8_t ch )
 
     //printf( "channel %d send %d item %s\n", ch, state, buf );
 
-    mqtt_send_item( buf, data );
+    //mqtt_send_item( buf, data );
+    printf("publish '%s'='%s'\n", buf, data );
+    int rc = mqtt_udp_send_publish( buf, data );
+    if( rc )        printf("publish err=%d", rc);
 }
+*/
+
 
 
 // Called from MQTT receiver

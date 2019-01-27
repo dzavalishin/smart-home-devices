@@ -11,6 +11,7 @@
 #include "mqtt_udp_glue.h"
 #include "mqtt_udp.h"
 #include "mqtt_udp_defs.h"
+#include "servant.h"
 
 #include <sys/timer.h>
 #include <sys/socket.h>
@@ -105,6 +106,9 @@ void mqtt_udp_send_channel( uint8_t state, uint8_t ch )
 {
     char topic[] = "mmnet/01/dio0";
     topic[12] = ch + '0';
+
+    if( !network_started ) return;
+
 
     char val[4+10];
     //snprintf( val, sizeof(val) - 1, "%d", state );

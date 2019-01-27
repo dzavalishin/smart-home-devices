@@ -27,7 +27,8 @@ SRCS += $(WEBFILE) httpd.c lua.c syslog.c
 # i2c.c net_io.c icp.c freq_send.c ds18x20.c onewire.c ds2482.c dallas_ds2482.c  child-1wire.c 
 SRCS += ui_lcd.c ui_encoder.c ui_menu.c
 #ui_menu.c
-#SRCS += mqtt_map.c libemqtt.c mqtt_main.c
+#SRCS += libemqtt.c mqtt_main.c
+SRCS += mqtt_map.c
 SRCS += logbuf.c
 SRCS += mqtt_udp_glue.c
 

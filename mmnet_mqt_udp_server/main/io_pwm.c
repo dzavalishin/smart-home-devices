@@ -61,18 +61,18 @@ void set_lcd_brightness( unsigned char level )
 static void pwm_init_dev( dev_major* d )
 {
     (void) d;
-    printf("pwm_init_dev\n");
+    //printf("pwm_init_dev\n");
 
     OCR2 = 0xFF; // Full brightness on boot
 
     //TCCR2 = (1 << COM21) | (1 << PWM2) | (1 << CS20);
     TCCR2 = (1 << COM21) | (1 << WGM20) | (1 << CS20);
-
 }
+
 static uint8_t pwm_start_dev( dev_major* d )
 {
     (void) d;
-    printf("pwm_start_dev\n");
+    //printf("pwm_start_dev\n");
 
     return 0;
 }

@@ -76,16 +76,24 @@
 //#include <sys/device.h>
 //#include <net/route.h>
 
+int network_started = 0;
 
+
+
+
+#define NMAJOR ( sizeof(devices) / sizeof(dev_major *) )
 
 static int tryToFillMac(unsigned char *mac, unsigned char *oneWireId);
 
 static void init_devices(void);
 
 static void init_net(void);
-static void init_cgi(void);
 static void init_httpd(void);
 static void init_sntp(void);
+
+static void init_regular_devices(void);
+static void start_regular_devices(void);
+
 
 #if ENABLE_SYSLOG
 //static void init_syslog(void);
@@ -96,6 +104,9 @@ THREAD(main_loop, arg);
 void each_second(HANDLE h, void *arg);
 
 
+THREAD(long_init, __arg);
+
+
 
 dev_major *devices[] =
 {
@@ -103,59 +114,11 @@ dev_major *devices[] =
     &io_pwm,
 };
 
-
-THREAD(long_init, __arg)
-{
-    while(1) // to satisfy no return
-    {
-#if ENABLE_SNTP
-        lcd_status_line("SNTP");
-        init_sntp();
-#endif
-
-#if ENABLE_SYSLOG
-        lcd_status_line("Syslog");
-        //init_syslog();
-        log_syslog_init();
-#endif
-
-
-#if SERVANT_LUA
-        lcd_status_line("Lua");
-        lua_init();
-#endif
-
-//        lcd_status_line("MQTT");
-//        mqtt_start();
-
-#if ENABLE_MQTT_UDP
-        lcd_status_line("MQTT/UDP");
-        mqtt_udp_start();
-        /*
-        mqtt_udp_send_channel( 233, 3 );
-        NutSleep(1000);
-
-        {
-            NUTDEVICE *dev;
-            uint32_t saddr;
-
-            dev = NutIpRouteQuery( 0xFFFFFFFF, &saddr);
-
-            printf("Route for broadcast 0x%lX, dev %s\n", saddr, dev->dev_name );
-        }
-
-
-        NutSleep(1000);
-        mqtt_udp_send_channel( 233, 2 );
-        NutSleep(1000);
-        mqtt_udp_send_channel( 233, 1 );
-        */
-#endif
-
-
-        NutThreadExit();
-    }
-}
+// -----------------------------------------------------------------------
+//
+// Main
+//
+// -----------------------------------------------------------------------
 
 
 
@@ -166,7 +129,6 @@ THREAD(long_init, __arg)
  */
 int main(void)
 {
-
     NutThreadSetSleepMode(SLEEP_MODE_IDLE); // Let the CPU sleep in idle
 
 #if ENABLE_LOGBUF
@@ -181,20 +143,16 @@ int main(void)
 
     //fail_led();
 
-//#warning fixme
-    // [dz] hangs on empty eeprom
     runtime_cfg_eeprom_read();  // Now attempt to load saved state
 
 
 #if 1
     // Initialize the uart device.
     if( RT_IO_ENABLED(IO_LOG) )
-    //if(1)
     {
 #if 1 // must be 1
 #if !SERVANT_TUN1
         NutRegisterDevice(&devDebug1, 0, 0); // USB
-    //check();
         freopen("uart1", "w", stdout);
 #endif
 #else
@@ -233,13 +191,11 @@ int main(void)
     lcd_status_line("Network");
     init_net();
 
-/*
+
 #if ENABLE_MQTT_UDP
-    lcd_status_line("MQTT/UDP");
-    mqtt_udp_start();
-    mqtt_udp_send_channel( 333, 0 );
+    //lcd_status_line("MQTT/UDP");
+    //mqtt_udp_start();
 #endif
-*/
 
     _timezone = (((long)ee_cfg.timezone) * 60L * 60L);
     _daylight = 0; // No DST in Russia now
@@ -255,10 +211,6 @@ int main(void)
     init_httpd();
     printf("httpd ready\n");
 #endif
-
-    //lcd_status_line("Modbus");
-    //modbus_init( 9600, 1 ); // we don't need both parameters, actually
-    //NutThreadCreate( "ModBusTCP", ModbusService, (void *) 0, 640);
 
     NutThreadSetPriority(254);
     NutTimerStart(1000, each_second, 0, 0 ); // Each second call each_second
@@ -280,6 +232,18 @@ int main(void)
 
     return 33;
 }
+
+
+
+
+
+// -----------------------------------------------------------------------
+//
+// Network startup
+//
+// -----------------------------------------------------------------------
+
+
 
 
 #define DEV1 1
@@ -361,30 +325,12 @@ dhcp_ok:
 }
 
 
+
+
+
+
+
 #if ENABLE_HTTP
-static void init_cgi(void)
-{
-    // Register OS statistics/debug CGI 
-    NutRegisterCgi("osdata.cgi", ShowOsData);
-
-    // Register our app CGI - i/o/net reports
-    NutRegisterCgi("inputs.cgi", CgiInputs);
-    NutRegisterCgi("outputs.cgi", CgiOutputs);
-
-    NutRegisterCgi("network.cgi", CgiNetwork);
-
-    // Web config and general status
-    NutRegisterCgi("form.cgi", ShowForm);
-    NutRegisterCgi("status.cgi", CgiStatus);
-
-    // OpenHAB integration - read (/write&) value with http
-    NutRegisterCgi("item.cgi", CgiNetIO );
-    NutRegisterCgi("log.cgi", CgiLog );
-    // Protect the cgi-bin directory with user and password.
-    //NutRegisterAuth("cgi-bin", "root:root");
-
-}
-
 static void init_httpd(void)
 {
     uint8_t i;
@@ -480,72 +426,44 @@ static int tryToFillMac(unsigned char *mac, unsigned char *oneWireId)
 
 
 
+// -----------------------------------------------------------------------
+//
+// Init things that can be started later or take too long to start
+//
+// -----------------------------------------------------------------------
 
 
 
-#define NMAJOR ( sizeof(devices) / sizeof(dev_major *) )
-
-static void init_regular_devices(void)
+THREAD(long_init, __arg)
 {
-    dev_major *	dev;
-    uint8_t	i;
-
-    // Init
-    for( i = 0; i < NMAJOR; i++ )
+    while(1) // to satisfy no return
     {
-        dev = devices[i];
-        printf("Init %s... ", dev->name );
-        dev->init( dev );
+#if ENABLE_SNTP
+        lcd_status_line("SNTP");
+        init_sntp();
+#endif
+
+#if ENABLE_SYSLOG
+        lcd_status_line("Syslog");
+        //init_syslog();
+        log_syslog_init();
+#endif
+
+#if SERVANT_LUA
+        lcd_status_line("Lua");
+        lua_init();
+#endif
+
+#if ENABLE_MQTT_UDP
+        lcd_status_line("MQTT/UDP");
+        mqtt_udp_start();
+#endif
+        network_started = 1;
+
+        NutThreadExit();
     }
 }
 
-static void start_regular_devices(void)
-{
-    dev_major *	dev;
-    uint8_t	i;
-
-    // Start
-    for( i = 0; i < NMAJOR; i++ )
-    {
-        dev = devices[i];
-        printf("Start %s... ", dev->name );
-        dev->started = ! dev->start( dev );
-    }
-}
-
-
-void timer_regular_devices(void)
-{
-    dev_major *	dev;
-    uint8_t	i;
-
-    for( i = 0; i < NMAJOR; i++ )
-    {
-        dev = devices[i];
-
-        if( dev->started )
-            dev->timer( dev );
-    }
-
-}
-
-// TODO call on manual reboot
-void stop_regular_devices(void)
-{
-    dev_major *	dev;
-    uint8_t	i;
-
-    for( i = 0; i < NMAJOR; i++ )
-    {
-        dev = devices[i];
-
-        if( dev->started )
-            dev->stop( dev );
-
-        dev->started = 0;
-    }
-
-}
 
 
 
@@ -555,10 +473,15 @@ void stop_regular_devices(void)
 
 
 
-
-
-
+// -----------------------------------------------------------------------
+//
 // Initialize all peripherals
+//
+// -----------------------------------------------------------------------
+
+
+
+
 
 void init_devices(void)
 {
@@ -591,10 +514,95 @@ void init_devices(void)
     init_regular_devices();
     start_regular_devices();
 
-    printf(" DONE\n");
+    //printf(" DONE\n");
+}
 
+
+
+
+
+
+
+
+
+
+// -----------------------------------------------------------------------
+//
+// Init / start / stop subsystems
+//
+// -----------------------------------------------------------------------
+
+
+
+
+
+
+static void init_regular_devices(void)
+{
+    dev_major *	dev;
+    uint8_t	i;
+
+    // Init
+    for( i = 0; i < NMAJOR; i++ )
+    {
+        dev = devices[i];
+        printf("Init %s... ", dev->name );
+        dev->init( dev );
+        printf("\n");
+    }
+}
+
+static void start_regular_devices(void)
+{
+    dev_major *	dev;
+    uint8_t	i;
+
+    // Start
+    for( i = 0; i < NMAJOR; i++ )
+    {
+        dev = devices[i];
+        printf("Start %s... ", dev->name );
+        dev->started = ! dev->start( dev );
+        printf("\n");
+    }
+}
+
+
+void timer_regular_devices(void)
+{
+#if 1
+    dev_major *	dev;
+    uint8_t	i;
+
+    for( i = 0; i < NMAJOR; i++ )
+    {
+        dev = devices[i];
+
+        if( dev->timer && dev->started )
+            dev->timer( dev );
+    }
+#endif
+}
+
+// TODO call on manual reboot
+void stop_regular_devices(void)
+{
+    dev_major *	dev;
+    uint8_t	i;
+
+    for( i = 0; i < NMAJOR; i++ )
+    {
+        dev = devices[i];
+
+        if( dev->started )
+            dev->stop( dev );
+
+        dev->started = 0;
+    }
 
 }
+
+
 
 
 

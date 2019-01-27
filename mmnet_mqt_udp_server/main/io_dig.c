@@ -325,7 +325,7 @@ static unsigned char get_ddr(unsigned char port_num)
 static void dio_init_dev( dev_major* d )
 {
     (void) d;
-    printf("dio_init_dev\n");
+    //printf("dio_init_dev\n");
 
 
 
@@ -335,9 +335,9 @@ static void dio_init_dev( dev_major* d )
 static uint8_t dio_start_dev( dev_major* d )
 {
     (void) d;
-    printf("dio_start_dev\n");
+    //printf("dio_start_dev\n");
 
-    NutThreadCreate("IO", dio_proc, 0, 4024 );
+    NutThreadCreate("IO", dio_proc, 0, 3024 );
 
     return 0;
 }

@@ -557,5 +557,38 @@ static int setNamedParameter( const char *name, const char *value )
 
 
 
+
+
+
+
+
+
+void init_cgi(void)
+{
+    // Register OS statistics/debug CGI 
+    NutRegisterCgi("osdata.cgi", ShowOsData);
+
+    // Register our app CGI - i/o/net reports
+    NutRegisterCgi("inputs.cgi", CgiInputs);
+    NutRegisterCgi("outputs.cgi", CgiOutputs);
+
+    NutRegisterCgi("network.cgi", CgiNetwork);
+
+    // Web config and general status
+    NutRegisterCgi("form.cgi", ShowForm);
+    NutRegisterCgi("status.cgi", CgiStatus);
+
+    // OpenHAB integration - read (/write&) value with http
+    NutRegisterCgi("item.cgi", CgiNetIO );
+    NutRegisterCgi("log.cgi", CgiLog );
+    // Protect the cgi-bin directory with user and password.
+    //NutRegisterAuth("cgi-bin", "root:root");
+}
+
+
+
+
+
+
 #endif // ENABLE_HTTP
 

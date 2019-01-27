@@ -20,6 +20,9 @@
 THREAD(HttpService, arg);
 
 
+void init_cgi(void);
+
+
 
 
 #define HTML(__text) do {     static prog_char form[] = __text;    fputs_P(form, stream); } while(0)

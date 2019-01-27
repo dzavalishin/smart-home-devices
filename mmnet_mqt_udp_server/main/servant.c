@@ -79,6 +79,8 @@ void each_second(HANDLE h, void *arg)
     }
 
     menu_timer_05sec(); // TODO 0.5 sec, not 1
+
+    timer_regular_devices();
 }
 
 
