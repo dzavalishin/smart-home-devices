@@ -22,6 +22,10 @@ void mqtt_udp_start( void );
 // Send channel status upstream
 void mqtt_udp_send_channel( uint8_t state, uint8_t ch );
 
+// Called from MQTT/UDP recv loop
+void mqtt_udp_recv_item( const char *mqtt_name, const char *data );
+
+
 /*
 // Called from MQTT receiver
 void mqtt_recv_item( const char *mqtt_name, const char *data );

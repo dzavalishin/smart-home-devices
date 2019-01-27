@@ -83,7 +83,8 @@ init_runtime_cfg()
     //ee_cfg.io_enable = IO_LOG|IO_LCD4; // disable all by default, enable serial debug and 4-bit LCD IO
     ee_cfg.io_enable = IO_LOG; // disable all by default, enable serial debug 
 
-    strlcpy( ee_cfg.topic_prefix, "/openhab", sizeof(ee_cfg.topic_prefix) );
+    //strlcpy( ee_cfg.topic_prefix, "/openhab/", sizeof(ee_cfg.topic_prefix) );
+    strlcpy( ee_cfg.topic_prefix, "", sizeof(ee_cfg.topic_prefix) );
 
     strlcpy( ee_cfg.mqtt_host, "smart", sizeof(ee_cfg.mqtt_host) );
     ee_cfg.mqtt_port = 1883;

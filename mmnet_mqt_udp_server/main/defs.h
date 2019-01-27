@@ -117,7 +117,7 @@ extern char *makeDate; // filled in by makefile
 #define LED_PIN  PING
 #define LED      PING3
 
-#if 1
+#if 0
 
 //#define FAIL_LED_EXCLPOS  4 // E
 #define FAIL_LED_DDR  DDRE

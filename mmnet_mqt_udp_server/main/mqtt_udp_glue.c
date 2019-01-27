@@ -39,7 +39,7 @@ int mqtt_udp_incoming_pkt( struct mqtt_udp_pkt *o )
 
     mqtt_io_count++;
 
-    printf( "got pkt from %d.%d.%d.%d", 
+    printf( "got pkt from %d.%d.%d.%d",
             //o->pflags, o->pkt_id,
             (int)(0xFF & (o->from_ip >> 24)),
             (int)(0xFF & (o->from_ip >> 16)),
@@ -52,6 +52,8 @@ int mqtt_udp_incoming_pkt( struct mqtt_udp_pkt *o )
 
     if( o->value_len > 0 )
         printf(" = '%s'", o->value );
+
+    mqtt_udp_recv_item( o->topic, o->value );
 
     printf( "\n");
     return 0;
@@ -100,7 +102,7 @@ void mqtt_udp_start( void )
     //NutThreadCreate("MQTT/UDP Send", mqtt_udp_send_thread, 0, 3640);
 }
 
-
+/*
 // Send channel status upstream
 void mqtt_udp_send_channel( uint8_t state, uint8_t ch )
 {
@@ -118,7 +120,7 @@ void mqtt_udp_send_channel( uint8_t state, uint8_t ch )
     int rc = mqtt_udp_send_publish( topic, val );
     if( rc )        printf("publish err=%d", rc);
 }
-
+*/
 
 
 // -----------------------------------------------------------------------

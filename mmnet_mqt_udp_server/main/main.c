@@ -570,7 +570,6 @@ static void start_regular_devices(void)
 
 void timer_regular_devices(void)
 {
-#if 1
     dev_major *	dev;
     uint8_t	i;
 
@@ -581,7 +580,6 @@ void timer_regular_devices(void)
         if( dev->timer && dev->started )
             dev->timer( dev );
     }
-#endif
 }
 
 // TODO call on manual reboot

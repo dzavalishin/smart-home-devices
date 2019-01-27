@@ -64,7 +64,7 @@ static int8_t pos_by_name( const char *name )
 
 
 
-/*
+
 void mqtt_udp_send_channel( uint8_t state, uint8_t ch )
 {
     if( !network_started ) return;
@@ -85,26 +85,28 @@ void mqtt_udp_send_channel( uint8_t state, uint8_t ch )
     char buf[80];
 
     strlcpy( buf, ee_cfg.topic_prefix, sizeof(buf) );
-    strlcat( buf, "/", sizeof(buf) );
+    //strlcat( buf, "/", sizeof(buf) );
     strlcat( buf, mp->mqtt_name, sizeof(buf) );
 
     //printf( "channel %d send %d item %s\n", ch, state, buf );
+
+    mqtt_io_count++;
 
     //mqtt_send_item( buf, data );
     printf("publish '%s'='%s'\n", buf, data );
     int rc = mqtt_udp_send_publish( buf, data );
     if( rc )        printf("publish err=%d", rc);
 }
-*/
+
 
 
 
 // Called from MQTT receiver
-void mqtt_recv_item( const char *mqtt_name, const char *data )
+void mqtt_udp_recv_item( const char *mqtt_name, const char *data )
 {
     int plen = strlen( ee_cfg.topic_prefix );
 
-    if( strncmp( mqtt_name, ee_cfg.topic_prefix, plen ) )
+    if( plen && strncmp( mqtt_name, ee_cfg.topic_prefix, plen ) )
     {
         printf("No prefix (%s) on incoming item (%s)", ee_cfg.topic_prefix, mqtt_name );
         return;
