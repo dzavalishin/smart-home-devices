@@ -128,7 +128,7 @@ THREAD(long_init, __arg)
 #if ENABLE_MQTT_UDP
         lcd_status_line("MQTT/UDP");
         mqtt_udp_start();
-        mqtt_udp_send_channel( 333, 0 );
+        mqtt_udp_send_channel( 233, 0 );
 #endif
 
 

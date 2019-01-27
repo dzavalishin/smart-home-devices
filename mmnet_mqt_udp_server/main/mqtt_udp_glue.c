@@ -29,9 +29,9 @@
 
 int mqtt_udp_incoming_pkt( struct mqtt_udp_pkt *o )
 {
-    if( o->ptype != PTYPE_PUBLISH ) return;
+    if( o->ptype != PTYPE_PUBLISH ) return 0;
 
-    printf( "got pkt from %d.%d.%d.%d",
+    printf( "got pkt from %d.%d.%d.%d", 
             //o->pflags, o->pkt_id,
             (int)(0xFF & (o->from_ip >> 24)),
             (int)(0xFF & (o->from_ip >> 16)),
@@ -176,7 +176,7 @@ int mqtt_udp_close_fd( int fd )
 
 
 
-int mqtt_udp_recv_pkt( int fd, char *buf, size_t buflen, int *src_ip_addr )
+int mqtt_udp_recv_pkt( int fd, char *buf, size_t buflen, uint32_t *src_ip_addr )
 {
 
 #if DEBUG
@@ -219,7 +219,7 @@ int mqtt_udp_send_pkt( int fd, char *data, size_t len )
 }
 
 
-int mqtt_udp_send_pkt_addr( int fd, char *data, size_t len, int ip_addr )
+int mqtt_udp_send_pkt_addr( int fd, char *data, size_t len, uint32_t ip_addr )
 {
 #if DEBUG
     printf("MQTT/UDP sent pkt to\n");
