@@ -179,23 +179,65 @@ uint8_t btn2_prev = -1;
 uint8_t btn3_prev = -1;
 
 
+typedef struct {
+    unsigned char        shift;
+    unsigned char        prev;
+} debounce_t;
+
+
+debounce_t buttons[] =
+{
+    { 0xF, -1 },
+    { 0xF, -1 },
+    { 0xF, -1 },
+    { 0xF, -1 },
+};
+
+
+static char debounce_button( debounce_t *s, char in )
+{
+    s->shift <<= 1;
+    if( in ) s->shift |= 1;
+
+    if( s-> shift == 0xFF ) return 1;
+    if( s-> shift == 0 ) return 0;
+
+    return s -> prev;
+}
+
 static void dio_input( void )
 {
     uint8_t di0 = DI_PIN & _BV(DI_1_BIT);
     uint8_t di1 = DI_PIN & _BV(DI_2_BIT);
 
+    dio_in_channel( ee_cfg.di_channel[0], &di0_prev, di0, ee_cfg.di_mode[0] & DI_IS_BUTTON );
+    dio_in_channel( ee_cfg.di_channel[1], &di1_prev, di1, ee_cfg.di_mode[1] & DI_IS_BUTTON );
+
+
+    /*
     uint8_t btn0 = DI_PIN & _BV(0);
     uint8_t btn1 = DI_PIN & _BV(1);
     uint8_t btn2 = DI_PIN & _BV(2);
     uint8_t btn3 = DI_PIN & _BV(3);
 
-    dio_in_channel( 0, &btn0_prev, btn0, DI_IS_BUTTON );
-    dio_in_channel( 1, &btn1_prev, btn1, DI_IS_BUTTON );
-    dio_in_channel( 2, &btn2_prev, btn2, DI_IS_BUTTON );
-    dio_in_channel( 3, &btn3_prev, btn3, DI_IS_BUTTON );
+    //dio_in_channel( 0, &btn0_prev, btn0, DI_IS_BUTTON );
+    //dio_in_channel( 1, &btn1_prev, btn1, DI_IS_BUTTON );
+    //dio_in_channel( 2, &btn2_prev, btn2, DI_IS_BUTTON );
 
-    dio_in_channel( ee_cfg.di_channel[0], &di0_prev, di0, ee_cfg.di_mode[0] & DI_IS_BUTTON );
-    dio_in_channel( ee_cfg.di_channel[1], &di1_prev, di1, ee_cfg.di_mode[1] & DI_IS_BUTTON );
+    dio_in_channel( 0, &(buttons[0].prev), debounce_button( buttons+0, btn0) , DI_IS_BUTTON );
+    dio_in_channel( 1, &(buttons[1].prev), debounce_button( buttons+1, btn1) , DI_IS_BUTTON );
+    dio_in_channel( 2, &(buttons[2].prev), debounce_button( buttons+2, btn2) , DI_IS_BUTTON );
+
+    //dio_in_channel( 3, &btn3_prev, btn3, DI_IS_BUTTON );
+    dio_in_channel( 3, &(buttons[3].prev), debounce_button( buttons+3, btn3) , DI_IS_BUTTON );
+    */
+
+    char i;
+    for( i = 0; i < 4; i++ )
+    {
+        dio_in_channel( i, &(buttons[i].prev), debounce_button( buttons+i, DI_PIN & _BV(i) ) , DI_IS_BUTTON );
+    }
+
 }
 
 

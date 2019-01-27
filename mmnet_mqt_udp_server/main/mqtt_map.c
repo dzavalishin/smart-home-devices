@@ -19,6 +19,7 @@
 #include <inttypes.h>
 #include <string.h>
 
+#include <ctype.h>
 
 
 struct mqtt_io
@@ -79,8 +80,9 @@ void mqtt_udp_send_channel( uint8_t state, uint8_t ch )
 
     struct mqtt_io *mp = mqm+pos;
 
-    char data[20];
-    sprintf( data, "%d", state );
+    //char data[20];
+    //sprintf( data, "%d", state );
+    char *data = state ? "ON" : "OFF";
 
     char buf[80];
 
@@ -127,7 +129,14 @@ void mqtt_udp_recv_item( const char *mqtt_name, const char *data )
 
     struct mqtt_io *mp = mqm+pos;
 
-    int state = atoi( data );
+    int state = 0;
+
+    if( isdigit( *data ) )
+        state = atoi( data );
+    else
+        state = !strcasecmp( data, "ON" );
+
+
     uint8_t ch = mp->local_id;
 
     // Now put to local data structure
