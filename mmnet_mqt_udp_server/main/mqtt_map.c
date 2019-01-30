@@ -110,7 +110,7 @@ void mqtt_udp_recv_item( const char *mqtt_name, const char *data )
 
     if( plen && strncmp( mqtt_name, ee_cfg.topic_prefix, plen ) )
     {
-        printf("No prefix (%s) on incoming item (%s)", ee_cfg.topic_prefix, mqtt_name );
+        //printf("No prefix (%s) on incoming item (%s)", ee_cfg.topic_prefix, mqtt_name );
         return;
     }
 
@@ -123,7 +123,7 @@ void mqtt_udp_recv_item( const char *mqtt_name, const char *data )
 
     if( pos < 0 )
     {
-        printf("no item %s", mqtt_name );
+        //printf("no item %s", mqtt_name );
         return;
     }
 
@@ -143,7 +143,7 @@ void mqtt_udp_recv_item( const char *mqtt_name, const char *data )
 
     if( ch >= (8*sizeof(dio_remote_state)) )
     {
-        printf("ch %d >= 8", ch);
+        //printf("ch %d >= 8", ch);
         return;
     }
 

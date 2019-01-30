@@ -10,6 +10,9 @@
 #include "runtime_cfg.h"
 
 
+#if SERVANT_LCD
+
+
 //#define LCD_4_BIT ( RT_IO_ENABLED( IO_LCD4 ) )
 #define LCD_4_BIT 0
 
@@ -370,3 +373,4 @@ void lcd_clear_line( uint8_t line )
 }
 
 
+#endif // SERVANT_LCD

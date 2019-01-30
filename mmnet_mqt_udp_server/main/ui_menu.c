@@ -19,6 +19,9 @@
 
 #include "runtime_cfg.h"
 
+
+#if SERVANT_LCD
+
 // ---------------------------------------------------------------
 //
 // Menu system common state
@@ -503,5 +506,6 @@ static void menu_read_input(void)
 
 
 
+#endif // SERVANT_LCD
 
 

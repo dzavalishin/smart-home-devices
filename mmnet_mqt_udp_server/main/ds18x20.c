@@ -1,3 +1,11 @@
+/**
+ *
+ * DZ-MMNET-WALL: Wall control panel based on MMNet01.
+ *
+ * 1-Wire temperature sensors.
+ *
+**/
+
 #include <avr/io.h>
 
 #include "ds18x20.h"

@@ -491,10 +491,9 @@ void init_devices(void)
     dio_init();
     sei(); //re-enable interrupts
 
+#if SERVANT_LCD
     lcd_init();
 
-
-#if SERVANT_LCD
     lcd_status_line("Encoder");
     encoder_init();
     lcd_status_line("Menu");

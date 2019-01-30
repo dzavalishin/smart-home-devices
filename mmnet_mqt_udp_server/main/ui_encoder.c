@@ -20,6 +20,9 @@
 #include <dev/irqreg.h>
 
 
+#if SERVANT_LCD
+
+
 // 0xD0; // Bits we use to connect encoder
 #define ENCODER_BITS 0b11010000
 
@@ -111,4 +114,7 @@ void menu_read_encoder( void )
     //NutSleep(1);
 
 }
+
+
+#endif // SERVANT_LCD
 

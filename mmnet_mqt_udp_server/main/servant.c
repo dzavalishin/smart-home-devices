@@ -78,7 +78,9 @@ void each_second(HANDLE h, void *arg)
         //wdt_reset();
     }
 
+#if SERVANT_LCD
     menu_timer_05sec(); // TODO 0.5 sec, not 1
+#endif
 
     timer_regular_devices();
 }
