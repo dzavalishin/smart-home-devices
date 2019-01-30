@@ -11,12 +11,10 @@
 // General definitions
 // ------------------------------------------------------------------------
 
-#define MODBUS_DEVICE_ID "DZWA00"
+#define MODBUS_DEVICE_ID "DZMQ00"
 extern char modbus_device_id[];
 
-#define DEVICE_NAME "DZ-MMNET-WALL"
-//#define DEVICE_REV "$Revision: 0 $"
-//#define DEVICE_DATE "$Date: $"
+#define DEVICE_NAME "DZ-MQTT-UDP-WALL"
 
 
 extern char *makeDate; // filled in by makefile
@@ -50,7 +48,7 @@ extern char *makeDate; // filled in by makefile
 
 #define SERVANT_NTEMP   7       // 1-Wire temperature sensors
 #define SERVANT_1WMAC   1       // Attempt to get MAC address from 1-wire 2401 chip
-#define OW_ONE_BUS      0       // 1 - have just one 1w bus, 0 - have 7: one on PG4 as usual, 6 on PD2-7
+#define OW_ONE_BUS      1       // 1 - have just one 1w bus, 0 - have 7: one on PG4 as usual, 6 on PD2-7
 
 // Does not fit to code flash mem :(
 #define SERVANT_LUA     0       // Have Lua scripting
@@ -82,11 +80,12 @@ extern char *makeDate; // filled in by makefile
 #if OW_ONE_BUS
 //#	define N_1W_BUS 1
 #	undef N_1W_BUS
+#       define B1W_NON_FIXED_PORT 0
 #else
 #	define N_1W_BUS 1
+#       define B1W_NON_FIXED_PORT 1
 #endif
 
-#define B1W_NON_FIXED_PORT 1
 
 // ------------------------------------------------------------------------
 // Network
@@ -104,8 +103,8 @@ extern char *makeDate; // filled in by makefile
 #define DEFAULT_TZ    -3
 
 #define DEFAULT_SYSLOGD		"192.168.1.130"
-//#define MYSYSLOGD  "syslog."
-//#define DEFAULT_MQTT 		"192.168.1.141"
+
+
 
 // ------------------------------------------------------------------------
 // Hardware connections

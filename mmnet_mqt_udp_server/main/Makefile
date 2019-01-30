@@ -10,7 +10,8 @@ WEBDIR = html-small
 
 WEBFILE= urom.c
 
-JTAG_CONF= -B 1000 -j /dev/com6
+JTAG_CONF= -B 4000 -j /dev/com6
+#JTAG_CONF= -B 1000 -j /dev/com6
 JTAG_CMD=cmd /c avarice 
 #JTAG_CMD=avarice 
 JTAG=$(JTAG_CMD) $(JTAG_CONF)

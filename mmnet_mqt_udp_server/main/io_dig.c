@@ -43,7 +43,7 @@ THREAD(dio_proc, __arg)
 {
     while(1)
     {
-        NutSleep(2);
+        NutSleep(4);
         dio_process();
     }
 }
@@ -131,6 +131,7 @@ static void dio_process( void )
     if( fb_ch )
     {
         //printf("fb_ch 0x%x", fb_ch);
+
         // Send to remote what we changed localy
         uint8_t mask, ch = 0;
         for( mask = 1; mask < 0x10; mask <<= 1, ch++ )

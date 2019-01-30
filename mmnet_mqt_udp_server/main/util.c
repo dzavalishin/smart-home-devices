@@ -62,12 +62,14 @@ void flash_led_once(void)
 
 void lcd_status_line(const char *msg)
 {
+#if SERVANT_LCD
     lcd_gotoxy( 0, 3 );
     lcd_puts("Init ");
     lcd_puts( msg );
     lcd_puts("          ");
     lcd_gotoxy( 0, 0 );
     //syslog( LOG_INFO, "Status: %s", msg );
+#endif
 }
 
 

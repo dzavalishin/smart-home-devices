@@ -94,10 +94,11 @@ void mqtt_udp_send_channel( uint8_t state, uint8_t ch )
 
     mqtt_io_count++;
 
-    //mqtt_send_item( buf, data );
     printf("publish '%s'='%s'\n", buf, data );
+
     int rc = mqtt_udp_send_publish( buf, data );
-    if( rc )        printf("publish err=%d", rc);
+    if( rc )
+        printf("publish err=%d", rc);
 }
 
 
@@ -107,6 +108,8 @@ void mqtt_udp_send_channel( uint8_t state, uint8_t ch )
 void mqtt_udp_recv_item( const char *mqtt_name, const char *data )
 {
     int plen = strlen( ee_cfg.topic_prefix );
+
+    //printf("." );
 
     if( plen && strncmp( mqtt_name, ee_cfg.topic_prefix, plen ) )
     {

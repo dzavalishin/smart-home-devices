@@ -95,15 +95,18 @@ void init_temperature(void)
 #else
     // TODO choose which buses to init
 
+#if OW_ONE_BUS
+    search_sensors(0);
+#else
     uint8_t bus;
     for( bus = 0; bus < N_1W_BUS; bus++ )
     {
-#if !OW_ONE_BUS
         ow_set_bus(&PIND,&PORTD,&DDRD,PD0+bus);
-#endif
         //uint8_t sc =
         search_sensors(bus);
     }
+#endif
+
 #endif // B1W_NON_FIXED_PORT
 }
 
@@ -257,24 +260,33 @@ void temp_meter_measure(void)
 // ---------------------------------------------------------------
 
 
+static void send_measure_request(char bus)
+{
+    // if( DS18X20_start_meas( DS18X20_POWER_PARASITE, NULL ) != DS18X20_OK)
+    if( DS18X20_start_meas( DS18X20_POWER_EXTERN, NULL ) != DS18X20_OK)
+    {
+        // Error starting temp mesaure.
+        REPORT_ERROR(ERR_FLAG_1WIRE_START_FAULT);
+        //ow_error_cnt++;
+        //ow_bus_error_cnt[bus];
+        count_1w_bus_error( bus );
+        //led1_timed( 200 );
+    }
+}
+
 static void request_temperature_measurement(void)
 {
+#if OW_ONE_BUS
+    send_measure_request( 0 );
+#else
     uint8_t bus;
 
     for( bus = 0; bus < N_1W_BUS; bus++ )
     {
         select_1w_bus( bus );
-        // if( DS18X20_start_meas( DS18X20_POWER_PARASITE, NULL ) != DS18X20_OK)
-        if( DS18X20_start_meas( DS18X20_POWER_EXTERN, NULL ) != DS18X20_OK)
-        {
-            // Error starting temp mesaure.
-            REPORT_ERROR(ERR_FLAG_1WIRE_START_FAULT);
-            //ow_error_cnt++;
-            //ow_bus_error_cnt[bus];
-            count_1w_bus_error( bus );
-            //led1_timed( 200 );
-        }
+        send_measure_request( bus );
     }
+#endif
 }
 
 

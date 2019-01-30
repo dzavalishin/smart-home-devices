@@ -35,10 +35,15 @@ uint32_t	mqtt_io_count = 0;
 
 int mqtt_udp_incoming_pkt( struct mqtt_udp_pkt *o )
 {
+    //if( o->ptype != PTYPE_SUBSCRIBE ) remote_config_request( o->topic );
+
     if( o->ptype != PTYPE_PUBLISH ) return 0;
 
-    mqtt_io_count++;
+    //remote_config_set( o->topic, o->value );
+    //printf( "-" );
 
+    mqtt_io_count++;
+#if 0
     printf( "got pkt from %d.%d.%d.%d",
             //o->pflags, o->pkt_id,
             (int)(0xFF & (o->from_ip >> 24)),
@@ -52,10 +57,9 @@ int mqtt_udp_incoming_pkt( struct mqtt_udp_pkt *o )
 
     if( o->value_len > 0 )
         printf(" = '%s'", o->value );
-
-    mqtt_udp_recv_item( o->topic, o->value );
-
     printf( "\n");
+#endif
+    mqtt_udp_recv_item( o->topic, o->value );
     return 0;
 }
 
@@ -67,9 +71,23 @@ THREAD( mqtt_udp_recv_thread, __arg )
 
     while(1)
     {
+#if 1
         int rc = mqtt_udp_recv_loop( mqtt_udp_incoming_pkt );
         if( rc )
             mqtt_udp_global_error_handler( MQ_Err_Other, rc, "recv_loop error", 0 );
+#else
+        char buf[2048];
+        uint32_t src_ip_addr;
+        int rc = mqtt_udp_recv_pkt( mqtt_udp_socket(), buf, sizeof(buf), &src_ip_addr );
+        if( rc < 0 ) printf("rc1 = %d", rc );
+        else printf("!" );
+
+        rc = mqtt_udp_parse_any_pkt( buf, rc, src_ip_addr, mqtt_udp_incoming_pkt );
+        if( rc < 0 ) printf("rc2 = %d", rc );
+        else printf("+" );
+
+
+#endif
     }
 }
 
@@ -98,7 +116,8 @@ THREAD( mqtt_udp_send_thread, __arg )
 void mqtt_udp_start( void )
 {
     mqtt_udp_set_throttle( 0 ); // Turn off for a while
-    NutThreadCreate("MQTT/UDP Recv", mqtt_udp_recv_thread, 0, 3640);
+    //NutThreadCreate("MQTT/UDP Recv", mqtt_udp_recv_thread, 0, 5640);
+    NutThreadCreate("MQTT/UDP Recv", mqtt_udp_recv_thread, 0, 4640);
     //NutThreadCreate("MQTT/UDP Send", mqtt_udp_send_thread, 0, 3640);
 }
 
