@@ -4,7 +4,7 @@ Control/monitor four switches with buttons/leds.
 
 To configure topic names for switches, see ```mqtt_map.c```:
 
-```
+```c
 struct mqtt_io  mqm[] =
 {
     { "Light5A",        0 },
@@ -26,13 +26,13 @@ MMNET01 Atmega128 board with ethernet.
 
  *    0-3 - front panel LEDs
  *    4,6 - relays (not finished)
- *    5   - (used in mmnet?)
+ *    5   - (used in mmnet, data flash CS)
  *    7   - LCD backlight PWM
 
 ### Port D
 
  *    0-3 - Front panel buttons
- *    2,3 - 
+ *    2,3 - (unused, UART1)
  *    6-7 - Di (not finished)
 
 ### Port E
@@ -40,8 +40,9 @@ MMNET01 Atmega128 board with ethernet.
  *    0   - LCD E
  *    1   - LCD R/W
  *    2   - LCD R/S
- *    3   - 
+ *    3   - (TODO fail LED)
  *    4   - Encoder button
+ *    5   - (used in mmnet, ethernet interrupt)
  *    6,7 - Encoder rotation
 
 ### Port F
