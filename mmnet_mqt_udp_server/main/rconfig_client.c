@@ -24,30 +24,10 @@
 #include "mqtt_udp.h"
 
 
-typedef enum {
-    MQ_CFG_TYPE_BOOL,
-    MQ_CFG_TYPE_STRING,
-    MQ_CFG_TYPE_INT32,
-} mqtt_udp_config_item_type_t;
-
-typedef union {
-    int32_t     b;
-    char *      s; // will reallocate, must be malloc'ed
-    int32_t     i;
-    void *      o; // other
-} mqtt_udp_config_item_value_t;
-
-typedef struct {
-    mqtt_udp_config_item_type_t         type;
-    const char *                        name;
-    const char *                        topic; // MQTT/UDP topic name for this config parameter
-    mqtt_udp_config_item_value_t        value; // Current or default value
-
-} mqtt_udp_config_item_t;
 
 
 // Will be parameter of mqtt_udp_rconfig_client_init()
-mqtt_udp_config_item_t rconfig_list[] =
+mqtt_udp_rconfig_item_t rconfig_list[] =
 {
     { MQ_CFG_TYPE_STRING, "Channel 1 topic", "Ch1Topic", { .s = 0 } },
     { MQ_CFG_TYPE_STRING, "Channel 2 topic", "Ch2Topic", { .s = 0 } },
@@ -57,7 +37,7 @@ mqtt_udp_config_item_t rconfig_list[] =
 
 
 // Will be parameter of mqtt_udp_rconfig_client_init()
-int rconfig_list_size = sizeof(rconfig_list) / sizeof(mqtt_udp_config_item_t);
+int rconfig_list_size = sizeof(rconfig_list) / sizeof(mqtt_udp_rconfig_item_t);
 
 
 // TODO kill me
@@ -67,7 +47,7 @@ int rconfig_rw_callback( int pos, int write );
 
 //static const char *topic_prefix = "$SYS/%s/conf/"; // put MAC address in %s
 static char topic_prefix[24];
-static int preflen = 0;
+static int topic_prefix_len = 0;
 
 static int rconfig_listener( struct mqtt_udp_pkt *pkt );
 
@@ -83,20 +63,22 @@ static int find_by_full_topic( const char *topic );
 static char *rconfig_mac_address_string = 0;
 
 
-static int (*user_rw_callback)( int pos, int write );
+//static int (*user_rw_callback)( int pos, int write );
+mqtt_udp_rconfig_rw_callback user_rw_callback;
 
 
 
-void mqtt_udp_rconfig_client_init(char *mac_address_string)
+void mqtt_udp_rconfig_client_init(char *mac_address_string, mqtt_udp_rconfig_rw_callback cb )
 {
     printf( "RConfig client init with mac '%s'\n", mac_address_string );
 
-    user_rw_callback = rconfig_rw_callback; // will be parameter
+    //user_rw_callback = rconfig_rw_callback; // will be parameter
+    user_rw_callback = cb;
 
     rconfig_mac_address_string = mac_address_string;
 
     sprintf( topic_prefix, "$SYS/%s/conf/", rconfig_mac_address_string );
-    preflen = strlen( topic_prefix );
+    topic_prefix_len = strlen( topic_prefix );
 
 
     mqtt_udp_add_packet_listener( rconfig_listener );
@@ -124,7 +106,7 @@ int mqtt_udp_rconfig_set_string( int pos, char *string )
 
     int slen = strnlen( string, PKT_BUF_SIZE );
 
-    mqtt_udp_config_item_t *item = rconfig_list + pos;
+    mqtt_udp_rconfig_item_t *item = rconfig_list + pos;
 
     //if( 0 == item->value.s ) return -3;
 
@@ -152,8 +134,8 @@ static int rconfig_listener( struct mqtt_udp_pkt *pkt )
         if( 0 == strcmp( pkt->topic, SYS_WILD ) ) { rconfig_send_topic_list(); return 0; }
 
         int pos = find_by_full_topic( pkt->topic );
-        printf("rconf got subscribe '%s' pos = %d\n", pkt->topic, pos );
         if( pos < 0 ) return 0;
+        printf("rconf got subscribe '%s' pos = %d\n", pkt->topic, pos );
 
         rconfig_send_topic_by_pos( pos );
     }
@@ -162,10 +144,8 @@ static int rconfig_listener( struct mqtt_udp_pkt *pkt )
     if( pkt->ptype == PTYPE_PUBLISH )
     {
         int pos = find_by_full_topic( pkt->topic );
-        printf("rconf '%s'='%s' pos = %d\n", pkt->topic, pkt->value, pos );
         if( pos < 0 ) return 0;
-
-        // found
+        printf("rconf set '%s'='%s' pos = %d\n", pkt->topic, pkt->value, pos );
 
         int rc = mqtt_udp_rconfig_set_string( pos, pkt->value );
 
@@ -179,10 +159,12 @@ static int rconfig_listener( struct mqtt_udp_pkt *pkt )
 
 static int find_by_full_topic( const char *topic )
 {
-    if( strncmp( topic_prefix, topic, preflen ) ) return -1;
-    //printf("%s prefix %s\n", pkt->topic, topic_prefix );
+    //printf("topic  '%s'\n", topic );
+    //printf("prefix '%s'\n", topic_prefix );
 
-    const char *suffix = topic + preflen;
+    if( strncmp( topic_prefix, topic, topic_prefix_len ) ) return -1;
+
+    const char *suffix = topic + topic_prefix_len;
 
     return rconfig_find_by_topic( suffix );
 }
@@ -209,9 +191,6 @@ static void rconfig_send_topic_by_pos( int pos )
     sprintf( topic, "$SYS/%s/conf/%s", rconfig_mac_address_string, subtopic );
 
     char *val = rconfig_list[pos].value.s;
-
-    //if( rconfig_list[i].value.s != 0 )
-    //    val = *rconfig_list[i].value.s;
 
     if( val == 0 ) val = "";
 

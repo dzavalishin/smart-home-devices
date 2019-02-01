@@ -68,6 +68,7 @@
 #include "ui_menu.h"
 
 #include "mqtt_udp_glue.h"
+#include "mqtt_udp.h"
 
 // NB - contains var def and init
 #include "makedate.h"
@@ -463,7 +464,7 @@ THREAD(long_init, __arg)
         {
             char mac_string[12+1];
 
-            char *mp = ee_cfg.mac_addr;
+            unsigned char *mp = ee_cfg.mac_addr;
             int i;
             for( i = 0; i < 6; i++ )
             {
@@ -472,7 +473,7 @@ THREAD(long_init, __arg)
 
             mac_string[sizeof(mac_string)-1] = 0;
 
-            mqtt_udp_rconfig_client_init( mac_string );
+            mqtt_udp_rconfig_client_init( mac_string, rconfig_rw_callback );
         }
 
         NutThreadExit();
