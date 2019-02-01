@@ -26,6 +26,9 @@ void mqtt_udp_send_channel( uint8_t state, uint8_t ch );
 void mqtt_udp_recv_item( const char *mqtt_name, const char *data );
 
 
+// Init remote configuration.
+void init_rconfig( void );
+
 // Called from remote config code
 int rconfig_rw_callback( int pos, int write );
 

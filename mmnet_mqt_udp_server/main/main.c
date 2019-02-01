@@ -461,20 +461,8 @@ THREAD(long_init, __arg)
 #endif
         network_started = 1;
 
-        {
-            char mac_string[12+1];
 
-            unsigned char *mp = ee_cfg.mac_addr;
-            int i;
-            for( i = 0; i < 6; i++ )
-            {
-                sprintf( mac_string+(i*2), "%02X", mp[i] );
-            }
-
-            mac_string[sizeof(mac_string)-1] = 0;
-
-            mqtt_udp_rconfig_client_init( mac_string, rconfig_rw_callback );
-        }
+        init_rconfig();
 
         NutThreadExit();
     }

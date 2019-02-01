@@ -22,7 +22,10 @@
 #include <string.h>
 
 #include "mqtt_udp.h"
+#include "runtime_cfg.h"
 
+
+static int rconfig_rw_callback( int pos, int write );
 
 
 
@@ -40,203 +43,29 @@ mqtt_udp_rconfig_item_t rconfig_list[] =
 int rconfig_list_size = sizeof(rconfig_list) / sizeof(mqtt_udp_rconfig_item_t);
 
 
-// TODO kill me
-int rconfig_rw_callback( int pos, int write );
 
-
-
-//static const char *topic_prefix = "$SYS/%s/conf/"; // put MAC address in %s
-static char topic_prefix[24];
-static int topic_prefix_len = 0;
-
-static int rconfig_listener( struct mqtt_udp_pkt *pkt );
-
-static void rconfig_send_topic_list( void );
-static void rconfig_send_topic_by_pos( int pos );
-
-static int rconfig_find_by_topic( const char *topic );
-static void rconfig_read_all( void );
-
-static int find_by_full_topic( const char *topic );
-
-
-static char *rconfig_mac_address_string = 0;
-
-
-//static int (*user_rw_callback)( int pos, int write );
-mqtt_udp_rconfig_rw_callback user_rw_callback;
-
-
-
-void mqtt_udp_rconfig_client_init(char *mac_address_string, mqtt_udp_rconfig_rw_callback cb )
+void init_rconfig( void )
 {
-    printf( "RConfig client init with mac '%s'\n", mac_address_string );
+    char mac_string[12+1];
 
-    //user_rw_callback = rconfig_rw_callback; // will be parameter
-    user_rw_callback = cb;
-
-    rconfig_mac_address_string = mac_address_string;
-
-    sprintf( topic_prefix, "$SYS/%s/conf/", rconfig_mac_address_string );
-    topic_prefix_len = strlen( topic_prefix );
-
-
-    mqtt_udp_add_packet_listener( rconfig_listener );
-
-    /*
-    int rc = mqtt_udp_rconfig_set_string( 0, "Ch1" );
-    if( rc ) printf("cant ch1 %d\n", rc );
-
-    mqtt_udp_rconfig_set_string( 1, "Ch2" );
-    mqtt_udp_rconfig_set_string( 2, "Ch3" );
-    mqtt_udp_rconfig_set_string( 3, "Ch4" );
-    */
-    rconfig_read_all();
-    rconfig_send_topic_list();
-}
-
-
-
-
-int mqtt_udp_rconfig_set_string( int pos, char *string )
-{
-    if( (pos < 0) || (pos >= rconfig_list_size) ) return -1; // TODO error
-
-    if( rconfig_list[pos].type != MQ_CFG_TYPE_STRING ) return -2; // TODO error
-
-    int slen = strnlen( string, PKT_BUF_SIZE );
-
-    mqtt_udp_rconfig_item_t *item = rconfig_list + pos;
-
-    //if( 0 == item->value.s ) return -3;
-
-    if( item->value.s ) free( item->value.s );
-    item->value.s = 0;
-
-    item->value.s = malloc( slen );
-
-    if( 0 == item->value.s ) return -4;
-
-    strcpy( item->value.s, string );
-    return 0;
-}
-
-
-#define SYS_WILD "$SYS/#"
-
-static int rconfig_listener( struct mqtt_udp_pkt *pkt )
-{
-    //printf("rconf\n");
-
-    // Got request
-    if( pkt->ptype == PTYPE_SUBSCRIBE )
-    {
-        if( 0 == strcmp( pkt->topic, SYS_WILD ) ) { rconfig_send_topic_list(); return 0; }
-
-        int pos = find_by_full_topic( pkt->topic );
-        if( pos < 0 ) return 0;
-        printf("rconf got subscribe '%s' pos = %d\n", pkt->topic, pos );
-
-        rconfig_send_topic_by_pos( pos );
-    }
-
-    // Got data
-    if( pkt->ptype == PTYPE_PUBLISH )
-    {
-        int pos = find_by_full_topic( pkt->topic );
-        if( pos < 0 ) return 0;
-        printf("rconf set '%s'='%s' pos = %d\n", pkt->topic, pkt->value, pos );
-
-        int rc = mqtt_udp_rconfig_set_string( pos, pkt->value );
-
-        rc = user_rw_callback( pos, 1 ); // Ask user to write item to local storage and use it
-
-    }
-
-    return 0;
-}
-
-
-static int find_by_full_topic( const char *topic )
-{
-    //printf("topic  '%s'\n", topic );
-    //printf("prefix '%s'\n", topic_prefix );
-
-    if( strncmp( topic_prefix, topic, topic_prefix_len ) ) return -1;
-
-    const char *suffix = topic + topic_prefix_len;
-
-    return rconfig_find_by_topic( suffix );
-}
-
-
-
-
-
-
-static void rconfig_send_topic_by_pos( int pos )
-{
-
-    printf("rconfig_send_topic_list %d: ", pos );
-
-    // TODO do more
-    if( rconfig_list[pos].type != MQ_CFG_TYPE_STRING )
-        return;
-
-    const char *subtopic = rconfig_list[pos].topic;
-
-    char topic[80];
-
-    //snprintf( topic, sizeof(topic)-1, "$SYS/%s/conf/%s", rconfig_mac_address_string, subtopic );
-    sprintf( topic, "$SYS/%s/conf/%s", rconfig_mac_address_string, subtopic );
-
-    char *val = rconfig_list[pos].value.s;
-
-    if( val == 0 ) val = "";
-
-    mqtt_udp_send_publish( topic, val );
-    printf("'%s'='%s'\n", topic, val );
-}
-
-
-
-static void rconfig_send_topic_list( void )
-{
+    unsigned char *mp = ee_cfg.mac_addr;
     int i;
-    for( i = 0; i < rconfig_list_size; i++ )
-        rconfig_send_topic_by_pos( i );
-}
-
-
-
-
-
-
-
-
-// return -1 if not found
-static int rconfig_find_by_topic( const char *topic )
-{
-    int i;
-    for( i = 0; i < rconfig_list_size; i++ )
+    for( i = 0; i < 6; i++ )
     {
-        if( 0 == strcmp( rconfig_list[i].topic, topic ) )
-            return i;
+        sprintf( mac_string+(i*2), "%02X", mp[i] );
     }
 
-    return -1;
+    mac_string[sizeof(mac_string)-1] = 0;
+
+    int rc = mqtt_udp_rconfig_client_init( mac_string, rconfig_rw_callback, rconfig_list, rconfig_list_size );
+    if( rc ) printf("rconfig init failed, %d\n", rc );
 }
 
 
 
-static void rconfig_read_all( void )
-{
-    int i;
-    for( i = 0; i < rconfig_list_size; i++ )
-    {
-        user_rw_callback( i, 0 ); // Ask user to read item from local storage
-    }
-}
+
+
+
 
 
 
@@ -249,19 +78,22 @@ static void rconfig_read_all( void )
 
 // Must read from local storage or write to local storage
 // config item at pos
-int rconfig_rw_callback( int pos, int write )
+static int rconfig_rw_callback( int pos, int write )
 {
     printf("asked to %s item %d\n", write ? "save" : "load", pos );
 
+    if( (pos < 0) || (pos >= rconfig_list_size) ) return -1; // TODO error
 
     if( write )
     {
+        printf("new val = '%s'\n", rconfig_list[pos].value.s );
         return 0;
     }
     else
     {
-        char *name = "Ch0";
+        char name[] = "Ch0";
         name[2] = '0' + pos;
+        //printf("return '%s'\n", name );
         mqtt_udp_rconfig_set_string( pos, name );
         return 0;
     }

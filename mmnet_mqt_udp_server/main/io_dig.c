@@ -233,7 +233,7 @@ static void dio_input( void )
     dio_in_channel( 3, &(buttons[3].prev), debounce_button( buttons+3, btn3) , DI_IS_BUTTON );
     */
 
-    char i;
+    int i;
     for( i = 0; i < 4; i++ )
     {
         dio_in_channel( i, &(buttons[i].prev), debounce_button( buttons+i, DI_PIN & _BV(i) ) , DI_IS_BUTTON );
