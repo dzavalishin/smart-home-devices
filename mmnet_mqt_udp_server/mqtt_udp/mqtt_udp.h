@@ -167,6 +167,10 @@ int mqtt_udp_close_fd( int fd );
 void mqtt_udp_throttle( void );
 
 
+// Additional subsystems use to snoop for incoming packets
+// Listener returns 0 if it is ok to pass packet to next listeners, non-zero to consume.
+void mqtt_udp_add_packet_listener( process_pkt listener );
+
 // --------------------------------------------------------------------------
 //
 // Defauli packet processor, called before user callback and replies according
@@ -187,6 +191,8 @@ void mqtt_udp_recv_reply( struct mqtt_udp_pkt *pkt );
 // --------------------------------------------------------------------------
 
 void mqtt_udp_clear_pkt( struct mqtt_udp_pkt *p );
+void mqtt_udp_free_pkt( struct mqtt_udp_pkt *p );
+
 int mqtt_udp_build_any_pkt( char *buf, size_t blen, struct mqtt_udp_pkt *p, size_t *out_len );
 int mqtt_udp_parse_any_pkt( const char *pkt, size_t plen, uint32_t from_ip, process_pkt callback );
 
