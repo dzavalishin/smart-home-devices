@@ -33,6 +33,9 @@ SRCS += mqtt_map.c
 SRCS += logbuf.c
 SRCS += mqtt_udp_glue.c
 
+SRCS += rconfig_client.c 
+
+
 OBJS =  $(SRCS:.c=.o) 
 #eewr_block.o eewr_byte.o
 
