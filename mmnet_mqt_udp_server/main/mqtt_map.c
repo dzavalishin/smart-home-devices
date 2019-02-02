@@ -22,6 +22,12 @@
 #include <ctype.h>
 
 
+#define DEBUG_NET 0
+
+#define RCONF 1
+
+
+#if !RCONF
 struct mqtt_io
 {
     const char *mqtt_name;      // MQTT item name
@@ -49,7 +55,11 @@ static int8_t pos_by_id( uint8_t id )
     }
 
     return -1;
+
 }
+
+
+
 
 static int8_t pos_by_name( const char *name )
 {
@@ -62,23 +72,41 @@ static int8_t pos_by_name( const char *name )
     return -1;
 }
 
+#endif
 
 
+// -----------------------------------------------------------------------
+//
+// Local event to network
+//
+// -----------------------------------------------------------------------
 
 
 void mqtt_udp_send_channel( uint8_t state, uint8_t ch )
 {
     if( !network_started ) return;
 
+#if RCONF
+    const char *topic = rconfig_get_string_by_item_index( ch, MQ_CFG_KIND_TOPIC );
+    if( topic == 0 )
+    {
+#if DEBUG_NET
+        printf("no ch %d\n", ch);
+#endif
+        return;
+    }
+#else
     int8_t pos = pos_by_id( ch );
 
     if( pos < 0 )
     {
-        printf("no ch %d", ch);
+        printf("no ch %d\n", ch);
         return;
     }
 
     struct mqtt_io *mp = mqm+pos;
+    const char *topic = mp->mqtt_name;
+#endif
 
     //char data[20];
     //sprintf( data, "%d", state );
@@ -88,28 +116,36 @@ void mqtt_udp_send_channel( uint8_t state, uint8_t ch )
 
     strlcpy( buf, ee_cfg.topic_prefix, sizeof(buf) );
     //strlcat( buf, "/", sizeof(buf) );
-    strlcat( buf, mp->mqtt_name, sizeof(buf) );
+    strlcat( buf, topic, sizeof(buf) );
 
     //printf( "channel %d send %d item %s\n", ch, state, buf );
 
     mqtt_io_count++;
 
+#if DEBUG_NET
     printf("publish '%s'='%s'\n", buf, data );
+#endif
 
     int rc = mqtt_udp_send_publish( buf, data );
     if( rc )
-        printf("publish err=%d", rc);
+        printf("publish err=%d\n", rc);
 }
 
 
+// -----------------------------------------------------------------------
+//
+// Incoming network message
+//
+// -----------------------------------------------------------------------
 
 
-// Called from MQTT receiver
+/// Called from MQTT receiver
 void mqtt_udp_recv_item( const char *mqtt_name, const char *data )
 {
     int plen = strlen( ee_cfg.topic_prefix );
 
     //printf("." );
+    //printf("incoming item '%s'\n", mqtt_name );
 
     if( plen && strncmp( mqtt_name, ee_cfg.topic_prefix, plen ) )
     {
@@ -122,15 +158,20 @@ void mqtt_udp_recv_item( const char *mqtt_name, const char *data )
     while( *mqtt_name == '/' )
         mqtt_name++;
 
+#if RCONF
+    int8_t pos = rconfig_find_by_string_value( mqtt_name, MQ_CFG_KIND_TOPIC );
+#else
     int8_t pos = pos_by_name( mqtt_name );
-
+#endif
     if( pos < 0 )
     {
-        //printf("no item %s", mqtt_name );
+        //printf("no item %s\n", mqtt_name );
         return;
     }
 
-    struct mqtt_io *mp = mqm+pos;
+#if DEBUG_NET
+    printf("our item '%s'\n", mqtt_name );
+#endif
 
     int state = 0;
 
@@ -140,7 +181,12 @@ void mqtt_udp_recv_item( const char *mqtt_name, const char *data )
         state = !strcasecmp( data, "ON" );
 
 
+#if RCONF
+    uint8_t ch = pos;
+#else
+    struct mqtt_io *mp = mqm+pos;
     uint8_t ch = mp->local_id;
+#endif
 
     // Now put to local data structure
 
@@ -160,29 +206,5 @@ void mqtt_udp_recv_item( const char *mqtt_name, const char *data )
 }
 
 
-// -----------------------------------------------------------------------
-// Subscription
-// -----------------------------------------------------------------------
 
-
-
-/*
-uint8_t subscribe_all( void )
-{
-    uint8_t i;
-    for( i = 0; i < N_MQM; i++ )
-    {
-        char buf[80];
-
-        strlcpy( buf, ee_cfg.topic_prefix, sizeof(buf) );
-        strlcat( buf, "/", sizeof(buf) );
-        strlcat( buf, mqm[i].mqtt_name, sizeof(buf) );
-
-        subscribe( buf );
-    }
-
-    return 0;
-}
-
-*/
 

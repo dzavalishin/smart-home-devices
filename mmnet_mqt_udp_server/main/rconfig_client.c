@@ -32,10 +32,13 @@ static int rconfig_rw_callback( int pos, int write );
 // Will be parameter of mqtt_udp_rconfig_client_init()
 mqtt_udp_rconfig_item_t rconfig_list[] =
 {
-    { MQ_CFG_TYPE_STRING, "Switch 1 topic", "Sw1Topic", { .s = 0 } },
-    { MQ_CFG_TYPE_STRING, "Switch 2 topic", "Sw2Topic", { .s = 0 } },
-    { MQ_CFG_TYPE_STRING, "Switch 3 topic", "Sw3Topic", { .s = 0 } },
-    { MQ_CFG_TYPE_STRING, "Switch 4 topic", "Sw4Topic", { .s = 0 } },
+    { MQ_CFG_TYPE_STRING, MQ_CFG_KIND_TOPIC, "Switch 1 topic", "topic/sw1", { .s = 0 } },
+    { MQ_CFG_TYPE_STRING, MQ_CFG_KIND_TOPIC, "Switch 2 topic", "topic/sw2", { .s = 0 } },
+    { MQ_CFG_TYPE_STRING, MQ_CFG_KIND_TOPIC, "Switch 3 topic", "topic/sw3", { .s = 0 } },
+    { MQ_CFG_TYPE_STRING, MQ_CFG_KIND_TOPIC, "Switch 4 topic", "topic/sw4", { .s = 0 } },
+    { MQ_CFG_TYPE_STRING, MQ_CFG_KIND_TOPIC, "Switch 4 topic", "topic/di0", { .s = 0 } },
+    { MQ_CFG_TYPE_STRING, MQ_CFG_KIND_TOPIC, "Switch 4 topic", "topic/di1", { .s = 0 } },
+    { MQ_CFG_TYPE_STRING, MQ_CFG_KIND_OTHER, "Switch 4 topic", "net/mac",   { .s = 0 } },
 };
 
 
@@ -63,8 +66,86 @@ void init_rconfig( void )
 
 
 
+// -----------------------------------------------------------------------
+//
+// Topic to index and back
+//
+// -----------------------------------------------------------------------
 
 
+
+/**
+ *
+ * @brief Find config item number (position in array) by string value.
+ *
+ * Used to find io channel number by topic name. Remote config item
+ * supposed to contain topic name.
+ *
+ * It is supposed that item index is equal to io channel nubmer.
+ * Usually it means that topic related items are at the beginning
+ * of item array and their position in array is important.
+ *
+ * @param in topic Topic name to find in item _value_.
+ *
+ * @param in kind Expected kind og the item, sanity check.
+ *
+ * @return Item position in array or -1 if not found.
+ *
+**/
+int rconfig_find_by_string_value( const char *search, mqtt_udp_rconfig_inetm_kind_t kind )
+{
+    int i;
+    for( i = 0; i < rconfig_list_size; i++ )
+    {
+        if( rconfig_list[i].type != MQ_CFG_TYPE_STRING )
+            continue;
+
+        if( rconfig_list[i].kind != kind )
+            continue;
+
+        if( 0 == strcmp( rconfig_list[i].value.s, search ) )
+            return i;
+    }
+
+    return -1;
+}
+
+/**
+ *
+ * @brief Get config item string by item number (position in array).
+ *
+ * Used to find topic for io channel by channel number.
+ * supposed to contain topic name
+ *
+ * It is supposed that item index is equal to io channel nubmer.
+ * Usually it means that topic related items are at the beginning
+ * of item array and their position in array is important.
+ *
+ * @todo Convert other types to string?
+ *
+ * @param in pos Position in array.
+ *
+ * @param in kind Expected kind og the item, sanity check.
+ *
+ * @return Item _value_ (string) or 0 if intem type is not string.
+ *
+**/
+const char * rconfig_get_string_by_item_index( int pos, mqtt_udp_rconfig_inetm_kind_t kind )
+{
+    if( rconfig_list[pos].type != MQ_CFG_TYPE_STRING )
+    {
+        mqtt_udp_global_error_handler( MQ_Err_Invalid, 0, "string_by_item_index !str", 0 );
+        return 0;
+    }
+
+    if( rconfig_list[pos].kind != kind )
+    {
+        mqtt_udp_global_error_handler( MQ_Err_Invalid, 0, "string_by_item_index !kind", 0 );
+        return 0;
+    }
+
+    return rconfig_list[pos].value.s;
+}
 
 
 
