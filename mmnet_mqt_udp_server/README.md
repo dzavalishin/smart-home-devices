@@ -2,6 +2,8 @@
 
 Control/monitor four switches with buttons/leds.
 
+based on [MQTT/UDP](https://github.com/dzavalishin/mqtt_udp) protocol.
+
 To configure topic names for switches, see ```mqtt_map.c```:
 
 ```c
