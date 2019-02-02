@@ -40,10 +40,7 @@ extern uint32_t  mqtt_io_count;
 
 
 
-// temp
 
-const char * rconfig_get_string_by_item_index( int pos, mqtt_udp_rconfig_inetm_kind_t kind );
-int rconfig_find_by_string_value( const char *search, mqtt_udp_rconfig_inetm_kind_t kind );
 
 
 

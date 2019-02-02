@@ -33,6 +33,7 @@
 // channel number / topic name map. Item index for
 // topic is a local channel number
 //
+//
 // -----------------------------------------------------------------------
 
 
@@ -149,7 +150,7 @@ void mqtt_udp_send_channel( uint8_t state, uint8_t ch )
 // -----------------------------------------------------------------------
 
 
-/// Called from MQTT receiver
+/// Called from MQTT receiver @todo use .opaque
 void mqtt_udp_recv_item( const char *mqtt_name, const char *data )
 {
     int plen = strlen( ee_cfg.topic_prefix );
