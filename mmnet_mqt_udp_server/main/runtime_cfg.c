@@ -64,12 +64,12 @@ init_runtime_cfg()
     ee_cfg.ip_nntp	= 0; // Will use default route instead
     ee_cfg.ip_syslog	= inet_addr( DEFAULT_SYSLOGD );
     ee_cfg.ip_mqtt	= 0; //inet_addr( DEFAULT_MQTT );
-#if 0
+
     strlcpy( ee_cfg.topics[0], "Light5A", sizeof( ee_cfg.topics[0] ) );
     strlcpy( ee_cfg.topics[1], "Light5B", sizeof( ee_cfg.topics[1] ) );
     strlcpy( ee_cfg.topics[2], "Light1A", sizeof( ee_cfg.topics[2] ) );
     strlcpy( ee_cfg.topics[3], "Light1B", sizeof( ee_cfg.topics[3] ) );
-
+#if 0
     strlcpy( ee_cfg.names[0], "Dinner L", sizeof( ee_cfg.names[0] ) );
     strlcpy( ee_cfg.names[1], "Dinner R", sizeof( ee_cfg.names[1] ) );
     strlcpy( ee_cfg.names[2], "Guest L", sizeof( ee_cfg.names[2] ) );
@@ -86,8 +86,8 @@ init_runtime_cfg()
     //strlcpy( ee_cfg.topic_prefix, "/openhab/", sizeof(ee_cfg.topic_prefix) );
     strlcpy( ee_cfg.topic_prefix, "", sizeof(ee_cfg.topic_prefix) );
 
-    strlcpy( ee_cfg.mqtt_host, "smart", sizeof(ee_cfg.mqtt_host) );
-    ee_cfg.mqtt_port = 1883;
+    //strlcpy( ee_cfg.mqtt_host, "smart", sizeof(ee_cfg.mqtt_host) );
+    //ee_cfg.mqtt_port = 1883;
 
     for( i = 0; i < SERVANT_N_DI; i++ )
     {
@@ -155,7 +155,8 @@ runtime_cfg_eeprom_write(void)
 
     cli();
     void *mem = &ee_cfg;
-    uint8_t crc = crc8 ( mem, sizeof(struct eeprom_cfg) );
+    //uint8_t crc = crc8 ( mem, sizeof(struct eeprom_cfg) );
+    uint8_t crc = crc8 ( mem, EESZ );
 
     //OnChipNvMemSave( EEPROM_CFG_BASE+1, mem, EESZ );
     //OnChipNvMemSave( EEPROM_CFG_BASE, &crc, 1 );
@@ -166,14 +167,22 @@ runtime_cfg_eeprom_write(void)
     // Now check
     //OnChipNvMemLoad( EEPROM_CFG_BASE, buf,  EESZ + 1 );
     eeload( EEPROM_CFG_BASE, buf,  EESZ + 1 );
-    sei();
 
     crc = crc8 ( buf+1, EESZ );
 
-    if( crc != buf[0] ) return -1;
+    if( crc != buf[0] )
+    {
+        sei();
+        return -1;
+    }
 
-    if( memcmp( buf+1, mem, EESZ ) ) return -1;
+    if( memcmp( buf+1, mem, EESZ ) )
+    {
+        sei();
+        return -2;
+    }
 
+    sei();
     return 0;
 }
 
@@ -193,6 +202,7 @@ static void eeload( uint16_t base, void *buf, uint16_t size )
         OnChipNvMemLoad( base, buf, part );
 
         base += part;
+        buf  += part;
         size -= part;
 
     }
@@ -209,6 +219,7 @@ static void eesave( uint16_t base, void *buf, uint16_t size )
         OnChipNvMemSave( base, buf, part );
 
         base += part;
+        buf  += part;
         size -= part;
     }
 }

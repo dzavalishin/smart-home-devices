@@ -78,10 +78,10 @@ struct eeprom_cfg
     // MQTT topic wildcard
     //char                topic_wildcard[EEPROM_CFG_MAX_TOPIC_LEN]; // subscription wildcard to get topic names in runtime for menu
 
-    char                mqtt_host[EEPROM_CFG_MAX_TOPIC_LEN];
-    uint16_t            mqtt_port;
+    //char                mqtt_host[EEPROM_CFG_MAX_TOPIC_LEN];
+    //uint16_t            mqtt_port;
 
-    char                openhab_url[EEPROM_CFG_MAX_TOPIC_LEN]; // to get topic names? - unused yet
+    //char                openhab_url[EEPROM_CFG_MAX_TOPIC_LEN]; // to get topic names? - unused yet
 
     // ---------------  DI/DO
 
