@@ -28,6 +28,17 @@
 static int rconfig_rw_callback( int pos, int write );
 
 
+// -----------------------------------------------------------------------
+//
+// Use remote config item list (rconfig.client.c) as
+// channel number / topic name map. Item index for
+// topic is a local channel number
+//
+// DO NOT MOVE items with MQ_CFG_KIND_TOPIC, their position
+// is local channel number.
+//
+// -----------------------------------------------------------------------
+
 
 // Will be parameter of mqtt_udp_rconfig_client_init()
 mqtt_udp_rconfig_item_t rconfig_list[] =

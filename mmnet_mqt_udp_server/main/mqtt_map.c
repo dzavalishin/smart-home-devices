@@ -27,6 +27,16 @@
 #define RCONF 1
 
 
+// -----------------------------------------------------------------------
+//
+// Use remote config item list (rconfig.client.c) as
+// channel number / topic name map. Item index for
+// topic is a local channel number
+//
+// -----------------------------------------------------------------------
+
+
+
 #if !RCONF
 struct mqtt_io
 {
