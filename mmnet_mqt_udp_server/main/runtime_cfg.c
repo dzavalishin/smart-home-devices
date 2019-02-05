@@ -65,6 +65,9 @@ init_runtime_cfg()
     ee_cfg.ip_syslog	= inet_addr( DEFAULT_SYSLOGD );
     ee_cfg.ip_mqtt	= 0; //inet_addr( DEFAULT_MQTT );
 
+    strlcpy( ee_cfg.node_name, "MQTT/UDP Wall Board", sizeof( ee_cfg.node_name ) );
+    strlcpy( ee_cfg.node_location, "None", sizeof( ee_cfg.node_location ) );
+
     strlcpy( ee_cfg.topics[0], "Light5A", sizeof( ee_cfg.topics[0] ) );
     strlcpy( ee_cfg.topics[1], "Light5B", sizeof( ee_cfg.topics[1] ) );
     strlcpy( ee_cfg.topics[2], "Light1A", sizeof( ee_cfg.topics[2] ) );

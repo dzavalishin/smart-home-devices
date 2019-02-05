@@ -89,6 +89,8 @@ struct eeprom_cfg
     uint8_t             di_mode[SERVANT_N_DI];  	// Di modem lower bit 1=button, 0 = switch
     uint8_t             do_channel[SERVANT_N_DO];  // Numer of channel for Do (relay), if 0-4, then parallelled with front panel LED
 
+    char                node_name[EEPROM_CFG_MAX_TOPIC_LEN];
+    char                node_location[EEPROM_CFG_MAX_TOPIC_LEN];
 };
 
 // di_mode bits

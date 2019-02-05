@@ -41,6 +41,9 @@ static int rconfig_rw_callback( int pos, int write );
 //
 // -----------------------------------------------------------------------
 
+
+// if opaque.s nonzero, it points to ee_cfg string with size = EEPROM_CFG_MAX_TOPIC_LEN
+
 // Will be parameter of mqtt_udp_rconfig_client_init()
 mqtt_udp_rconfig_item_t rconfig_list[] =
 {
@@ -57,6 +60,9 @@ mqtt_udp_rconfig_item_t rconfig_list[] =
     { MQ_CFG_TYPE_STRING, MQ_CFG_KIND_INFO, "Switch 4 topic", "info/ver",    { .s = 0 } },
     { MQ_CFG_TYPE_STRING, MQ_CFG_KIND_INFO, "Switch 4 topic", "info/uptime", { .s = 0 } },  // DO NON MOVE OR ADD LINES ABOVE, inited by array index below
 
+    //{ MQ_CFG_TYPE_STRING, MQ_CFG_KIND_INFO, "Name", 		"node/name", { .s = "MQTT/UDP Room Unit" }, .opaque.s = 0 }, // TODO R/W
+    { MQ_CFG_TYPE_STRING, MQ_CFG_KIND_OTHER, "Name", 		"node/name", { .s = 0 }, .opaque.s = ee_cfg.node_name }, // TODO R/W
+    { MQ_CFG_TYPE_STRING, MQ_CFG_KIND_OTHER, "Location", 	"node/location", { .s = 0 }, .opaque.s = ee_cfg.node_location }, // TODO R/W
 };
 
 
@@ -105,6 +111,9 @@ static int rconfig_rw_callback( int pos, int write )
 
     if( (pos < 0) || (pos >= rconfig_list_size) ) return -1; // TODO error
 
+    if( rconfig_list[pos].type != MQ_CFG_TYPE_STRING )
+        return -2;
+
     if( rconfig_list[pos].kind == MQ_CFG_KIND_TOPIC )
     {
         if( write )
@@ -126,6 +135,25 @@ static int rconfig_rw_callback( int pos, int write )
             return 0;
         }
     }
+
+    if( rconfig_list[pos].opaque.s != 0 )
+    {
+        if( write )
+        {
+            strlcpy( rconfig_list[pos].opaque.s, rconfig_list[pos].value.s, EEPROM_CFG_MAX_TOPIC_LEN );
+
+            //printf("val '%s'\n", rconfig_list[pos].value.s );
+            //printf("node name '%s' loc '%s'\n", ee_cfg.node_name, ee_cfg.node_location );
+
+            int rc = runtime_cfg_eeprom_write(); // TODO do write from thread with timeout to combine writes
+            if( rc ) printf("eeprom wr err %d\n", rc );
+        }
+        else
+        {
+            mqtt_udp_rconfig_set_string( pos, rconfig_list[pos].opaque.s );
+        }
+    }
+
 }
 
 
