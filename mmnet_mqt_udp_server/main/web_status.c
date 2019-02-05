@@ -88,6 +88,11 @@ static int CgiStatusRow( FILE * stream, int row_no )
 
     case 3:
         {
+#if 1
+            HTML("<TR><TD>&nbsp;UpTime </TD><TD>&nbsp;");
+            fprintf(stream, "%s",  uptime );
+            HTML(" </TD></TR>\r\n");
+#else
             uint32_t seconds = NutGetSeconds();
             uint32_t minutes = seconds / 60UL;
             uint32_t hours = minutes / 60UL;
@@ -99,6 +104,7 @@ static int CgiStatusRow( FILE * stream, int row_no )
             HTML("<TR><TD>&nbsp;UpTime </TD><TD>&nbsp;");
             fprintf(stream, "%lu days  %lu:%lu:%lu", days, hours, minutes, seconds);
             HTML(" </TD></TR>\r\n");
+#endif
         }
         break;
 

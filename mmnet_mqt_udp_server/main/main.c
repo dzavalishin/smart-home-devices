@@ -96,16 +96,19 @@ static void init_regular_devices(void);
 static void start_regular_devices(void);
 
 
+
 #if ENABLE_SYSLOG
 //static void init_syslog(void);
 #endif
 
 // in servant.c
 THREAD(main_loop, arg); 
-void each_second(HANDLE h, void *arg);
+//THREAD(time_loop, arg); 
+THREAD(long_init, __arg); // will do each_second
+
+//void each_second(HANDLE h, void *arg);
 
 
-THREAD(long_init, __arg);
 
 
 
@@ -204,17 +207,19 @@ int main(void)
     NutThreadCreate("LongInit", long_init, 0, 2640);
 //NutSleep(10000);
 
-    // Register our device for the file system.
-    NutRegisterDevice(&devUrom, 0, 0);
 
 #if ENABLE_HTTP
+    // Register our device for the file system.
+    NutRegisterDevice(&devUrom, 0, 0);
     init_cgi();
     init_httpd();
     printf("httpd ready\n");
 #endif
 
     NutThreadSetPriority(254);
-    NutTimerStart(1000, each_second, 0, 0 ); // Each second call each_second
+
+    // now in thread
+    //NutTimerStart(1000, each_second, 0, 0 ); // Each second call each_second
 
     LED_OFF;
 
@@ -464,7 +469,15 @@ THREAD(long_init, __arg)
 
         init_rconfig();
 
-        NutThreadExit();
+        //NutThreadExit();
+
+        // now do timing thread
+
+        while(1)
+        {
+            NutSleep(1000);
+            each_second();
+        }
     }
 }
 
@@ -604,8 +617,32 @@ void stop_regular_devices(void)
 }
 
 
+// -----------------------------------------------------------------------
+//
+// Uptime
+//
+// -----------------------------------------------------------------------
 
 
+//char uptime[16];
+char uptime[20];
+
+void update_uptime( void )
+{
+#if 1
+    uint32_t seconds = NutGetSeconds();
+    uint32_t minutes = seconds / 60UL;
+    uint32_t hours = minutes / 60UL;
+    uint32_t days = hours / 24UL;
+    minutes %= 60UL;
+    seconds %= 60UL;
+    hours %= 24UL;
+
+    //snprintf( uptime, sizeof(uptime)-1, "%lud %02lu:%02lu:%02lu", days, hours, minutes, seconds );
+    sprintf( uptime, "%lud %02lu:%02lu:%02lu", days, hours, minutes, seconds );
+    printf("up %s\n", uptime );
+#endif
+}
 
 
 

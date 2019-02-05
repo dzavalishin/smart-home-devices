@@ -16,6 +16,8 @@ extern char modbus_device_id[];
 
 #define DEVICE_NAME "DZ-MQTT-UDP-WALL"
 
+extern char uptime[];
+
 
 extern char *makeDate; // filled in by makefile
 

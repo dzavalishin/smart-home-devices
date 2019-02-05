@@ -43,7 +43,8 @@ uint8_t watch_main_loop = 0;
 uint8_t watch_ui_loop = 0;
 
 
-void each_second(HANDLE h, void *arg)
+//void each_second(HANDLE h, void *arg)
+void each_second( void )
 {
     second_counter++;
     temperatureMeterCnt++;
@@ -83,6 +84,12 @@ void each_second(HANDLE h, void *arg)
 #endif
 
     timer_regular_devices();
+
+    // once a minute
+    //if( (second_counter % 60) == 0 )
+    if( (second_counter % 20) == 0 )
+        update_uptime();
+
 }
 
 
